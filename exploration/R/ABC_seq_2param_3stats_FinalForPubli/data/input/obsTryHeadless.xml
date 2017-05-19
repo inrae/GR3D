@@ -1,0 +1,21 @@
+<hashtable>
+	<entry>
+		<java-class>species.DiadromousFishGroup</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<miscellaneous.MyCSVObserver>
+					<separator>;</separator>
+					<sysout>true</sysout>
+					<outputFile>data/output/totalAbundance.csv</outputFile>
+					<observables>
+						<string>getNbSI</string>
+						<string>getFishEffective</string>
+						<string>getNbColonizedBasins</string>
+						<string>getSouthernBasins</string>
+						<string>getNorthernBasins</string>
+					</observables>
+				</miscellaneous.MyCSVObserver>
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+</hashtable>

@@ -1,0 +1,12 @@
+nbSimul: 200
+nbCluster: 10
+p_acc_min: 0.05
+parameters:
+- javapath: processes.processesEachStep.5.tempMinRep
+  prior: [ unif, 5, 15 ]
+- javapath: processes.processesEachStep.4.tempMinMortGenInRiv
+  prior: [ unif, 5, 15 ]
+- javapath: processes.processesEachStep.5.ratioS95_S50
+  prior: [ unif, 1.5, 2.5 ]
+- javapath: processes.processesEachStep.3.pHomingAfterEquil
+  prior: [ unif, 0.5, 1 ]

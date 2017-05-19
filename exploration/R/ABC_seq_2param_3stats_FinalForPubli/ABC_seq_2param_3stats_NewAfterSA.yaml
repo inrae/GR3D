@@ -1,0 +1,10 @@
+nbSimul: 4000
+nbCluster: 13
+p_acc_min: 0.01
+alpha: 0.25
+parameters:
+- javapath: processes.processesEachStep.2.kOpt
+  prior: [ unif, 0.1, 0.8 ]
+- javapath: processes.processesEachStep.5.tempMinRep
+  prior: [ unif, 9.0, 12.0 ]
+

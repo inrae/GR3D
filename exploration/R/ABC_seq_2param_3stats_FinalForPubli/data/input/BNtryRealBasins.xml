@@ -1,0 +1,11 @@
+<environment.BasinNetworkReal>
+	<nbBasin>0</nbBasin>
+	<memorySize>10</memorySize>
+	<cVthresholdForFinalStates>5.0</cVthresholdForFinalStates>
+	<RecruitmentThresholdForFsAndKappa>50.0</RecruitmentThresholdForFsAndKappa>
+	<basinFile>data/input/reality/basins.csv</basinFile>
+	<seaBasinShpFile>data/input/reality/seaCatchment.shp</seaBasinShpFile>
+	<riverBasinShpFile>data/input/reality/bv_polygoneFacAtl_WGS84.shp</riverBasinShpFile>
+	<distanceGridFileName>data/input/reality/DistanceGrid_FacAtlaComp.csv</distanceGridFileName>
+	<temperatureCatchmentFile>data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv</temperatureCatchmentFile>
+</environment.BasinNetworkReal>

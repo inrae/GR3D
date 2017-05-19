@@ -1,0 +1,6 @@
+
+<environment.BasinNetworkWithnBasins>
+  <basinNetworkFileName>data/input/BasinNetwork.csv</basinNetworkFileName>
+  <distanceGridFileName>data/input/distanceGrid.csv</distanceGridFileName>
+    <nbBasin>25</nbBasin>
+</environment.BasinNetworkWithnBasins> 

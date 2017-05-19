@@ -1,0 +1,60 @@
+<hashtable>
+    <entry>
+        <java-class>fr.cemagref.simaqualife.kernel.AquaticWorld</java-class>
+        <fr.cemagref.observation.kernel.ObservablesHandler>
+            <observers>
+                <environment.BasinNetworkObserver>
+                    <title>Basin Network 1</title>
+                </environment.BasinNetworkObserver>
+
+                <environment.BasinNetworkObserver>
+                    <title>Basin Network 2</title>
+                </environment.BasinNetworkObserver>
+            </observers>
+        </fr.cemagref.observation.kernel.ObservablesHandler>
+    </entry>
+    <entry>
+        <java-class>species.DiadromousFishGroup</java-class>
+        <fr.cemagref.observation.kernel.ObservablesHandler>
+            <observers>
+                <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+                    <graphType>LINE</graphType>
+                    <title>Number of colonized basins</title>
+                    <xAxisLabel>Time (season)</xAxisLabel>
+                    <yAxisLabel>number of basins</yAxisLabel>
+                    <variableName>getNbColonizedBasins</variableName>
+                </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+                                
+                <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+                    <graphType>LINE</graphType>
+                    <title>Total Abondance</title>
+                    <xAxisLabel>Time (season)</xAxisLabel>
+                    <yAxisLabel>number of fishes</yAxisLabel>
+                    <variableName>getFishEffective</variableName>
+                </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+                <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+                    <graphType>LINE</graphType>
+                    <title>Northern basin</title>
+                    <xAxisLabel>Time (season)</xAxisLabel>
+                    <yAxisLabel>Basin index</yAxisLabel>
+                    <variableName>getNorthernBasins</variableName>
+                </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+				
+                <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+                    <graphType>LINE</graphType>
+                    <title>Southern basin</title>
+                    <xAxisLabel>Time (season)</xAxisLabel>
+                    <yAxisLabel>Basin index</yAxisLabel>
+                    <variableName>getSouthernBasins</variableName>
+                </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+				
+                <fr.cemagref.observation.observers.CSVObserver>
+                    <separator>;</separator>
+                    <sysout>false</sysout>
+                    <outputFile>data/output/totalAbundance.csv</outputFile>
+                </fr.cemagref.observation.observers.CSVObserver>
+            </observers>
+        </fr.cemagref.observation.kernel.ObservablesHandler>
+    </entry>	
+</hashtable>

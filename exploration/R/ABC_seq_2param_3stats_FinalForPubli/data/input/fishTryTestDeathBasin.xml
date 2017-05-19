@@ -1,0 +1,117 @@
+<list>
+	<species.DiadromousFishGroup>
+		<name>species A</name>
+		<color>
+			<red>255</red>
+			<green>0</green>
+			<blue>0</blue>
+			<alpha>255</alpha>
+		</color>
+		<linfVonBert>60.0</linfVonBert>
+		<dMaxDisp>0.0</dMaxDisp>
+		<lFirstMaturity>40.0</lFirstMaturity>
+
+		<processes>
+			<processesAtBegin>
+				<species.PopulateWithASinglePopulation>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<nbSIPerBasin>10</nbSIPerBasin>
+					<nbIndPerSI>10</nbIndPerSI>
+					<bassinInd>20</bassinInd>
+					<initialLength>2.0</initialLength>
+				</species.PopulateWithASinglePopulation>
+			</processesAtBegin>
+
+			<processesEachStep>
+				<species.PlopProcess>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<temporisation>0</temporisation>
+				</species.PlopProcess>
+
+				<species.Age>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+				</species.Age>
+
+				<species.Survive>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<tempMinMortGenInRiv>10.0</tempMinMortGenInRiv>
+					<tempMaxMortGenInRiv>23.0</tempMaxMortGenInRiv>
+					<tempOptMortGenInRiv>20.0</tempOptMortGenInRiv>
+					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
+					<mortalityRateInRiver>0.4</mortalityRateInRiver>
+					<mortalityRateInSea>0.4</mortalityRateInSea>
+					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
+				</species.Survive>
+
+				<species.Grow>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<tempMinGrow>3.0</tempMinGrow>
+					<tempMaxGrow>26.0</tempMaxGrow>
+					<tempOptGrow>17.0</tempOptGrow>
+					<kOpt>0.3</kOpt>
+					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
+				</species.Grow>
+
+				<species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<alpha0Rep>0.0</alpha0Rep>
+					<alpha1Rep>0.2</alpha1Rep>
+					<alpha3Rep>0.0</alpha3Rep>
+					<meanBvSurface>40000.0</meanBvSurface>
+					<standardDeviationBvSurface>2.0</standardDeviationBvSurface>
+					<meanInterDistance>100.0</meanInterDistance>
+					<standardDeviationInterDistance>50.0</standardDeviationInterDistance>
+					<pHoming>0.5</pHoming>
+					<riverMigrationSeason>SPRING</riverMigrationSeason>
+					<alpha2Rep>0.0</alpha2Rep>
+					<meanSpawnersLengthAtRepro>45.0</meanSpawnersLengthAtRepro>
+					<standardDeviationOfSpawnersLengthAtRepro>2.0
+					</standardDeviationOfSpawnersLengthAtRepro>
+					<weightOfDeathBasin>0.2</weightOfDeathBasin>
+				</species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
+
+				<species.ReproduceAndSurviveAfterReproduction>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<reproductionSeason>SPRING</reproductionSeason>
+					<tempMinRep>14.0</tempMinRep>
+					<tempMaxRep>26.0</tempMaxRep>
+					<tempOptRep>20.0</tempOptRep>
+					<eta>2.4</eta>
+					<ratioS95__S50>2.0</ratioS95__S50>
+					<a>135000.0</a>
+					<delta__t>0.33</delta__t>
+					<survOpt>0.0017</survOpt>
+					<lambda>4.1E-4</lambda>
+					<initialLength>2.0</initialLength>
+					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
+					<maxNumberOfSuperIndividualPerReproduction>50.0
+					</maxNumberOfSuperIndividualPerReproduction>
+				</species.ReproduceAndSurviveAfterReproduction>
+
+				<species.MigrateToSea>
+					<seaMigrationSeason>SUMMER</seaMigrationSeason>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+				</species.MigrateToSea>
+
+				<environment.UpdateTemperature>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<nbYearBeforeWarming>100</nbYearBeforeWarming>
+					<tempValueOfCenturyWarmingWinter>3.0
+					</tempValueOfCenturyWarmingWinter>
+					<tempValueOfCenturyWarmingSpring>3.0
+					</tempValueOfCenturyWarmingSpring>
+					<tempValueOfCenturyWarmingSummer>3.0
+					</tempValueOfCenturyWarmingSummer>
+					<tempValueOfCenturyWarmingAutomn>3.0
+					</tempValueOfCenturyWarmingAutomn>
+					<incrementDuration>100.0</incrementDuration>
+					<incrementPower>1.0</incrementPower>
+				</environment.UpdateTemperature>
+			</processesEachStep>
+
+			<processesAtEnd>
+			</processesAtEnd>
+		</processes>
+		<useCemetery>false</useCemetery>
+	</species.DiadromousFishGroup>
+</list>

@@ -1,0 +1,67 @@
+<hashtable>
+	<entry>
+		<java-class>fr.cemagref.simaqualife.kernel.AquaticWorld</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<environment.BasinNetworkObserverWithRealBasin>
+					<title>Basin Network 1</title>
+					<threshold>1000000</threshold>
+				</environment.BasinNetworkObserverWithRealBasin>
+
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+	<entry>
+		<java-class>species.DiadromousFishGroup</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Number of colonized basins</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of basins</yAxisLabel>
+					<variableName>getNbColonizedBasins</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Total Abundance</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of fishes</yAxisLabel>
+					<variableName>getFishEffective</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<miscellaneous.TemporalRangeSerieChart>
+					<title>Range distribution</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>latitude</yAxisLabel>
+					<variableName>getRangeDistributionWithLat</variableName>
+				</miscellaneous.TemporalRangeSerieChart>
+
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+	<entry>
+		<java-class>environment.RiverBasin</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<miscellaneous.TemporalSerieChartForBasin>
+					<graphType>LINE</graphType>
+					<title>Number of juveniles</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of juveniles</yAxisLabel>
+					<variableName>getJuvenileNumber</variableName>
+				</miscellaneous.TemporalSerieChartForBasin>
+
+				<miscellaneous.TemporalSerieChartForBasin>
+					<graphType>LINE</graphType>
+					<title>% Autochtone</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>% Autochtone</yAxisLabel>
+					<variableName>getLastPercentageOfAutochtone</variableName>
+				</miscellaneous.TemporalSerieChartForBasin>
+                
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+</hashtable>

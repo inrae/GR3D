@@ -1,0 +1,116 @@
+<list>
+	<species.DiadromousFishGroup>
+		<name>species A</name>
+		<color>
+			<red>255</red>
+			<green>0</green>
+			<blue>0</blue>
+			<alpha>255</alpha>
+		</color>
+		<linfVonBert>60.0</linfVonBert>
+		<dMaxDisp>0.0</dMaxDisp>
+		<lFirstMaturity>40.0</lFirstMaturity>
+		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
+
+		<processes>
+			<processesAtBegin>
+				<species.PopulateBasinNetwork>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<nbSIPerBasin>2500</nbSIPerBasin>
+					<nbFishPerBasin>200</nbFishPerBasin>
+					<initialLength>2.0</initialLength>
+				</species.PopulateBasinNetwork>
+			</processesAtBegin>
+
+			<processesEachStep>
+				<species.PlopProcess>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<temporisation>0</temporisation>
+				</species.PlopProcess>
+
+				<species.Age>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+				</species.Age>
+
+				<species.Grow>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<tempMinGrow>3.0</tempMinGrow>
+					<tempMaxGrow>26.0</tempMaxGrow>
+					<tempOptGrow>17.0</tempOptGrow>
+					<kOpt>0.4</kOpt>
+					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
+				</species.Grow>
+
+				<species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<alpha0Rep>-2.9</alpha0Rep>
+					<alpha1Rep>19.7</alpha1Rep>
+					<alpha3Rep>0.0</alpha3Rep>
+					<meanBvSurface>17351</meanBvSurface>
+					<standardDeviationBvSurface>35594</standardDeviationBvSurface>
+					<meanInterDistance>300.0</meanInterDistance>
+					<standardDeviationInterDistance>978.0
+					</standardDeviationInterDistance>
+					<pHomingForReachEquil>0.75</pHomingForReachEquil>
+					<pHomingAfterEquil>0.75</pHomingAfterEquil>
+					<NbYearForInstallPop>0</NbYearForInstallPop>
+					<riverMigrationSeason>SPRING</riverMigrationSeason>
+					<alpha2Rep>0.0</alpha2Rep>
+					<meanSpawnersLengthAtRepro>45.0</meanSpawnersLengthAtRepro>
+					<standardDeviationOfSpawnersLengthAtRepro>2.0
+					</standardDeviationOfSpawnersLengthAtRepro>
+					<weightOfDeathBasin>0.4</weightOfDeathBasin>
+				</species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
+
+				<species.Survive>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<tempMinMortGenInRiv>9.0</tempMinMortGenInRiv>
+					<tempMaxMortGenInRiv>23.0</tempMaxMortGenInRiv>
+					<tempOptMortGenInRiv>20.0</tempOptMortGenInRiv>
+					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
+					<mortalityRateInRiver>0.4</mortalityRateInRiver>
+					<mortalityRateInSea>0.4</mortalityRateInSea>
+					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
+				</species.Survive>
+
+				<species.ReproduceAndSurviveAfterReproduction>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<reproductionSeason>SPRING</reproductionSeason>
+					<tempMinRep>10.0</tempMinRep>
+					<tempMaxRep>26.0</tempMaxRep>
+					<tempOptRep>20.0</tempOptRep>
+					<eta>2.4</eta>
+					<ratioS95__S50>1.9</ratioS95__S50>
+					<a>135000.0</a>
+					<delta__t>0.33</delta__t>
+					<survOptRep>0.0017</survOptRep>
+					<lambda>4.1E-4</lambda>
+					<initialLength>2.0</initialLength>
+					<sigmaRecruitment>0.2</sigmaRecruitment>
+					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
+					<maxNumberOfSuperIndividualPerReproduction>50.0
+					</maxNumberOfSuperIndividualPerReproduction>
+				</species.ReproduceAndSurviveAfterReproduction>
+
+				<species.MigrateToSea>
+					<seaMigrationSeason>SUMMER</seaMigrationSeason>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+				</species.MigrateToSea>
+
+				<environment.updateTemperatureInRealBasin>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<yearOfTheBegin>1800</yearOfTheBegin>
+					<offshoreTemperature>12.0</offshoreTemperature>
+				</environment.updateTemperatureInRealBasin>
+			</processesEachStep>
+
+			<processesAtEnd>
+				<species.TypeTrajectoryCV>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<fileNameOutput>data/output/test_Thibaud_Kappa</fileNameOutput>
+				</species.TypeTrajectoryCV>
+			</processesAtEnd>
+		</processes>
+		<useCemetery>false</useCemetery>
+	</species.DiadromousFishGroup>
+</list>

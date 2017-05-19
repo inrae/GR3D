@@ -1,0 +1,80 @@
+<hashtable>
+	<entry>
+		<java-class>fr.cemagref.simaqualife.kernel.AquaticWorld</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<environment.BasinNetworkObserverWith2Basins>
+					<title> Two-basin network</title>
+					<maxDistance>1000.0</maxDistance>
+					<minDistance>50.0</minDistance>
+					<maxSurface>100000.0</maxSurface>
+				</environment.BasinNetworkObserverWith2Basins>
+
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+	<entry>
+		<java-class>species.DiadromousFishGroup</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Number of colonized basins</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of basins</yAxisLabel>
+					<variableName>getNbColonizedBasins</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Total Abundance</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of fishes</yAxisLabel>
+					<variableName>getFishEffective</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+	<entry>
+		<java-class>environment.RiverBasin</java-class>
+		<fr.cemagref.observation.kernel.ObservablesHandler>
+			<observers>
+				<miscellaneous.TemporalSerieChartForBasin>
+					<graphType>LINE</graphType>
+					<title>Number of juveniles</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of juveniles</yAxisLabel>
+					<variableName>getJuvenileNumber</variableName>
+				</miscellaneous.TemporalSerieChartForBasin>
+
+				<miscellaneous.TemporalSerieChartForBasin>
+					<graphType>LINE</graphType>
+					<title>Number of spawners</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of spawners</yAxisLabel>
+					<variableName>getSpawnerNumber</variableName>
+				</miscellaneous.TemporalSerieChartForBasin>
+
+				<miscellaneous.TemporalSerieChartForBasin>
+					<graphType>LINE</graphType>
+					<title>Recruitment / RB production capacity</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>R/alpha</yAxisLabel>
+					<variableName>getLastRecruitmentOverProdCapacity</variableName>
+				</miscellaneous.TemporalSerieChartForBasin>
+
+				<miscellaneous.TemporalSerieChartForBasin>
+					<graphType>LINE</graphType>
+					<title>% Autochtone</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>% Autochtone</yAxisLabel>
+					<variableName>getLastPercentageOfAutochtone</variableName>
+				</miscellaneous.TemporalSerieChartForBasin>
+
+
+			</observers>
+		</fr.cemagref.observation.kernel.ObservablesHandler>
+	</entry>
+</hashtable>

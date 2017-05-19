@@ -1,0 +1,20 @@
+<environment.BasinNetworkWith2Basins>
+  <nbBasin>0</nbBasin>
+  <memorySize>10</memorySize>
+  <cVthresholdForFinalStates>5.0</cVthresholdForFinalStates>
+  <nameOfBv>
+    <string>BV1</string>
+    <string>BV2</string>
+  </nameOfBv>
+  <surfaceOfBv1>40000.0</surfaceOfBv1>
+  <surfaceOfBv2>20000.0</surfaceOfBv2>
+  <interDistance>100.0</interDistance>
+  <winterTemperatureOfBv1>8.7</winterTemperatureOfBv1>
+  <springTemperatureOfBv1>20.1</springTemperatureOfBv1>
+  <summerTemperatureOfBv1>23.1</summerTemperatureOfBv1>
+  <fallTemperatureOfBv1>13.0</fallTemperatureOfBv1>
+  <winterTemperatureOfBv2>8.7</winterTemperatureOfBv2>
+  <springTemperatureOfBv2>14.0</springTemperatureOfBv2>
+  <summerTemperatureOfBv2>23.1</summerTemperatureOfBv2>
+  <fallTemperatureOfBv2>13.0</fallTemperatureOfBv2>
+</environment.BasinNetworkWith2Basins>
