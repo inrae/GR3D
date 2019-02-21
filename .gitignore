@@ -88,6 +88,7 @@ bin
 build
 dist
 target
-
-
-
+.classpath
+.project
+org.*
+/src/main/java/miscellaneous/Essai.java
