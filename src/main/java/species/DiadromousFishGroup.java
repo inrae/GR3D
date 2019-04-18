@@ -97,7 +97,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			InvocationTargetException {
 		super.initTransientParameters(pilot);
 
-		if (basinsToUpdateFile != null){
+		if ( basinsToUpdate != null){
 			String subDir=basinsToUpdateFile;
 			if (basinsToUpdateFile.lastIndexOf("/")!=-1)
 				subDir=basinsToUpdateFile.substring(basinsToUpdateFile.lastIndexOf("/")+1,

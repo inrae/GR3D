@@ -15,11 +15,11 @@
 			<processesAtBegin>
 				<species.PopulateBasinNetwork>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<nbSIPerBasin>2500</nbSIPerBasin>
-					<nbFishPerBasin>200</nbFishPerBasin>
+					<nbSIPerBasin>200</nbSIPerBasin>
+					<nbFishPerSI>2500</nbFishPerSI>
 					<initialLength>2.0</initialLength>
 				</species.PopulateBasinNetwork>
-				
+
 				<environment.fixTemperatureInRealBasin>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<selectedYear>1950</selectedYear>
