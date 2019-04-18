@@ -27,13 +27,36 @@ import species.DiadromousFish.Stage;
  */
 public class FishNutrient {
 
-	private double aLWfemale = 0.0221; // param�tre "a" de la relation taille/poids avec Lt en cm
-	private double bLWfemale  = 2.8147; // param�tre "b" de la relation taille/poids
-	private double GSIfemale =.15;
+	private double aLWfemalePre = 0.0221; // param�tre "a" de la relation taille/poids avec Lt en cm
+	private double bLWfemalePre  = 2.8147; // param�tre "b" de la relation taille/poids
+	private double GSIfemalePre =.15;	
+	private double aLWmalePre = 0.0221; // param�tre "a" de la relation taille/poids avec Lt en cm
+	private double bLWmalePre  = 2.8147; // param�tre "b" de la relation taille/poids
+	private double GSImalePre =.07;
+
+	// Si on ne possède pas wT post reproduction 
 	
-	private double aLWmale = 0.0221; // param�tre "a" de la relation taille/poids avec Lt en cm
-	private double bLWmale  = 2.8147; // param�tre "b" de la relation taille/poids
-	private double GSImale =.07;
+		private double aLWfemalePost = 0.; // param�tre "a" de la relation taille/poids avec Lt en cm
+		private double bLWfemalePost  = 0.; // param�tre "b" de la relation taille/poids
+		private double GSIfemalePost=0.;	
+		private double aLWmalePost = 0.; // param�tre "a" de la relation taille/poids avec Lt en cm
+		private double bLWmalePost = 0.; // param�tre "b" de la relation taille/poids
+		private double GSImalePost =.07;
+		
+	
+	
+	//Valeurs de Haskell pour A. sapidissima -- A rechercher pour Alosa alosa
+	
+		private double compoNpreMale = 2.921; 
+		private double compoPpreMale = 0.662;
+		private double compoNpreFemale = 2.917;
+		private double compoPpreFemale = 0.725;
+		
+		private double compoNpostMale = 2.790 ;
+		private double compoPpostMale = 0.961;
+		private double compoNpostFemale = 3.216 ;
+		private double compoPpostFemale = 0.997;
+
 
 	/**
 	 * 
@@ -43,16 +66,18 @@ public class FishNutrient {
 	}
 
 	public void computeNP(DiadromousFish fish) {
-		double totalWeightPre , totalWeightPost;
+		double totalWeightPre, totalWeightPost;
 		
 		if (fish.getStage() == Stage.MATURE) {
 			if (fish.getGender() == Gender.FEMALE ) {
-				totalWeightPre = aLWfemale * Math.pow(fish.getLength(), bLWfemale);
-				totalWeightPost = totalWeightPre * GSIfemale;
+				totalWeightPre = aLWfemalePre * Math.pow(fish.getLength(), bLWfemalePre);
+				totalWeightPost = aLWfemalePost * Math.pow(fish.getLength(), bLWfemalePost);
+				// totalWeightPost = totalWeightPre * GSIfemalePre;
 			}
 			else if (fish.getGender() == Gender.MALE) {
-				totalWeightPre = aLWmale * Math.pow(fish.getLength(), bLWmale);
-				totalWeightPost =  totalWeightPre * GSImale;
+				totalWeightPre = aLWmalePre * Math.pow(fish.getLength(), bLWmalePre);
+				totalWeightPost = aLWmalePost * Math.pow(fish.getLength(), bLWmalePost);
+				// totalWeightPost =  totalWeightPre * GSImalePre;
 			}
 			else {
 				totalWeightPre = Double.NaN;
