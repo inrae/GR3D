@@ -10,8 +10,7 @@
               <linfVonBert>60.0</linfVonBert>
               <dMaxDisp>0.0</dMaxDisp>
               <lFirstMaturity>40.0</lFirstMaturity>
-              <fileNameInputForInitialObservation>data/input/reality/Obs1900.csv
-              </fileNameInputForInitialObservation>
+              <fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
 
               <processes>
                      <processesAtBegin>
