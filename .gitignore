@@ -3,3 +3,5 @@ output
 .classpath
 .project
 
+/bin/
+/target/
