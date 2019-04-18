@@ -101,6 +101,13 @@ public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 		return birthBasin;
 	}
 		
+	/**
+	 * @return the gender
+	 */
+	public Gender getGender() {
+		return gender;
+	}
+
 	@Override
 	public <ANG extends AquaNismsGroup<?, BasinNetwork>> void moveTo(
 			Pilot pilot, Basin destination, ANG group) {

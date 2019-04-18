@@ -39,8 +39,6 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public double linfVonBert = 60.;
 	public double dMaxDisp = 300.;
 	public double lFirstMaturity = 40.;
-	public double aLW = 0.02; // paramï¿½tre "a" de la relation taille/poids
-	public double bLW = 3.; // paramï¿½tre "b" de la relation taille/poids
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 	public double centileForRange = 0.95;
 
@@ -139,7 +137,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 
 		// charge kopt et temMinRep depuis le fichier de parametre. Sinon (parameterSetLine<=0), ce sont les 
-		// valeur dasn le procoessus de reroduction qui sont utilisé
+		// valeur dasn le procoessus de reroduction qui sont utilisï¿½
 		kOpt=Double.NaN;
 		tempMinRep =Double.NaN;
 		if (parameterSetLine>0){
@@ -267,14 +265,6 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	public void setlFirstMaturity(double lFirstMaturity) {
 		this.lFirstMaturity = lFirstMaturity;
-	}
-
-	public double getaLW() {
-		return aLW;
-	}
-
-	public double getbLW() {
-		return bLW;
 	}
 
 
