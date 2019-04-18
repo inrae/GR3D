@@ -38,7 +38,7 @@ public class FishNutrient {
 	
 		private double aLWfemalePost = 0.; // param�tre "a" de la relation taille/poids avec Lt en cm
 		private double bLWfemalePost  = 0.; // param�tre "b" de la relation taille/poids
-		private double GSIfemalePost=0.;	
+		private double GSIfemalePost=0.10;	
 		private double aLWmalePost = 0.; // param�tre "a" de la relation taille/poids avec Lt en cm
 		private double bLWmalePost = 0.; // param�tre "b" de la relation taille/poids
 		private double GSImalePost =.07;
