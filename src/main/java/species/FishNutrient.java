@@ -19,6 +19,8 @@
  */
 package species;
 
+import environment.SeaBasin;
+import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFish.Gender;
 import species.DiadromousFish.Stage;
 
@@ -74,18 +76,53 @@ public class FishNutrient {
 	public FishNutrient() {
 		// TODO Auto-generated constructor stub
 	}
+	
+
+	public FishNutrient(double aLWfemalePre, double bLWfemalePre, double gSIfemalePre, double aLWmalePre,
+			double bLWmalePre, double gSImalePre, double aLWfemalePost, double bLWfemalePost, double gSIfemalePost,
+			double aLWmalePost, double bLWmalePost, double gSImalePost, double coeffLossWeight, double compoNpreMale,
+			double compoPpreMale, double compoNpreFemale, double compoPpreFemale, double compoNpostMale,
+			double compoPpostMale, double compoNpostFemale, double compoPpostFemale, double compoNoocyte,
+			double compoNsperm, double compoPoocyte, double compoPsperm) {
+		super();
+		this.aLWfemalePre = aLWfemalePre;
+		this.bLWfemalePre = bLWfemalePre;
+		GSIfemalePre = gSIfemalePre;
+		this.aLWmalePre = aLWmalePre;
+		this.bLWmalePre = bLWmalePre;
+		GSImalePre = gSImalePre;
+		this.aLWfemalePost = aLWfemalePost;
+		this.bLWfemalePost = bLWfemalePost;
+		GSIfemalePost = gSIfemalePost;
+		this.aLWmalePost = aLWmalePost;
+		this.bLWmalePost = bLWmalePost;
+		GSImalePost = gSImalePost;
+		CoeffLossWeight = coeffLossWeight;
+		this.compoNpreMale = compoNpreMale;
+		this.compoPpreMale = compoPpreMale;
+		this.compoNpreFemale = compoNpreFemale;
+		this.compoPpreFemale = compoPpreFemale;
+		this.compoNpostMale = compoNpostMale;
+		this.compoPpostMale = compoPpostMale;
+		this.compoNpostFemale = compoNpostFemale;
+		this.compoPpostFemale = compoPpostFemale;
+		this.compoNoocyte = compoNoocyte;
+		this.compoNsperm = compoNsperm;
+		this.compoPoocyte = compoPoocyte;
+		this.compoPsperm = compoPsperm;
+	}
+
 
 	/**
 	 * compute the N and P fluxes for a single fish (in the super individual)
 	 *  that dies after spawning (gametes expelling) 
 	 * @param fish
 	 */
-
 	public double[] computeInportNPforDeathBeforeSpawning(DiadromousFish fish) {
 		double totalWeightPre; 
 
-		double [] inportNP = new double[2]; 
-		inportNP[0] = 0; 
+		double [] inportNP = new double[2]; //Declare an array with two coloumns 
+		inportNP[0] = 0; // create the colomn 
 		inportNP[1] = 0; 
 
 		if (fish.getStage()== Stage.MATURE) {
@@ -114,7 +151,7 @@ public class FishNutrient {
 	public double[] computeInportNPforDeathAfterSpawning(DiadromousFish fish) {
 		double totalWeightPre, totalWeightPost;
 
-		double[] inportNP = new double[2]; //Pour faire un tableau à deux colonnes, N et P 
+		double[] inportNP = new double[2]; 
 		inportNP[0] = 0.;
 		inportNP[1] = 0.;
 
@@ -180,6 +217,31 @@ public class FishNutrient {
 		return inportNP; 
 	}
 
+public static void main(String[] args)	{
+	
+	FishNutrient fn = new FishNutrient(0.0221, 2.8147, .15, 0.0221, 2.8147, .07, 0., 0., 0.10, 0., 0., 0.07, 0., 2.921, 0.662, 2.917, 0.725, 2.790, 0.961, 3.216, 0.997, 0., 0., 0., 0.); //On lui passe les valeurs utilisés ici dans le programme 
+	SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des température pour chaque saison 
+	Pilot pilot = new Pilot ();
+	DiadromousFish fish = new DiadromousFish (pilot, basin, 40., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
+	fish.setStage(Stage.MATURE);
+	double[] np =  fn.computeInportNPforDeathAfterSpawning(fish); 
+	System.out.println("N = " + np[0]+ "P = "+ np[1]); // on met des + à la place des "," car l'ordinateur n'est pas capable detraiter des objets ddifférent de "String". Or on a un double ici. 
+			
+			
+			
+			
+			
+			
+	
+	
+	
+	
+	
+	
+}
+	
+	
+	
 } 
 
 
