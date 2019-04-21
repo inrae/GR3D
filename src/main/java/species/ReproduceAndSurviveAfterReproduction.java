@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import miscellaneous.Duo;
 import miscellaneous.Miscellaneous;
+import species.DiadromousFish.Gender;
 
 import org.openide.util.lookup.ServiceProvider;
 
@@ -156,7 +157,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 									ageOfNativeSpawners.put(age, fish.getAmount());*/
 							}
 
-							//System.out.println("l'âge du poisson est :" + fish.getAge() + " et la saison est :" + Time.getSeason());
+							//System.out.println("l'ï¿½ge du poisson est :" + fish.getAge() + " et la saison est :" + Time.getSeason());
 							// Survive After Reproduction
 							fish.incNumberOfReproduction();	
 
@@ -170,7 +171,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 					}
 
 					/*
-					// calcul de la mortalité associée aux géniteurs autochtones
+					// calcul de la mortalitï¿½ associï¿½e aux gï¿½niteurs autochtones
 					if (numberOfGenitors > 0.) {
 						System.out.println(riverBasin.getName().toUpperCase());
 						System.out.println("Spawners");
@@ -238,10 +239,10 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 							// System.out.println(numberOfRecruit + " / " + amountPerSuperIndividual +" = " +numberOfsuperIndividual);
 							//System.out.println(numberOfRecruit + " / " + numberOfsuperIndividual +" = " +effectiveAmount);
 							for (int i=0; i<numberOfsuperIndividual; i++){
-								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount));
+								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount, Gender.UNDIFFERENCIED));
 							}
 							riverBasin.getLastRecruitmentExpectations().push(Math.round(meanNumberOfRecruit));
-							riverBasin.getLastRecruitments().push(numberOfsuperIndividual * effectiveAmount); // on remplit la pile qui permet de stocker un nombre fixé de derniers recrutement
+							riverBasin.getLastRecruitments().push(numberOfsuperIndividual * effectiveAmount); // on remplit la pile qui permet de stocker un nombre fixï¿½ de derniers recrutement
 							riverBasin.getLastRecsOverProdCaps().push(((double) riverBasin.getLastRecruitments().getLastItem())/riverBasin.getLastProdCapacities().getLastItem());
 
 							if (numberOfAutochtones > 0){
@@ -289,7 +290,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
-			// on met à jour les observeurs
+			// on met ï¿½ jour les observeurs
 			for (RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 				riverBasin.getCobservable().fireChanges(riverBasin, pilot.getCurrentTime());
 			}                                                
