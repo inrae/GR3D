@@ -69,7 +69,8 @@ public class IdentifyPopulation extends AquaNismsGroupProcess<DiadromousFish, Di
 					bW = new BufferedWriter(new FileWriter(new File(group.getOutputPath()+
 							fileNameOutput +group.getSimulationId()+ ".csv")));
 
-					BasinNetworkReal nbr= (BasinNetworkReal) pilot.getAquaticWorld().getEnvironment();
+					// BasinNetworkReal nbr= (BasinNetworkReal) pilot.getAquaticWorld().getEnvironment();
+					BasinNetwork nbr=  group.getEnvironment();
 					bW.write("year"+sep+"migrationBasin");
 					for (String basinName : nbr.getRiverBasinNames()){
 						bW.write(sep+basinName);
