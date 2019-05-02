@@ -33,44 +33,44 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
-		// TODO Auto-generated method stub
-		double survivalProbability;
+		
+		double survivalProbability=1.;
 		List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 		long survivalAmount; 
 
 		for(Basin basin : group.getEnvironment().getBasins()){
-                    if (basin.getFishs(group)!=null) for(DiadromousFish fish : basin.getFishs(group)){
-			survivalProbability = 1.;
-			//Survive
-			if(fish.getPosition().getType() == TypeBassin.RIVER && fish.isMature()){				
-				double tempEffectSurv = Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinMortGenInRiv, tempOptMortGenInRiv, tempMaxMortGenInRiv);
-				if (tempEffectSurv == 0.){
-					survivalProbability = 0.;
-					//System.out.println("le poisson situé dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() +" a un coeff de mortalité de " + fish.getMortalityRateInRiver() + " mais à cause de la température une prob de survie de " + survivalProbability);
-				}else{
-					survivalProbability = survivalProbOptGenInRiv * tempEffectSurv;
-					//System.out.println("le poisson situé dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalité de " + fish.getMortalityRateInRiver() + " et donc une prob de survie de " + survivalProbability);
-				}				
-			}else if (fish.getPosition().getType() == TypeBassin.SEA){ 
-				survivalProbability = Math.exp(-mortalityRateInSea * Time.getSeasonDuration());
-				//System.out.println("le poisson situé dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalité de " + fish.getMortalityRateInSea() + " et donc une prob de survie de " + survivalProbability);
-			}else if (fish.getPosition().getType() == TypeBassin.OFFSHORE){
-				survivalProbability = Math.exp(-mortalityRateInOffshore * Time.getSeasonDuration());
-				//System.out.println("le poisson situé dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalité de " + fish.getMortalityRateInOffshore() + " et donc une prob de survie de " + survivalProbability);
-			}else{
+			if (basin.getFishs(group)!=null) for(DiadromousFish fish : basin.getFishs(group)){
 				survivalProbability = 1.;
-			}
+				//Survive
+				if(fish.getPosition().getType() == TypeBassin.RIVER && fish.isMature()){				
+					double tempEffectSurv = Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinMortGenInRiv, tempOptMortGenInRiv, tempMaxMortGenInRiv);
+					if (tempEffectSurv == 0.){
+						survivalProbability = 0.;
+						//System.out.println("le poisson situï¿½ dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() +" a un coeff de mortalitï¿½ de " + fish.getMortalityRateInRiver() + " mais ï¿½ cause de la tempï¿½rature une prob de survie de " + survivalProbability);
+					}else{
+						survivalProbability = survivalProbOptGenInRiv * tempEffectSurv;
+						//System.out.println("le poisson situï¿½ dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalitï¿½ de " + fish.getMortalityRateInRiver() + " et donc une prob de survie de " + survivalProbability);
+					}				
+				}else if (fish.getPosition().getType() == TypeBassin.SEA){ 
+					survivalProbability = Math.exp(-mortalityRateInSea * Time.getSeasonDuration());
+					//System.out.println("le poisson situï¿½ dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalitï¿½ de " + fish.getMortalityRateInSea() + " et donc une prob de survie de " + survivalProbability);
+				}else if (fish.getPosition().getType() == TypeBassin.OFFSHORE){
+					survivalProbability = Math.exp(-mortalityRateInOffshore * Time.getSeasonDuration());
+					//System.out.println("le poisson situï¿½ dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalitï¿½ de " + fish.getMortalityRateInOffshore() + " et donc une prob de survie de " + survivalProbability);
+				}else{
+					survivalProbability = 1.;
+				}
 
-			if (survivalProbability<1.){
-				survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalProbability);
+				if (survivalProbability<1.){
+					survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalProbability);
 
-				if (survivalAmount > 0) 
-					fish.setAmount(survivalAmount);
-				else
-					deadFish.add(fish);
+					if (survivalAmount > 0) 
+						fish.setAmount(survivalAmount);
+					else
+						deadFish.add(fish);
+				}
 			}
-                    }
-                }
+		}
 
 		for (DiadromousFish fish : deadFish){
 			group.removeAquaNism(fish);
