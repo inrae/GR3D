@@ -40,7 +40,7 @@ public class Miscellaneous {
         if (T <= Tmin || T >= Tmax) {
             return 0;
         } else {
-            return (T - Tmin) * (T - Tmax) / ((T - Tmin) * (T - Tmax) - Math.pow(T - Topt, 2.));
+            return (T - Tmin) * (T - Tmax) / ((T - Tmin) * (T - Tmax) - ((T - Topt) * (T-Topt)));
         }
     }
 }
