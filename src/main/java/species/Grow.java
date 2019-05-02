@@ -62,7 +62,7 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 				
 			// 2) We update the size of the fish
 			if (fish.getLength() < group.getLinfVonBert()){
-				muDeltaLVonBert = Math.log((group.getLinfVonBert() - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (Math.pow(sigmaDeltaLVonBert,2))/2;
+				muDeltaLVonBert = Math.log((group.getLinfVonBert() - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
 				growthIncrement = Math.exp(genNormal.nextDouble()*sigmaDeltaLVonBert + muDeltaLVonBert);
 				fish.setLength(Math.min(group.getLinfVonBert(), fish.getLength() + growthIncrement));											
 			}else{
@@ -74,7 +74,7 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 					fish.setStage(Stage.MATURE);
 				}
 			}
-			//System.out.println("la température du lieu de vie du poisson est :" + fish.getPosition().getCurrentTemperature() + ", la saison est :" + Time.getSeason() + " et sa nouvelle taille est :" + fish.getLength());
+			//System.out.println("la tempï¿½rature du lieu de vie du poisson est :" + fish.getPosition().getCurrentTemperature() + ", la saison est :" + Time.getSeason() + " et sa nouvelle taille est :" + fish.getLength());
                     }
                 }
 	}
