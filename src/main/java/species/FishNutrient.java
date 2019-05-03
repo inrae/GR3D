@@ -291,12 +291,14 @@ public class FishNutrient {
 
 		FishNutrient fn = new FishNutrient(aFeaturePreSpawning, aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes, aCompoJuveniles, 
 				-11.942, 3.0306);
+	
 		SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des température pour chaque saison 
 		Pilot pilot = new Pilot ();
 		DiadromousFish fish = new DiadromousFish (pilot, basin, 40., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
 		fish.setStage(Stage.MATURE);
 		DiadromousFish juvenileFish = new DiadromousFish(pilot,basin,2.0,1L,Gender.UNDIFFERENCIED);
 		fish.setStage(Stage.IMMATURE);
+		
 		ArrayList <String> nutrientsOfInterest= new ArrayList <String>();
 		nutrientsOfInterest.add("N");
 		nutrientsOfInterest.add("P");
