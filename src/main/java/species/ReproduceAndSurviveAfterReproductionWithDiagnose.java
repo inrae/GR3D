@@ -147,6 +147,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// compute the number of spawners and keep the origines of the spawners
 					for( DiadromousFish fish : fishInBasin){
 						if( fish.isMature()){
+							
+							//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+")");
 							if (fish.getNumberOfReproduction() < 1) {
 								numberOfSpawnerForFirstTime++;
 								spawnersForFirstTimeAgesSum += fish.getAge();
