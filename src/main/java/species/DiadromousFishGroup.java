@@ -39,6 +39,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	/**
 	 * L infinity of the van Bertalanffy growth curve
+	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit cm
 	 */
 	public double linfVonBert = 60.;
@@ -103,7 +104,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private transient Map<String, Duo<Double, Double>> basinsToUpdate;
 
 	/**
-	 *  growth coefficient of the von Bertalanffy growth curve (from the parameterset file)
+	 * Brody growth coefficient of the von Bertalanffy growth curve (from the parameterset file)
+	 *  	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit year-1
 	 */
 	private transient double kOpt; 
