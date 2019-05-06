@@ -11,6 +11,7 @@
 		<dMaxDisp>0.0</dMaxDisp>
 		<lFirstMaturity>40.0</lFirstMaturity>
 		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
+		<outputPath>data/output/</outputPath>
 
 		<processes>
 			<processesAtBegin>
@@ -76,6 +77,12 @@
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
+
+				<species.ExportLenghtAgeDistribution>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>lengthAgeDistribution</fileNameOutput>
+				</species.ExportLenghtAgeDistribution>
 
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
