@@ -31,9 +31,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- */
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 
 /**
  * @author camille.poulet
@@ -41,6 +41,7 @@ import java.util.Map;
  */
 public class FishNutrient {
 
+	private ArrayList<String> nutrientsOfInterest;
 	/**
 	 * Main feature for weight computation before spawning i.e. gametes expelling //Voir pour un retour à la ligne lors du commentaire 
 	 * key gender
@@ -48,19 +49,12 @@ public class FishNutrient {
 	 * 		key feature
 	 * 		value value
 	 */
-	private Map <Gender,Map<String, Double>> fishFeatures;
+	private Map <Gender,Map<String, Double>> fishFeaturesPreSpawning;
 
-	// Si on ne possede pas wT post reproduction 
+	private Map <Gender, Map<String, Double>> fishFeaturesPostSpawning;
 
-	private double aLWfemalePost = 0.; 
-	private double bLWfemalePost  = 0.;
-	private double GSIfemalePost=0.10;	
-	private double aLWmalePost = 0.; 
-	private double bLWmalePost = 0.; 
-	private double GSImalePost =.07;
+	private Map <String, Double> juvenileFeatures;
 
-
-	// Valeurs de Haskell pour A. sapidissima -- A rechercher pour Alosa alosa
 
 	/**
 	 * chemical composition of carcass before gametes expelling (before spawning) i.e. carcass + gonads + gametes
@@ -83,7 +77,7 @@ public class FishNutrient {
 	 * 		<value> value
 	 */
 	private Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning;
-	
+
 	/**
 	 * chemical composition of gametes
 	 * <key> gender
@@ -105,8 +99,6 @@ public class FishNutrient {
 
 	private Map<String,Double> compoJuvenile; 
 
-	private double aLWjuveniles = -11.942 ; // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
-	private double bLWjuveniles  = 3.0306; // parametre "b" de la relation taille/poids - Coefficient d'allometrie
 
 	/**
 	 * 
@@ -118,24 +110,28 @@ public class FishNutrient {
 
 	/**
 	 * Constructor based on the 5 Map of fish composition 
-	 * @param fishFeatures
+	 * @param fishFeaturesPreSpawning
 	 * @param compoCarcassPreSpawning
 	 * @param compoCarcassPostSpawning
 	 * @param compoGametes
 	 * @param compoJuvenile
 	 */
-	public FishNutrient(Map<Gender, Map<String, Double>> fishFeatures,
+	public FishNutrient(ArrayList<String> nutrientsOfInterest, Map<Gender, Map<String, Double>> fishFeaturesPreSpawning,
+			Map<Gender, Map<String, Double>> fishFeaturesPostSpawning,
 			Map<Gender, Map<String, Double>> compoCarcassPreSpawning,
 			Map<Gender, Map<String, Double>> compoCarcassPostSpawning, Map<Gender, Map<String, Double>> compoGametes,
-			Map<String, Double> compoJuvenile,double aLWjuveniles, double bLWjuveniles ) {
+			Map<String, Double> juvenileFeatures,
+			Map<String, Double> compoJuvenile) {
 		super();
-		this.fishFeatures = fishFeatures;
+		this.nutrientsOfInterest = nutrientsOfInterest;
+		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
+		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
 		this.compoCarcassPostSpawning = compoCarcassPostSpawning;
 		this.compoGametes = compoGametes;
+		this.juvenileFeatures = juvenileFeatures;
 		this.compoJuvenile = compoJuvenile; 
-		this.aLWjuveniles = aLWjuveniles; 
-		this.bLWjuveniles = bLWjuveniles; 
+
 	}
 
 	/**
@@ -149,7 +145,7 @@ public class FishNutrient {
 		for (String nutrient : nutrientsOfInterest) {
 
 			if (fish.getStage()== Stage.MATURE) {
-				double totalWeightPre = fishFeatures.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeatures.get(fish.getGender()).get("bLW"));
+				double totalWeightPre = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW"));
 				//totalWeightPost = totalWeightPre * (1-GSIfemalePost)+ totalWeightPost * GSIfemalePost * CoeffLossWeight
 				nutrientsInput.put(nutrient, totalWeightPre * compoCarcassPreSpawning.get(fish.getGender()).get(nutrient));
 			}
@@ -158,6 +154,11 @@ public class FishNutrient {
 			}
 		}
 		return nutrientsInput;
+	}
+
+	public Map<String,Double> computeNutrientsInputForDeathBeforeSpawning(DiadromousFish fish) { 
+
+		return computeNutrientsInputForDeathBeforeSpawning(fish,this.nutrientsOfInterest); 
 	}
 
 	/**
@@ -173,10 +174,12 @@ public class FishNutrient {
 
 			if (fish.getStage()== Stage.MATURE) {
 
-				double totalWeightPre = fishFeatures.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeatures.get(fish.getGender()).get("bLW"));
-	//TODO Fix the new data
-				double totalWeightPost = aLWfemalePost * Math.pow(fish.getLength(), bLWfemalePost);
-				nutrientsInput.put(nutrient,(totalWeightPre - totalWeightPost) * compoCarcassPostSpawning.get(fish.getGender()).get(nutrient));
+				double totalWeightPre = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * 
+						Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW"));
+				double totalWeightPost = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * 
+						Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
+				nutrientsInput.put(nutrient,(totalWeightPre - totalWeightPost) * 
+						compoCarcassPostSpawning.get(fish.getGender()).get(nutrient));
 			}
 			else {
 				nutrientsInput.put(nutrient,0.);
@@ -185,7 +188,10 @@ public class FishNutrient {
 		return nutrientsInput; 
 	}
 
-	
+	public Map<String, Double> computeNutrientsInputForDeathAfterSpawning(DiadromousFish fish){
+
+		return computeNutrientsInputForDeathAfterSpawning(fish, this.nutrientsOfInterest); 
+	}
 	/**
 	 * compute the nutrient fluxes for a single fish (in the super individual)
 	 * that survives after spawning 
@@ -198,10 +204,13 @@ public class FishNutrient {
 		for (String nutrient: nutrientsOfInterest) {
 			if (fish.getStage()==Stage.MATURE) {
 
-				double totalWeightPre = fishFeatures.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeatures.get(fish.getGender()).get("bLW"));
-			//TODO Fix with new data 
-				double totalWeightPost = aLWfemalePost * Math.pow(fish.getLength(), bLWfemalePost);
-				nutrientsInput.put(nutrient, (totalWeightPre - totalWeightPost) * compoGametes.get(fish.getGender()).get(nutrient)); 	
+				double totalWeightPre = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") 
+						* Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW"));
+				//TODO Fix with new data 
+				double totalWeightPost = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW")
+						* Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
+				nutrientsInput.put(nutrient, (totalWeightPre - totalWeightPost) * 
+						compoGametes.get(fish.getGender()).get(nutrient)); 	
 			}
 			else {
 				nutrientsInput.put(nutrient,0.);
@@ -210,36 +219,66 @@ public class FishNutrient {
 		return nutrientsInput;
 	}	
 
-	public Map<String,Double> computeNutrientsExportForJuveniles (DiadromousFish juvenileFish, ArrayList<String>nutrientsOfInterest) {
+	public Map<String,Double>computeNutrientsInputForSurvivalAfterSpawning(DiadromousFish fish) {
+
+		return computeNutrientsInputForSurvivalAfterSpawning(fish, this.nutrientsOfInterest);
+	}
+
+
+	public Map<String,Double> computeNutrientsExportForJuveniles(DiadromousFish juvenileFish, ArrayList<String>nutrientsOfInterest) {
 		Map<String,Double> nutrientsExport = new Hashtable<String,Double>();
 		for(String nutrient: nutrientsOfInterest) {
 			if(juvenileFish.getStage()==Stage.IMMATURE) {
-				
-				double JuvenileMass = aLWjuveniles * Math.pow(juvenileFish.getLength(), bLWjuveniles);
+
+				double JuvenileMass = juvenileFeatures.get("aLW") * 
+						Math.pow(juvenileFish.getLength(), juvenileFeatures.get("bLW"));
 				nutrientsExport.put(nutrient, JuvenileMass * compoJuvenile.get(nutrient));
 			}
 		}
-		
+
 		return nutrientsExport;
 	}
 
+	public Map<String,Double> computeNutrientsExportForJuveniles(DiadromousFish juvenileFish){
+		return computeNutrientsExportForJuveniles(juvenileFish, this.nutrientsOfInterest);
+
+	}
+	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args)	{
-		
+
 		Map<Gender, Map<String, Double>> aFeaturePreSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
 		Map<String,Double> aFeature = new Hashtable<String,Double>();
-		aFeature.put("aLW",1.2102E-6); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
 		aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
+		aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
 		aFeature.put("GSI",0.15); 
 		aFeaturePreSpawning.put(Gender.FEMALE, aFeature);
-		
+
 		aFeature = new Hashtable<String,Double>();
-		aFeature.put("aLW",2.4386E-6);
 		aFeature.put("bLW",3.2252);
+		aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
 		aFeature.put("GSI",.07);
 		aFeaturePreSpawning.put(Gender.MALE,aFeature);
 
-		System.out.println(aFeaturePreSpawning.toString()); //
-		
+		System.out.println("aFeaturePreSpawning: " + aFeaturePreSpawning.toString()); //
+
+		Map<Gender, Map<String, Double>> aFeaturePostSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
+		aFeature = new Hashtable<String,Double>();
+		aFeature.put("GSI",0.15);
+		aFeature.put("aLW",aFeaturePreSpawning.get(Gender.FEMALE).get("aLW")/(1+aFeature.get("GSI"))); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
+		aFeature.put("bLW",aFeaturePreSpawning.get(Gender.FEMALE).get("bLW"));// parametre "b" de la relation taille/poids - Coefficient d'allometrie
+		aFeaturePostSpawning.put(Gender.FEMALE, aFeature);
+
+		aFeature = new Hashtable<String,Double>();
+		aFeature.put("GSI",.07);
+		aFeature.put("aLW",aFeaturePreSpawning.get(Gender.MALE).get("aLW")/(1+aFeature.get("GSI")));
+		aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
+		aFeaturePostSpawning.put(Gender.MALE,aFeature);
+
+		System.out.println("aFeaturePostSpawning: " + aFeaturePostSpawning.toString());
+
 		// carcass composition for fish before spawning
 		Map<Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 		Map<String,Double> aCompo = new Hashtable<String,Double>();
@@ -252,7 +291,7 @@ public class FishNutrient {
 		aCompo.put("P",0.662);
 		aCompoCarcassPreSpawning.put(Gender.MALE,aCompo);
 
-		System.out.println(aCompoCarcassPreSpawning.toString()); //
+		System.out.println("aCompoCarcassPreSpawning: " + aCompoCarcassPreSpawning.toString()); //
 
 		// carcass composition for fish after spawning
 		Map<Gender, Map<String, Double>> aCompoCarcassPostSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
@@ -262,55 +301,70 @@ public class FishNutrient {
 		aCompoCarcassPostSpawning.put(Gender.FEMALE,aCompo);
 
 		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 2.790);
+		aCompo.put("N", 2.790); // From Haskel et al, 2017 
 		aCompo.put("P",0.961);
 		aCompoCarcassPostSpawning.put(Gender.MALE,aCompo);
 
-		System.out.println(aCompoCarcassPostSpawning.toString()); //
+		System.out.println("aCompoCarcassPostSpawning: " + aCompoCarcassPostSpawning.toString()); //
 
-		// carcass composition for fish gametes
+		// Gametes composition approximated by the difference between gonads weight before and after spawning. 
 		Map<Gender, Map<String, Double>> aCompoGametes = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 0.); //On remplit une collection avec un put. 
-		aCompo.put("P", 0.);
+		aCompo.put("N", 3.242); //On remplit une collection avec un put. From Haskel et al, 2018. 
+		aCompo.put("P", 0.320);
 		aCompoGametes.put(Gender.FEMALE,aCompo);
 
 		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 0.);
-		aCompo.put("P",0.);
+		aCompo.put("N", 3.250);
+		aCompo.put("P", 0.724);
 		aCompoGametes.put(Gender.MALE,aCompo);
 
-		System.out.println(aCompoGametes.toString()); //
+		System.out.println("aCompoGametes:" + aCompoGametes.toString()); //
+
+		// features for juveniles 
+
+		Map<String,Double> aJuvenileFeatures = new Hashtable<String, Double>();
+		aJuvenileFeatures.put("aLW",Math.exp(-11.942));
+		aJuvenileFeatures.put("bLW",3.0306);
+
+		System.out.println(aJuvenileFeatures.toString()); 
 
 		// carcass composition for juveniles fish 
 		Map<String, Double> aCompoJuveniles = new Hashtable<String,Double>();
-		aCompoJuveniles.put("N", 0.); //On remplit une collection avec un put. 
-		aCompoJuveniles.put("P", 0.);
+		aCompoJuveniles.put("N", 2.803); //On remplit une collection avec un put. %N in wet weight (Haskell et al, 2017) on Alosa sapidissima 
+		aCompoJuveniles.put("P", 0.887); //%P in wet weight (from Haskell et al, 2017) on Alosa sapidissima 
 
-		System.out.println(aCompoJuveniles.toString()); 
+		System.out.println("aCompoJuveniles: " + aCompoJuveniles.toString()); 
 
-		FishNutrient fn = new FishNutrient(aFeaturePreSpawning, aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes, aCompoJuveniles, 
-				-11.942, 3.0306);
-	
+		ArrayList <String> nutrientsOfInterest= new ArrayList <String>();
+		nutrientsOfInterest.add("N");
+		nutrientsOfInterest.add("P");
+
+		System.out.println("nutrientsOfInterest: " + nutrientsOfInterest);
+		
+		FishNutrient fn = new FishNutrient(nutrientsOfInterest, aFeaturePreSpawning, aFeaturePostSpawning, 
+				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
+				aJuvenileFeatures, aCompoJuveniles);
+
 		SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des température pour chaque saison 
 		Pilot pilot = new Pilot ();
 		DiadromousFish fish = new DiadromousFish (pilot, basin, 40., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
 		fish.setStage(Stage.MATURE);
 		DiadromousFish juvenileFish = new DiadromousFish(pilot,basin,2.0,1L,Gender.UNDIFFERENCIED);
-		fish.setStage(Stage.IMMATURE);
+		juvenileFish.setStage(Stage.IMMATURE);
 		
-		ArrayList <String> nutrientsOfInterest= new ArrayList <String>();
-		nutrientsOfInterest.add("N");
-		nutrientsOfInterest.add("P");
-		
-		System.out.println(nutrientsOfInterest);
-		
-		System.out.println("Nutrients Fluxes for death before spawning " + fn.computeNutrientsInputForDeathBeforeSpawning(fish, nutrientsOfInterest).toString());
-		System.out.println("Nutrients Fluxes for death after spawning " + fn.computeNutrientsInputForDeathAfterSpawning(fish, nutrientsOfInterest).toString());
-		System.out.println("Nutrients Fluxes for survival  " + fn.computeNutrientsInputForSurvivalAfterSpawning(fish, nutrientsOfInterest).toString());
-		System.out.println("Nutrients Fluxes for juveniles " + fn.computeNutrientsExportForJuveniles(juvenileFish, nutrientsOfInterest).toString());
+		System.out.println(fish.toString());
+		System.out.println("Nutrients Fluxes for death before spawning " + fn.computeNutrientsInputForDeathBeforeSpawning(fish).toString());
+		System.out.println("Nutrients Fluxes for death after spawning " + fn.computeNutrientsInputForDeathAfterSpawning(fish).toString());
+		System.out.println("Nutrients Fluxes for survival  " + fn.computeNutrientsInputForSurvivalAfterSpawning(fish).toString());
+		System.out.println("Nutrients Fluxes for juveniles " + fn.computeNutrientsExportForJuveniles(juvenileFish).toString());
 
-		
+
+		/* Create XML file 
+		 * 
+		 */
+		//System.out.println((new	XStream(new DomDriver())).toXML(fn));
+
 	} 
 }
 
