@@ -40,6 +40,9 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  *
  */
 public class FishNutrient {
+	
+	private static enum SpawningPosition  {PRE,POST}; // on créer un static pour réserver une même classe mémoire pour toutes les instances 
+	
 
 	private ArrayList<String> nutrientsOfInterest;
 	/**
@@ -58,7 +61,7 @@ public class FishNutrient {
 
 
 	/**
-	 * chemical composition of carcass before gametes expelling (before spawning) i.e. carcass + gonads + gametes
+	 * chemical composition of carcass before gametes expelling (before spawning) i.e. soma + gonads + gametes
 	 * <key> gender
 	 * <value> 
 	 * 		<key> chemical element
@@ -71,8 +74,7 @@ public class FishNutrient {
 	//N'accepte pas la valeur nulle et thread safe i.e. utilisable simultanément par plusieurs éléments du programme. 
 
 	/**
-	 * chemical composition of carcass after spawning i.e. gonads without gametes
-	 * <key> gender
+	 * chemical composition of carcass after spawning i.e. soma + spent gonad (without gametes)
 	 * <value> 
 	 * 		<key> chemical element
 	 * 		<value> value
@@ -146,7 +148,7 @@ public class FishNutrient {
 		for (String nutrient : nutrientsOfInterest) {
 
 			if (fish.getStage()== Stage.MATURE) {
-				double totalWeightPre = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW"));
+				double totalWeightPre = this.getWeight(fish,SpawningPosition.PRE);
 				//totalWeightPost = totalWeightPre * (1-GSIfemalePost)+ totalWeightPost * GSIfemalePost * CoeffLossWeight
 				nutrientsInput.put(nutrient, totalWeightPre * compoCarcassPreSpawning.get(fish.getGender()).get(nutrient));
 			}
@@ -177,12 +179,11 @@ public class FishNutrient {
 
 			if (fish.getStage()== Stage.MATURE) {
 
-				double totalWeightPre = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * 
-						Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW"));
-				double totalWeightPost = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * 
-						Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
-				nutrientsInput.put(nutrient,(totalWeightPre - totalWeightPost) * 
-						compoCarcassPostSpawning.get(fish.getGender()).get(nutrient));
+				double totalWeightPre = this.getWeight(fish, SpawningPosition.PRE);
+				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
+				double nutrientImport = totalWeightPost * compoCarcassPostSpawning.get(fish.getGender()).get(nutrient)
+						+ (totalWeightPre - totalWeightPost)*compoGametes.get(fish.getGender()).get(nutrient);
+				nutrientsInput.put(nutrient,nutrientImport);
 			}
 			else {
 				nutrientsInput.put(nutrient,0.);
@@ -207,11 +208,12 @@ public class FishNutrient {
 		for (String nutrient: nutrientsOfInterest) {
 			if (fish.getStage()==Stage.MATURE) {
 
-				double totalWeightPre = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") 
-						* Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW"));
+				double totalWeightPre = this.getWeight(fish, SpawningPosition.PRE);
 				//TODO Fix with new data 
-				double totalWeightPost = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW")
-						* Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
+				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
+				//TotalWeigthPre - TotalWeightPost = gonad weight loss = gamete emission 
+				//Gamete compositions depends on sex. 
+				
 				nutrientsInput.put(nutrient, (totalWeightPre - totalWeightPost) * 
 						compoGametes.get(fish.getGender()).get(nutrient)); 	
 			}
@@ -233,8 +235,7 @@ public class FishNutrient {
 		for(String nutrient: nutrientsOfInterest) {
 			if(juvenileFish.getStage()==Stage.IMMATURE) {
 
-				double JuvenileMass = juvenileFeatures.get("aLW") * 
-						Math.pow(juvenileFish.getLength(), juvenileFeatures.get("bLW"));
+				double JuvenileMass = this.getWeight(juvenileFish);
 				nutrientsExport.put(nutrient, JuvenileMass * compoJuvenile.get(nutrient));
 			}
 		}
@@ -244,8 +245,29 @@ public class FishNutrient {
 
 	public Map<String,Double> computeNutrientsExportForJuveniles(DiadromousFish juvenileFish){
 		return computeNutrientsExportForJuveniles(juvenileFish, this.nutrientsOfInterest);
-
+		
 	}
+	
+	/**
+	 * Compute the weight for a fish with length (cm) 
+	 * @param fish
+	 * @return weight (g)
+	 */
+	public double getWeight (DiadromousFish fish, SpawningPosition spawningPosition) {
+
+		double weight = 0.; 
+		if (fish.getStage()==Stage.IMMATURE) 
+			weight = juvenileFeatures.get("aLW") * Math.pow(fish.getLength(),juvenileFeatures.get("bLW"));
+		 else  //Stage.MATURE
+			 if (spawningPosition == SpawningPosition.PRE)
+			weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") 
+					* Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") );
+			 else weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") 
+						* Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
+			
+		return weight;
+	}
+	
 	/**
 	 * Compute the weight for a fish with length (cm) 
 	 * @param fish
@@ -253,15 +275,9 @@ public class FishNutrient {
 	 */
 	public double getWeight (DiadromousFish fish) {
 
-		double weight = 0.; 
-		if (fish.getStage()==Stage.IMMATURE) 
-			weight = juvenileFeatures.get("aLW") * Math.pow(fish.getLength(),juvenileFeatures.get("bLW"));
-		 else  //Stage.MATURE
-			weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") 
-					* Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") );
-			
-		return weight;
+		return getWeight (fish, SpawningPosition.PRE);
 	}
+	
 /**
  * @param args
  */
@@ -366,16 +382,24 @@ public static void main(String[] args)	{
 
 	SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des température pour chaque saison 
 	Pilot pilot = new Pilot ();
-	DiadromousFish fish = new DiadromousFish (pilot, basin, 55., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
-	fish.setStage(Stage.MATURE);
+	DiadromousFish fishFemale = new DiadromousFish (pilot, basin, 55., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
+	fishFemale.setStage(Stage.MATURE);
+	DiadromousFish fishMale = new DiadromousFish (pilot, basin, 45., 1L, Gender.MALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
+	fishMale.setStage(Stage.MATURE);
 	DiadromousFish juvenileFish = new DiadromousFish(pilot,basin,7.0,1L,Gender.UNDIFFERENCIED);
 	juvenileFish.setStage(Stage.IMMATURE);
 
 	System.out.println(); // affiche une ligne blanche 
-	System.out.println(fish.getGender() + ": " + fish.getLength() + " cm " + fn.getWeight(fish)+ " g ");
-	System.out.println("\tNutrients Fluxes for death before spawning " + fn.computeNutrientsInputForDeathBeforeSpawning(fish).toString());
-	System.out.println("\tNutrients Fluxes for death after spawning " + fn.computeNutrientsInputForDeathAfterSpawning(fish).toString());
-	System.out.println("\tNutrients Fluxes for survival  " + fn.computeNutrientsInputForSurvivalAfterSpawning(fish).toString());
+	System.out.println(fishFemale.getGender() + ": " + fishFemale.getLength() + " cm " + fn.getWeight(fishFemale, SpawningPosition.PRE)+ " g " + fn.getWeight(fishFemale, SpawningPosition.POST));
+	System.out.println("\tNutrients Fluxes for death before spawning " + fn.computeNutrientsInputForDeathBeforeSpawning(fishFemale).toString());
+	System.out.println("\tNutrients Fluxes for death after spawning " + fn.computeNutrientsInputForDeathAfterSpawning(fishFemale).toString());
+	System.out.println("\tNutrients Fluxes for survival  " + fn.computeNutrientsInputForSurvivalAfterSpawning(fishFemale).toString());
+	
+	System.out.println(fishMale.getGender() + ": " + fishMale.getLength() + " cm " + fn.getWeight(fishMale, SpawningPosition.PRE)+ " g " + fn.getWeight(fishMale, SpawningPosition.POST));
+	System.out.println("\tNutrients Fluxes for death before spawning " + fn.computeNutrientsInputForDeathBeforeSpawning(fishMale).toString());
+	System.out.println("\tNutrients Fluxes for death after spawning " + fn.computeNutrientsInputForDeathAfterSpawning(fishMale).toString());
+	System.out.println("\tNutrients Fluxes for survival  " + fn.computeNutrientsInputForSurvivalAfterSpawning(fishMale).toString());
+	
 	System.out.println(juvenileFish.getStage() + ": " + juvenileFish.getLength() + " cm " + fn.getWeight(juvenileFish)+ " g ");
 	System.out.println("\tNutrients Fluxes for juveniles " + fn.computeNutrientsExportForJuveniles(juvenileFish).toString());
 
