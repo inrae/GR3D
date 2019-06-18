@@ -41,10 +41,16 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class FishNutrient {
 	
+	
 	private static enum SpawningPosition  {PRE,POST}; // on créer un static pour réserver une même classe mémoire pour toutes les instances 
 	
 
 	private ArrayList<String> nutrientsOfInterest;
+	
+	private double residenceTime;
+	
+	private Map<String, Double> excretionRate; 
+	
 	/**
 	 * Main feature for weight (g) computation before spawning i.e. gametes expelling according to gender, for a given length (cm) 
 	 * //Voir pour un retour à la ligne lors du commentaire 
@@ -100,8 +106,8 @@ public class FishNutrient {
 	 * 		<value> value
 	 */
 
-	private Map<String,Double> compoJuvenile; 
-
+	private Map<String,Double> compoJuvenile;
+	
 
 	/**
 	 * 
@@ -119,14 +125,22 @@ public class FishNutrient {
 	 * @param compoGametes
 	 * @param compoJuvenile
 	 */
-	public FishNutrient(ArrayList<String> nutrientsOfInterest, Map<Gender, Map<String, Double>> fishFeaturesPreSpawning,
+	public FishNutrient(ArrayList<String> nutrientsOfInterest, 
+			 
+			double residenceTime,
+			Map <String, Double> excretionRate,
+			Map<Gender, Map<String, Double>> fishFeaturesPreSpawning,
 			Map<Gender, Map<String, Double>> fishFeaturesPostSpawning,
 			Map<Gender, Map<String, Double>> compoCarcassPreSpawning,
-			Map<Gender, Map<String, Double>> compoCarcassPostSpawning, Map<Gender, Map<String, Double>> compoGametes,
+			Map<Gender, Map<String, Double>> compoCarcassPostSpawning, 
+			Map<Gender, Map<String, Double>> compoGametes,
 			Map<String, Double> juvenileFeatures,
-			Map<String, Double> compoJuvenile) {
+			Map<String, Double> compoJuvenile)
+		{
 		super();
 		this.nutrientsOfInterest = nutrientsOfInterest;
+		this.excretionRate = excretionRate; 
+		this.residenceTime = residenceTime; 
 		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
 		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
@@ -149,8 +163,15 @@ public class FishNutrient {
 
 			if (fish.getStage()== Stage.MATURE) {
 				double totalWeightPre = this.getWeight(fish,SpawningPosition.PRE);
-				//totalWeightPost = totalWeightPre * (1-GSIfemalePost)+ totalWeightPost * GSIfemalePost * CoeffLossWeight
-				nutrientsInput.put(nutrient, totalWeightPre * compoCarcassPreSpawning.get(fish.getGender()).get(nutrient));
+				double carcass = totalWeightPre 
+						* compoCarcassPreSpawning.get(fish.getGender()).get(nutrient);
+				double excretion = totalWeightPre 
+						* residenceTime 
+						* excretionRate.get(nutrient) 
+						* compoCarcassPreSpawning.get(fish.getGender()).get(nutrient); 
+				double nutrientImport = carcass + excretion;
+				
+				nutrientsInput.put(nutrient, nutrientImport); 
 			}
 			else { 
 				nutrientsInput.put(nutrient, 0.);
@@ -181,8 +202,16 @@ public class FishNutrient {
 
 				double totalWeightPre = this.getWeight(fish, SpawningPosition.PRE);
 				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
-				double nutrientImport = totalWeightPost * compoCarcassPostSpawning.get(fish.getGender()).get(nutrient)
-						+ (totalWeightPre - totalWeightPost)*compoGametes.get(fish.getGender()).get(nutrient);
+				double carcass = totalWeightPost 
+						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient); 
+				double gametes = (totalWeightPre - totalWeightPost) //FAUX car perte de poids somatique due a la reproduction  
+						*compoGametes.get(fish.getGender()).get(nutrient); //TODO: FAUX ! Revoir comment calculer les gamètes 
+				double excretion = totalWeightPost
+						* residenceTime 
+						* excretionRate.get(nutrient) 
+						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient);
+				double nutrientImport = carcass + gametes + excretion;
+				
 				nutrientsInput.put(nutrient,nutrientImport);
 			}
 			else {
@@ -207,15 +236,21 @@ public class FishNutrient {
 		Map<String,Double> nutrientsInput = new Hashtable<String,Double>();
 		for (String nutrient: nutrientsOfInterest) {
 			if (fish.getStage()==Stage.MATURE) {
-
+				
 				double totalWeightPre = this.getWeight(fish, SpawningPosition.PRE);
 				//TODO Fix with new data 
 				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
+				double gametes = (totalWeightPre - totalWeightPost) 
+						* compoGametes.get(fish.getGender()).get(nutrient);
+				double excretion = totalWeightPre 
+						* residenceTime 
+						* excretionRate.get(nutrient) 
+						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient);
+				double nutrientImport = gametes + excretion;
 				//TotalWeigthPre - TotalWeightPost = gonad weight loss = gamete emission 
 				//Gamete compositions depends on sex. 
 				
-				nutrientsInput.put(nutrient, (totalWeightPre - totalWeightPost) * 
-						compoGametes.get(fish.getGender()).get(nutrient)); 	
+				nutrientsInput.put(nutrient, nutrientImport); 	
 			}
 			else {
 				nutrientsInput.put(nutrient,0.);
@@ -283,6 +318,19 @@ public class FishNutrient {
  */
 public static void main(String[] args)	{
 
+	
+	double aResidenceTime =30; 
+	
+	System.out.println("aResidenceTime: " + aResidenceTime); //
+	
+	
+	Map <String, Double> anExcretionRate = new Hashtable <String, Double>(); 
+	anExcretionRate.put("N", 24.71E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
+	anExcretionRate.put("P", 2.17E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
+	
+	System.out.println("anExcretionRate: " + anExcretionRate.toString()); //
+	
+	
 	Map<Gender, Map<String, Double>> aFeaturePreSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
 	Map<String,Double> aFeature = new Hashtable<String,Double>();
 	aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
@@ -376,7 +424,8 @@ public static void main(String[] args)	{
 
 	System.out.println("nutrientsOfInterest: " + nutrientsOfInterest);
 
-	FishNutrient fn = new FishNutrient(nutrientsOfInterest, aFeaturePreSpawning, aFeaturePostSpawning, 
+	
+	FishNutrient fn = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, 
 			aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 			aJuvenileFeatures, aCompoJuveniles);
 
