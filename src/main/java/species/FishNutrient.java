@@ -65,6 +65,14 @@ public class FishNutrient {
 
 	private Map <String, Double> juvenileFeatures;
 
+	
+	/**
+	 * Gamete spawned for both males and females 
+	 * key gender
+	 * value
+	 */
+	private Map <Gender, Double> gameteSpawned; 
+	
 
 	/**
 	 * chemical composition of carcass before gametes expelling (before spawning) i.e. soma + gonads + gametes
@@ -88,7 +96,7 @@ public class FishNutrient {
 	private Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning;
 
 	/**
-	 * chemical composition of gametes
+	 * chemical composition of gametes estimated from the MIGADO dataset (BDalosesBruch)
 	 * <key> gender
 	 * <value> 
 	 * 		<key> chemical element
@@ -131,6 +139,7 @@ public class FishNutrient {
 			Map <String, Double> excretionRate,
 			Map<Gender, Map<String, Double>> fishFeaturesPreSpawning,
 			Map<Gender, Map<String, Double>> fishFeaturesPostSpawning,
+			Map<Gender, Double> gameteSpawned, 
 			Map<Gender, Map<String, Double>> compoCarcassPreSpawning,
 			Map<Gender, Map<String, Double>> compoCarcassPostSpawning, 
 			Map<Gender, Map<String, Double>> compoGametes,
@@ -143,6 +152,7 @@ public class FishNutrient {
 		this.residenceTime = residenceTime; 
 		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
 		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
+		this.gameteSpawned = gameteSpawned; 
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
 		this.compoCarcassPostSpawning = compoCarcassPostSpawning;
 		this.compoGametes = compoGametes;
@@ -199,12 +209,12 @@ public class FishNutrient {
 		for (String nutrient : nutrientsOfInterest) {
 
 			if (fish.getStage()== Stage.MATURE) {
-
-				double totalWeightPre = this.getWeight(fish, SpawningPosition.PRE);
+				
 				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
 				double carcass = totalWeightPost 
 						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient); 
-				double gametes = (totalWeightPre - totalWeightPost) //FAUX car perte de poids somatique due a la reproduction  
+				//double gametes = (totalWeightPre - totalWeightPost) FAUX car perte de poids somatique due a la reproduction  
+				double gametes = gameteSpawned.get(fish.getGender())
 						*compoGametes.get(fish.getGender()).get(nutrient); //TODO: FAUX ! Revoir comment calculer les gamètes 
 				double excretion = totalWeightPost
 						* residenceTime 
@@ -237,12 +247,11 @@ public class FishNutrient {
 		for (String nutrient: nutrientsOfInterest) {
 			if (fish.getStage()==Stage.MATURE) {
 				
-				double totalWeightPre = this.getWeight(fish, SpawningPosition.PRE);
 				//TODO Fix with new data 
 				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
-				double gametes = (totalWeightPre - totalWeightPost) 
+				double gametes = gameteSpawned.get(fish.getGender())
 						* compoGametes.get(fish.getGender()).get(nutrient);
-				double excretion = totalWeightPre 
+				double excretion = totalWeightPost 
 						* residenceTime 
 						* excretionRate.get(nutrient) 
 						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient);
@@ -361,6 +370,12 @@ public static void main(String[] args)	{
 
 	System.out.println("aFeaturePostSpawning: " + aFeaturePostSpawning.toString());
 
+	Map<Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
+	aGameteSpawned.put(Gender.FEMALE, 113.1); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
+	aGameteSpawned.put(Gender.MALE, 37.6); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
+	
+	System.out.println("aGameteSpawned: " + aGameteSpawned.toString());
+	
 	// carcass composition for fish before spawning
 	Map<Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 	Map<String,Double> aCompo = new Hashtable<String,Double>();
@@ -425,7 +440,7 @@ public static void main(String[] args)	{
 	System.out.println("nutrientsOfInterest: " + nutrientsOfInterest);
 
 	
-	FishNutrient fn = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, 
+	FishNutrient fn = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
 			aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 			aJuvenileFeatures, aCompoJuveniles);
 
