@@ -267,7 +267,7 @@ public class FishNutrient {
 		}
 		return nutrientsInput;
 	}	
-
+	
 	public Map<String,Double>computeNutrientsInputForSurvivalAfterSpawning(DiadromousFish fish) {
 
 		return computeNutrientsInputForSurvivalAfterSpawning(fish, this.nutrientsOfInterest);
@@ -304,11 +304,12 @@ public class FishNutrient {
 			weight = juvenileFeatures.get("aLW") * Math.pow(fish.getLength(),juvenileFeatures.get("bLW"));
 		 else  //Stage.MATURE
 			 if (spawningPosition == SpawningPosition.PRE)
-			weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") 
-					* Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") );
-			 else weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") 
-						* Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
-			
+				 //weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") );
+				weight = fishFeaturesPreSpawning.get(fish.getGender()).get("MeanTotalWeight"); 
+			 else 
+				//weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
+				weight = fishFeaturesPostSpawning.get(fish.getGender()).get("MeanTotalWeight");
+		
 		return weight;
 	}
 	
@@ -342,28 +343,32 @@ public static void main(String[] args)	{
 	
 	Map<Gender, Map<String, Double>> aFeaturePreSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
 	Map<String,Double> aFeature = new Hashtable<String,Double>();
+	aFeature.put("MeanTotalWeight",1836.83);
 	aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
 	aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
 	aFeature.put("GSI",0.15); 
 	aFeaturePreSpawning.put(Gender.FEMALE, aFeature);
 
 	aFeature = new Hashtable<String,Double>();
+	aFeature.put("MeanTotalWeight",1133.12);
 	aFeature.put("bLW",3.2252);
 	aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
-	aFeature.put("GSI",.07);
+	aFeature.put("GSI",.08);
 	aFeaturePreSpawning.put(Gender.MALE,aFeature);
 
 	System.out.println("aFeaturePreSpawning: " + aFeaturePreSpawning.toString()); //
 
 	Map<Gender, Map<String, Double>> aFeaturePostSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
 	aFeature = new Hashtable<String,Double>();
-	aFeature.put("GSI",0.15);
+	aFeature.put ("MeanTotalWeight", 1529.32); 
+	aFeature.put("GSI",0.10); //From BDalosesBruch 
 	aFeature.put("aLW",aFeaturePreSpawning.get(Gender.FEMALE).get("aLW")/(1+aFeature.get("GSI"))); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
 	aFeature.put("bLW",aFeaturePreSpawning.get(Gender.FEMALE).get("bLW"));// parametre "b" de la relation taille/poids - Coefficient d'allometrie
 	aFeaturePostSpawning.put(Gender.FEMALE, aFeature);
 
 	aFeature = new Hashtable<String,Double>();
-	aFeature.put("GSI",.07);
+	aFeature.put ("MeanTotalWeight", 1078.22); 
+	aFeature.put("GSI",.05); //From BDalosesBruch 
 	aFeature.put("aLW",aFeaturePreSpawning.get(Gender.MALE).get("aLW")/(1+aFeature.get("GSI")));
 	aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
 	aFeaturePostSpawning.put(Gender.MALE,aFeature);
