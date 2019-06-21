@@ -177,8 +177,7 @@ public class FishNutrient {
 						* compoCarcassPreSpawning.get(fish.getGender()).get(nutrient);
 				double excretion = totalWeightPre 
 						* residenceTime 
-						* excretionRate.get(nutrient) 
-						* compoCarcassPreSpawning.get(fish.getGender()).get(nutrient); 
+						* excretionRate.get(nutrient) ; 
 				double nutrientImport = carcass + excretion;
 				
 				nutrientsInput.put(nutrient, nutrientImport); 
@@ -218,8 +217,7 @@ public class FishNutrient {
 						*compoGametes.get(fish.getGender()).get(nutrient); //TODO: FAUX ! Revoir comment calculer les gamètes 
 				double excretion = totalWeightPost
 						* residenceTime 
-						* excretionRate.get(nutrient) 
-						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient);
+						* excretionRate.get(nutrient);
 				double nutrientImport = carcass + gametes + excretion;
 				
 				nutrientsInput.put(nutrient,nutrientImport);
@@ -253,8 +251,7 @@ public class FishNutrient {
 						* compoGametes.get(fish.getGender()).get(nutrient);
 				double excretion = totalWeightPost 
 						* residenceTime 
-						* excretionRate.get(nutrient) 
-						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient);
+						* excretionRate.get(nutrient);
 				double nutrientImport = gametes + excretion;
 				//TotalWeigthPre - TotalWeightPost = gonad weight loss = gamete emission 
 				//Gamete compositions depends on sex. 
