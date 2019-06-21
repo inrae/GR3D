@@ -72,7 +72,7 @@ public class ExportLenghtAgeDistribution extends AquaNismsGroupProcess<Diadromou
 							fileNameOutput +group.getSimulationId()+ ".csv")));
 
 					bW.write("timestep"+sep+"year"+sep+"season"+sep+"basin"+ sep+"gender" 
-							+sep+ "effective" +sep+"length"+sep+"age"+"\n");
+							+sep+ "effective" +sep+"length"+sep+"age"+sep+"nbSpawn"+"\n");
 
 				} catch (IOException e) {
 					e.printStackTrace();
