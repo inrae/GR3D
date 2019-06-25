@@ -67,11 +67,12 @@ public class FishNutrient {
 
 	
 	/**
-	 * Gamete spawned for both males and females 
+	 *  Weight  of gametes spawned for both males and females 
 	 * key gender
-	 * value
+	 * value g
+	 * usually computed as the difference between unspawned gonad (inbound) and spawned gonad (outbound; "spent gonad") 
 	 */
-	private Map <Gender, Double> gameteSpawned; 
+	private Map <Gender, Double> spawnedGametesWeight; 
 	
 
 	/**
@@ -152,7 +153,7 @@ public class FishNutrient {
 		this.residenceTime = residenceTime; 
 		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
 		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
-		this.gameteSpawned = gameteSpawned; 
+		this.spawnedGametesWeight = gameteSpawned; 
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
 		this.compoCarcassPostSpawning = compoCarcassPostSpawning;
 		this.compoGametes = compoGametes;
@@ -213,7 +214,7 @@ public class FishNutrient {
 				double carcass = totalWeightPost 
 						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient); 
 				//double gametes = (totalWeightPre - totalWeightPost) FAUX car perte de poids somatique due a la reproduction  
-				double gametes = gameteSpawned.get(fish.getGender())
+				double gametes = spawnedGametesWeight.get(fish.getGender())
 						*compoGametes.get(fish.getGender()).get(nutrient); //TODO: FAUX ! Revoir comment calculer les gamètes 
 				double excretion = totalWeightPost
 						* residenceTime 
@@ -247,14 +248,15 @@ public class FishNutrient {
 				
 				//TODO Fix with new data 
 				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
-				double gametes = gameteSpawned.get(fish.getGender())
+				//Gamete compositions depends on sex. 
+				double gametes = spawnedGametesWeight.get(fish.getGender())
 						* compoGametes.get(fish.getGender()).get(nutrient);
 				double excretion = totalWeightPost 
 						* residenceTime 
 						* excretionRate.get(nutrient);
 				double nutrientImport = gametes + excretion;
-				//TotalWeigthPre - TotalWeightPost = gonad weight loss = gamete emission 
-				//Gamete compositions depends on sex. 
+				
+			
 				
 				nutrientsInput.put(nutrient, nutrientImport); 	
 			}
