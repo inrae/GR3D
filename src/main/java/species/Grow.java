@@ -23,11 +23,36 @@ import umontreal.iro.lecuyer.randvar.NormalGen;
 @ServiceProvider(service = AquaNismsGroupProcess.class)
 public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
+	/**
+	 * temperature minimum for growth
+	 * @unit °C
+	 */
 	private double tempMinGrow = 3.;
+
+	/**
+	 * temperature maximum for growth
+	 * @unit °C
+	 */
 	private double tempMaxGrow = 26.; 
+
+	/**
+	 * temperature optimal for growth
+	 * @unit °C
+	 */
 	private double tempOptGrow = 17.;
+
+	/**
+	 * K, Brody growth rate at optimal temperature
+	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit year -1
+	 */
 	private double kOpt = 0.3;
-	private double sigmaDeltaLVonBert = 0.2; // random value... has to be fixed with literature 
+
+	/**
+	 * standart deviation for the lognormal random draw of growth increment
+	 * @unit cm
+	 */
+	private double sigmaDeltaLVonBert = 0.2;
 
 	private transient NormalGen genNormal;
 
@@ -37,45 +62,52 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 	@Override
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
-            super.initTransientParameters(pilot);
+		super.initTransientParameters(pilot);
 		genNormal = new NormalGen( pilot.getRandomStream(),
 				new NormalDist(0., 1.));		
 	}
 
+	
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
-                for(Basin basin : group.getEnvironment().getBasins()){
-                    if (basin.getFishs(group)!=null) for(DiadromousFish fish : basin.getFishs(group)){
-                        double muDeltaLVonBert = 0.;
-			double kVonBert = 0.;
-			double growthIncrement = 0.;
-			//Grow
-			// 1) We calculate the kVonBert
-			
-			if (group.getKOpt()==Double.NaN){
-				kVonBert = kOpt * 
-				Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinGrow, tempOptGrow, tempMaxGrow);
-			} else {
-				kVonBert = group.getKOpt() * 
-						Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinGrow, tempOptGrow, tempMaxGrow);
-			}
-				
-			// 2) We update the size of the fish
-			if (fish.getLength() < group.getLinfVonBert()){
-				muDeltaLVonBert = Math.log((group.getLinfVonBert() - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (Math.pow(sigmaDeltaLVonBert,2))/2;
-				growthIncrement = Math.exp(genNormal.nextDouble()*sigmaDeltaLVonBert + muDeltaLVonBert);
-				fish.setLength(Math.min(group.getLinfVonBert(), fish.getLength() + growthIncrement));											
-			}else{
-				fish.setLength(group.getLinfVonBert());
-			}
+		for(Basin basin : group.getEnvironment().getBasins()){
+			if (basin.getFishs(group)!=null) 
+				for(DiadromousFish fish : basin.getFishs(group)){
+					double muDeltaLVonBert = 0.;
+					double kVonBert = 0.;
+					double growthIncrement = 0.;
+					
+					// 1) calculate the kVonBert (from the grow process or forn Diadromousgroup 
+					// when Brody coeff comes from calibration output
+					if (Double.isNaN(group.getKOpt())){
+						kVonBert = kOpt * 
+								Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinGrow, tempOptGrow, tempMaxGrow);
+					} else {
+						kVonBert = group.getKOpt() * 
+								Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinGrow, tempOptGrow, tempMaxGrow);
+					}
 
-			if (fish.getStage() == Stage.IMMATURE){
-				if (fish.getLength() > group.getlFirstMaturity()){
-					fish.setStage(Stage.MATURE);
+					// 2) Update the fish length with a lognormal normal draw  of increment
+					// limit the fish length to Linf
+					if (fish.getLength() < group.getLinfVonBert()){
+						muDeltaLVonBert = Math.log((group.getLinfVonBert() - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
+						growthIncrement = Math.exp(genNormal.nextDouble()*sigmaDeltaLVonBert + muDeltaLVonBert);
+					
+						
+						fish.setLength(Math.min(group.getLinfVonBert(), fish.getLength() + growthIncrement));											
+					}
+					else {
+						fish.setLength(group.getLinfVonBert());
+					}
+					//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+"): "+ growthIncrement);
+					// test if fish become mature
+					if (fish.getStage() == Stage.IMMATURE){
+						if (fish.getLength() > group.getlFirstMaturity()){
+							fish.setStage(Stage.MATURE); 
+						}
+					}
+					//System.out.println("la temp�rature du lieu de vie du poisson est :" + fish.getPosition().getCurrentTemperature() + ", la saison est :" + Time.getSeason() + " et sa nouvelle taille est :" + fish.getLength());
 				}
-			}
-			//System.out.println("la temp�rature du lieu de vie du poisson est :" + fish.getPosition().getCurrentTemperature() + ", la saison est :" + Time.getSeason() + " et sa nouvelle taille est :" + fish.getLength());
-                    }
-                }
+		}
 	}
 }

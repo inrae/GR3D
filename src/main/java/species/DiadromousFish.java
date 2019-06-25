@@ -19,13 +19,6 @@ public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 	private Gender gender;    
     private int numberOfReproduction;
 
-	public DiadromousFish(Pilot pilot, Basin position, double initialLength,  long fishAmount) {
-		this(pilot, position, initialLength, fishAmount, Gender.UNDIFFERENCIED);
-	}
-
-	public DiadromousFish(Pilot pilot, Basin position, double initialLength) {
-		this(pilot, position, initialLength, 1, Gender.UNDIFFERENCIED);
-	}
 	
 	public DiadromousFish(Pilot pilot, Basin position, double initialLength, long fishAmount, Gender gender) {
 		super(pilot, position);

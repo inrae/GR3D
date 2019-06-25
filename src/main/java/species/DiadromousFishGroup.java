@@ -36,23 +36,90 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	public String name = "species A";
 	public Color color = Color.RED;
+
+	/**
+	 * L infinity of the van Bertalanffy growth curve
+	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit cm
+	 */
 	public double linfVonBert = 60.;
+
+	/**
+	 *  ????
+	 * @unit
+	 */
 	public double dMaxDisp = 300.;
+	
+	/**
+	 *  length at first maturity. At that length the fish become Stage.MATURE
+	 * @unit cm
+	 */
 	public double lFirstMaturity = 40.;
+	
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
+
+	/**
+	 *  centile to calucale the range of species distribution
+	 * @unit
+	 */
 	public double centileForRange = 0.95;
 
+	/**
+	 * file with the calibated parameters (from baysian approach)
+	 * @unit
+	 */
 	private String parameterSetfileName= "data/input/reality/parameterSet.csv";
+
+	/**
+	 *  line to use in the calibrated parameters file
+	 * @unit
+	 */
 	private int parameterSetLine =0;
 
+	/**
+	 *  year when the update of the basin should occur
+	 * @unit
+	 */
 	private long yearOfTheUpdate;
+
+	/**
+	 * list of the basins to be updated
+	 * column 1: name of the basin
+	 * column 2: Pattractive: how the bassin become attractive (0 not attractive, 1 ??? normal weight associated to catchment size)
+	 * column 3: Paccessible: how the bassin become acesssible (0 not accessible, 1 ???normal weight to inter catchment distance )
+	 * @unit
+	 */
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
 	private String outputPath = "data/output/";
 
+	/**
+	 *  map
+	 *  <key> basin name
+	 *  <value> Duo
+	 *  	<first>       pAttractive
+	 *  	<second>  pAccessible
+	 * @unit
+	 */
 	private transient Map<String, Duo<Double, Double>> basinsToUpdate;
-	private transient double kOpt; //parametre de croissance
+
+	/**
+	 * Brody growth coefficient of the von Bertalanffy growth curve (from the parameterset file)
+	 *  	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit year-1
+	 */
+	private transient double kOpt; 
+	/**
+	 * minimum temperature for the reproduction (from the parameterset file)
+	 * @unit °C
+	 */
 	private transient double tempMinRep; //parametre de reproduction
+
+
+	/**
+	 * list of the parameters provided by the calibration
+	 * @unit
+	 */
 	private transient List<Duo<Double, Double>> parameterSets;
 
 	public static void main(String[] args) {
@@ -65,13 +132,18 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 
 	public double getPattractive(String basinName){
-		if (basinsToUpdate.containsKey(basinName.substring(0, basinName.length()-2)))
-			return basinsToUpdate.get(basinName.substring(0, basinName.length()-2)).getFirst();
+		// TODO pass in argument a Basin
+		// remove "-s" of the sea basin name
+		String shortBasinName = basinName.substring(0, basinName.length()-2);
+		if (basinsToUpdate.containsKey(shortBasinName))
+			return basinsToUpdate.get(shortBasinName).getFirst();
 		else
 			return Double.NaN;
 	}
 
 	public double getPaccessible(String basinName){
+		// TODO pass in argument a Basin
+		//WHY not a short name
 		if (basinsToUpdate.containsKey(basinName))
 			return basinsToUpdate.get(basinName).getSecond();
 		else
@@ -95,6 +167,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			InvocationTargetException {
 		super.initTransientParameters(pilot);
 
+		// basin to be updated
 		if ( basinsToUpdate != null){
 			String subDir=basinsToUpdateFile;
 			if (basinsToUpdateFile.lastIndexOf("/")!=-1)
@@ -186,41 +259,60 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	@Observable(description = "Nb of SI")
 	public int getNbSI() {
-		return this.getAquaNismsList().size();
+		int nbSI = 0;
+		for (Basin basin : this.getEnvironment().getBasins() ) {
+			if (basin.getFishs(this) != null) 
+				nbSI += basin.getFishs(this).size();
+		}
+		return nbSI;
 	}
 
 	@Observable(description = "Sizes mean of SI")
 	public double getSizesMeanOfSI() {
-		double sum = 0;
-		for (DiadromousFish list : getAquaNismsList()) {
-			sum += (int) list.getAmount();
+		double totalEffective = 0;
+		double nbSI =0;
+		for (Basin basin : this.getEnvironment().getBasins() ) {
+			if (basin.getFishs(this) != null) {
+				nbSI += basin.getFishs(this).size();
+				for (DiadromousFish superFish : basin.getFishs(this)) {
+					totalEffective += superFish.getAmount();
+				}
+			}
 		}
-		return sum / getAquaNismsList().size();
+		if (nbSI >=0)
+			return totalEffective /nbSI;
+		else
+			return Double.NaN;
 	}
 
 	@Observable(description = "# of SI with ind < 10")
 	public double getNbLittleSI() {
 		double nb = 0;
-		for (DiadromousFish list : getAquaNismsList()) {
-			if (list.getAmount() < 10) {
-				nb++;
+		for (Basin basin : this.getEnvironment().getBasins() ) {
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish superFish : basin.getFishs(this)) {
+					if ( superFish.getAmount()<10L)	
+						nb++;
+				}
 			}
 		}
 		return nb;
 	}
 
 	public double getMeanLengthOfMatureFish(){
-		double meanLengthOfMatureFish = 0.;
 		double sumOfLength = 0.;
 		double numberOfMatureFish = 0.;
-		for (DiadromousFish fish : getAquaNismsList()){
-			if (fish.isMature()){
-				sumOfLength += fish.getAmount() * fish.getLength();
-				numberOfMatureFish += fish.getAmount();
+		for (Basin basin : this.getEnvironment().getBasins() ) {
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.isMature()){
+						sumOfLength += fish.getAmount() * fish.getLength();
+						numberOfMatureFish += fish.getAmount();
+					}
+				}
 			}
-			meanLengthOfMatureFish = sumOfLength / numberOfMatureFish;
 		}
-		return meanLengthOfMatureFish;
+		return sumOfLength / numberOfMatureFish;
 	}
 
 	public double getStandardDeviationOfMatureFishLength(){
@@ -228,13 +320,18 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		double sumOfSquareLength = 0.;
 		double numberOfMatureFish = 0.;
 		double meanOfSquareLengthOfMatureFish = 0.;
-		for (DiadromousFish fish : getAquaNismsList()){
-			if (fish.isMature()){
-				sumOfSquareLength += fish.getAmount() * Math.pow(fish.getLength(), 2);
-				numberOfMatureFish += fish.getAmount();
+		for (Basin basin : this.getEnvironment().getBasins() ) {
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.isMature()){
+						sumOfSquareLength += fish.getAmount() * fish.getLength() * fish.getLength();
+						numberOfMatureFish += fish.getAmount();
+					}
+				}
 			}
 			meanOfSquareLengthOfMatureFish = sumOfSquareLength / numberOfMatureFish;
-			standardDeviationOfMatureFishLength = Math.pow((meanOfSquareLengthOfMatureFish - Math.pow(getMeanLengthOfMatureFish(), 2)), 0.5);
+			double meanLength = getMeanLengthOfMatureFish();
+			standardDeviationOfMatureFishLength = Math.sqrt(meanOfSquareLengthOfMatureFish - meanLength * meanLength);
 		}
 		return standardDeviationOfMatureFishLength;
 	}
@@ -266,29 +363,20 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public void setlFirstMaturity(double lFirstMaturity) {
 		this.lFirstMaturity = lFirstMaturity;
 	}
-
-
-	@Observable(description="Higher Populated Latitude")
-	public double getHigherPopulatedLatitude() {
-		double latitude = 0.0;
-		RiverBasin[] basins = getEnvironment().getRiverBasins();
-		int[] finalStates = getEnvironment().getFinalStates();
-		for (int i = 0; i < finalStates.length; i++) {
-			if ((finalStates[i] == 1) && (basins[i].getLatitude() > latitude)) {
-				latitude = basins[i].getLatitude();
-			}
-
-		}
-		return latitude;
-	}
-
+	
+	// ================================================================
+	// statictis for calibration
+	// ================================================================
 	@Observable(description="Spawners For First Time Summary Statistic")
 	public double computeSpawnerForFirstTimeSummaryStatistic() {
 		double sum = 0;
+		//TODO move TARGET to the right place
 		double TARGET = 5.0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
-			if (riverBasin.getSpawnersForFirstTimeMeanAges().getMeanWithoutZero() > 0.)
-				sum += Math.pow(riverBasin.getSpawnersForFirstTimeMeanAges().getMeanWithoutZero() - TARGET, 2);
+			if (riverBasin.getSpawnersForFirstTimeMeanAges().getMeanWithoutZero() > 0.) {
+				double val = riverBasin.getSpawnersForFirstTimeMeanAges().getMeanWithoutZero()  - TARGET;
+				sum += val * val;
+			}
 		}
 		return sum;
 	}
@@ -299,6 +387,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		// 1 : read input file of observation
 		FileReader reader;
 		Scanner scanner;
+		//TODO move the obs1900 and the scanner
 		Map<String, Integer> obs1900 = new HashMap<String, Integer>();
 		try {
 			reader = new FileReader(fileNameInputForInitialObservation);
@@ -337,7 +426,26 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 		return sumLogWhereAbs + sumLogWherePres;
 	}
+	
+	
+	// ========================================================
+	// obeserver to explore the distribution
+	// ========================================================
+	@Observable(description="Higher Populated Latitude")
+	public double getHigherPopulatedLatitude() {
+		double latitude = 0.0;
+		RiverBasin[] basins = getEnvironment().getRiverBasins();
+		int[] finalStates = getEnvironment().getFinalStates();
+		for (int i = 0; i < finalStates.length; i++) {
+			if ((finalStates[i] == 1) && (basins[i].getLatitude() > latitude)) {
+				latitude = basins[i].getLatitude();
+			}
 
+		}
+		return latitude;
+	}
+	
+	
 	@Observable(description="Number of colonized basins")
 	public double getNbColonizedBasins() {
 		int nb = 0;
@@ -350,6 +458,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return nb;
 	}
+	
 
 	@Observable(description="Northern colonized basins")
 	public double getNorthernBasins() {
@@ -364,6 +473,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return northernBasin;
 	}
 
+	
 	@Observable(description="Southern colonized basins")
 	public double getSouthernBasins() {
 		int southernBasin = Integer.MIN_VALUE;
@@ -408,6 +518,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return rangeDistribution;
 	}
 
+	
 	@Observable(description = "Range distribution")
 	public Double[] getRangeDistribution() {
 		double southernBasin = 0;
@@ -440,15 +551,23 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return rangeDistribution;
 	}
 
-	@Observable(description = "Number of fishes")
+	/**
+	 * @return sum of effectives in all the river basins
+	 */
+	@Observable(description = "Number of fishes in river basin")
 	public double getFishEffective() {
 		long eff = 0;
-		for (DiadromousFish fish : this.getAquaNismsList()) {
-			eff += fish.getAmount();
+		for (RiverBasin basin : this.getEnvironment().getRiverBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					eff += fish.getAmount();
+				}
+			}
 		}
 		return eff;
 	}
 
+	
 	@Override
 	public void addAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -456,6 +575,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		fish.getPosition().addFish(fish, this);
 	}
 
+	
 	@Override
 	public void removeAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -463,11 +583,18 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		fish.getPosition().removeFish(fish, this);
 	}
 
+	
 	@Override
 	public int compareTo(DiadromousFishGroup t) {
 		return name.compareTo(t.name);
 	}
 
+	
+	/**
+	 * 
+	 * concat at RngSatusIndex, temperatureCatchmentFile
+	 * @return simulation name
+	 */
 	public String getSimulationId(){
 		String id="_";
 		id=id.concat(Integer.toString(getPilot().getParameters().getRngStatusIndex()));
@@ -482,7 +609,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public boolean isThereBasinToUpdate(){
 		return basinsToUpdate != null;
 	}
-	
+
 	/**
 	 * @return the outputPath
 	 */

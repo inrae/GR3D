@@ -5,6 +5,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import environment.Basin;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
+import species.DiadromousFish.Gender;
+
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service = AquaNismsGroupProcess.class)
@@ -23,7 +25,7 @@ public class PopulateWithASinglePopulation extends AquaNismsGroupProcess<Diadrom
 
 		Basin basin = group.getEnvironment().getRiverBasins()[bassinInd];
 		for (int i=0; i < nbSIPerBasin; i++){
-			group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbIndPerSI));
+			group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbIndPerSI, Gender.UNDIFFERENCIED));
 		}
 	}
 }

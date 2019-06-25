@@ -24,6 +24,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import environment.RiverBasin;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
+import species.DiadromousFish.Gender;
 
 /**
  *
@@ -46,7 +47,7 @@ public class PopulateBasinNetworkWithANorthLimit extends AquaNismsGroupProcess<D
 		for (RiverBasin basin : group.getEnvironment().getRiverBasins()){
 			if (basin.getLatitude()<=northLimitLatitude){
 			for (int i=0; i < nbSIPerBasin; i++){
-				group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbFishPerSI));
+				group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbFishPerSI, Gender.UNDIFFERENCIED));
 			}
 		}
 		}
