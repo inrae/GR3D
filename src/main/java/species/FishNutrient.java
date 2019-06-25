@@ -303,11 +303,9 @@ public class FishNutrient {
 			weight = juvenileFeatures.get("aLW") * Math.pow(fish.getLength(),juvenileFeatures.get("bLW"));
 		 else  //Stage.MATURE
 			 if (spawningPosition == SpawningPosition.PRE)
-				 //weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") );
-				weight = fishFeaturesPreSpawning.get(fish.getGender()).get("MeanTotalWeight"); 
+				 weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") ); 
 			 else 
-				//weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
-				weight = fishFeaturesPostSpawning.get(fish.getGender()).get("MeanTotalWeight");
+				weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
 		
 		return weight;
 	}
@@ -325,6 +323,12 @@ public class FishNutrient {
 /**
  * @param args
  */
+/**
+ * @param args
+ */
+/**
+ * @param args
+ */
 public static void main(String[] args)	{
 
 	
@@ -339,37 +343,61 @@ public static void main(String[] args)	{
 	
 	System.out.println("anExcretionRate: " + anExcretionRate.toString()); //
 	
-	
+	/*
+	 * A feature pre spawning 
+	 */
 	Map<Gender, Map<String, Double>> aFeaturePreSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
+	
+	/*
+	 * For females
+	 */
 	Map<String,Double> aFeature = new Hashtable<String,Double>();
-	aFeature.put("MeanTotalWeight",1836.83);
-	aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
-	aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
-	aFeature.put("GSI",0.15); 
+
+	aFeature.put("aLW", Math.exp(-4.3276)); //weight size relationship computed from BDalosesBruch 
+	aFeature.put("bLW", 3.147);
+	//aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
+	//aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
+	//aFeature.put("GSI",0.15); 
 	aFeaturePreSpawning.put(Gender.FEMALE, aFeature);
 
+	/*
+	 * For males 
+	 */
 	aFeature = new Hashtable<String,Double>();
-	aFeature.put("MeanTotalWeight",1133.12);
-	aFeature.put("bLW",3.2252);
-	aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
-	aFeature.put("GSI",.08);
+	aFeature.put("aLW", Math.exp(-1.304)); 
+	aFeature.put("bLW", 2.1774);
+	//aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
+	//aFeature.put("GSI",.08);
 	aFeaturePreSpawning.put(Gender.MALE,aFeature);
 
 	System.out.println("aFeaturePreSpawning: " + aFeaturePreSpawning.toString()); //
-
+	
+	/*
+	 * a Feature post Spawning 
+	 */
 	Map<Gender, Map<String, Double>> aFeaturePostSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
+	
+	/*
+	 * For females 
+	 */
 	aFeature = new Hashtable<String,Double>();
-	aFeature.put ("MeanTotalWeight", 1529.32); 
-	aFeature.put("GSI",0.10); //From BDalosesBruch 
-	aFeature.put("aLW",aFeaturePreSpawning.get(Gender.FEMALE).get("aLW")/(1+aFeature.get("GSI"))); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
-	aFeature.put("bLW",aFeaturePreSpawning.get(Gender.FEMALE).get("bLW"));// parametre "b" de la relation taille/poids - Coefficient d'allometrie
+	aFeature.put("aLW", Math.exp(-4.3276)); //weight size relationship computed from BDalosesBruch 
+	aFeature.put("bLW", 2.9418);
+	//aFeature.put("GSI",0.10); //From BDalosesBruch 
+	//aFeature.put("aLW",aFeaturePreSpawning.get(Gender.FEMALE).get("aLW")/(1+aFeature.get("GSI"))); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
+	//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.FEMALE).get("bLW"));// parametre "b" de la relation taille/poids - Coefficient d'allometrie
 	aFeaturePostSpawning.put(Gender.FEMALE, aFeature);
 
+	/*
+	 * For males 
+	 */
 	aFeature = new Hashtable<String,Double>();
-	aFeature.put ("MeanTotalWeight", 1078.22); 
-	aFeature.put("GSI",.05); //From BDalosesBruch 
-	aFeature.put("aLW",aFeaturePreSpawning.get(Gender.MALE).get("aLW")/(1+aFeature.get("GSI")));
-	aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
+	
+	aFeature.put("aLW", Math.exp(-4.5675));// parametre "a" de la relation taille/poids - Coefficient d'allometrie
+	aFeature.put("bLW", 2.9973); 
+	//aFeature.put("GSI",.05); From BDalosesBruch 
+	//aFeature.put("aLW",aFeaturePreSpawning.get(Gender.MALE).get("aLW")/(1+aFeature.get("GSI")));
+	//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
 	aFeaturePostSpawning.put(Gender.MALE,aFeature);
 
 	System.out.println("aFeaturePostSpawning: " + aFeaturePostSpawning.toString());
@@ -450,9 +478,9 @@ public static void main(String[] args)	{
 
 	SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des température pour chaque saison 
 	Pilot pilot = new Pilot ();
-	DiadromousFish fishFemale = new DiadromousFish (pilot, basin, 55., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
+	DiadromousFish fishFemale = new DiadromousFish (pilot, basin, 52., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
 	fishFemale.setStage(Stage.MATURE);
-	DiadromousFish fishMale = new DiadromousFish (pilot, basin, 45., 1L, Gender.MALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
+	DiadromousFish fishMale = new DiadromousFish (pilot, basin, 47., 1L, Gender.MALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
 	fishMale.setStage(Stage.MATURE);
 	DiadromousFish juvenileFish = new DiadromousFish(pilot,basin,7.0,1L,Gender.UNDIFFERENCIED);
 	juvenileFish.setStage(Stage.IMMATURE);
