@@ -23,7 +23,7 @@ public class PopulateBasinNetwork extends AquaNismsGroupProcess<DiadromousFish, 
 	public void doProcess(DiadromousFishGroup group) {
 		for (Basin basin : group.getEnvironment().getRiverBasins()){
 			for (int i=0; i < nbSIPerBasin; i++){
-				group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbFishPerSI, Gender.UNDIFFERENCIED));
+				group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbFishPerSI, Gender.FEMALE));
 			}
 		}
 	}
