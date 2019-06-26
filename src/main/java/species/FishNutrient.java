@@ -353,7 +353,7 @@ public static void main(String[] args)	{
 	 */
 	Map<String,Double> aFeature = new Hashtable<String,Double>();
 
-	aFeature.put("aLW", Math.exp(-4.3276)); //weight size relationship computed from BDalosesBruch 
+	aFeature.put("aLW", Math.exp(-4.9078)); //weight size relationship computed from BDalosesBruch 
 	aFeature.put("bLW", 3.147);
 	//aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
 	//aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
@@ -403,21 +403,21 @@ public static void main(String[] args)	{
 	System.out.println("aFeaturePostSpawning: " + aFeaturePostSpawning.toString());
 
 	Map<Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
-	aGameteSpawned.put(Gender.FEMALE, 113.1); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
-	aGameteSpawned.put(Gender.MALE, 37.6); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
+	aGameteSpawned.put(Gender.FEMALE, 131.); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
+	aGameteSpawned.put(Gender.MALE, 44.8); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
 	
 	System.out.println("aGameteSpawned: " + aGameteSpawned.toString());
 	
 	// carcass composition for fish before spawning
 	Map<Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 	Map<String,Double> aCompo = new Hashtable<String,Double>();
-	aCompo.put("N", 2.917 / 100.); //On remplit une collection avec un put. 
-	aCompo.put("P", 0.725 / 100.);
+	aCompo.put("N", 2.958 / 100.); //On remplit une collection avec un put. 
+	aCompo.put("P", 0.673 / 100.);
 	aCompoCarcassPreSpawning.put(Gender.FEMALE,aCompo);
 
 	aCompo = new Hashtable<String,Double>();
-	aCompo.put("N", 2.921 / 100.);
-	aCompo.put("P", 0.662 / 100.);
+	aCompo.put("N", 2.941 / 100.);
+	aCompo.put("P", 0.666 / 100.);
 	aCompoCarcassPreSpawning.put(Gender.MALE,aCompo);
 
 	System.out.println("aCompoCarcassPreSpawning: " + aCompoCarcassPreSpawning.toString()); //
@@ -431,7 +431,7 @@ public static void main(String[] args)	{
 
 	aCompo = new Hashtable<String,Double>();
 	aCompo.put("N", 2.790 / 100.); // From Haskel et al, 2017 
-	aCompo.put("P", 0.9610 / 100.);
+	aCompo.put("P", 0.961 / 100.);
 	aCompoCarcassPostSpawning.put(Gender.MALE,aCompo);
 
 	System.out.println("aCompoCarcassPostSpawning: " + aCompoCarcassPostSpawning.toString()); //
