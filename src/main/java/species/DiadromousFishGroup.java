@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
 
 import miscellaneous.Duo;
 import miscellaneous.TreeMapForCentile;
+import species.DiadromousFish.Gender;
 
 import org.openide.util.lookup.ServiceProvider;
 
@@ -55,6 +57,12 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit cm
 	 */
 	public double lFirstMaturity = 40.;
+	
+	/**
+	 * Routine to compute nutrient fluxes operated by a single individual (TODO by a single super individual). 
+	 * 
+	 */
+	private  FishNutrient fishNutrient; 
 	
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 
@@ -121,9 +129,148 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit
 	 */
 	private transient List<Duo<Double, Double>> parameterSets;
+	
+	
 
 	public static void main(String[] args) {
-		System.out.println((new XStream(new DomDriver())).toXML(new DiadromousFishGroup(new Pilot(), null, null)));
+		DiadromousFishGroup diadromousFishGroup = new DiadromousFishGroup(new Pilot(), null, null);
+		
+		double aResidenceTime =30; 
+		
+		
+		Map <String, Double> anExcretionRate = new Hashtable <String, Double>(); 
+		anExcretionRate.put("N", 24.71E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
+		anExcretionRate.put("P", 2.17E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
+		
+		
+		/*
+		 * A feature pre spawning 
+		 */
+		Map<DiadromousFish.Gender, Map<String, Double>> aFeaturePreSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
+		
+		/*
+		 * For females
+		 */
+		Map<String,Double> aFeature = new Hashtable<String,Double>();
+
+		aFeature.put("aLW", Math.exp(-4.9078)); //weight size relationship computed from BDalosesBruch 
+		aFeature.put("bLW", 3.147);
+		//aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
+		//aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
+		//aFeature.put("GSI",0.15); 
+		aFeaturePreSpawning.put(Gender.FEMALE, aFeature);
+
+		/*
+		 * For males 
+		 */
+		aFeature = new Hashtable<String,Double>();
+		aFeature.put("aLW", Math.exp(-1.304)); 
+		aFeature.put("bLW", 2.1774);
+		//aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
+		//aFeature.put("GSI",.08);
+		aFeaturePreSpawning.put(Gender.MALE,aFeature);
+
+		
+		/*
+		 * a Feature post Spawning 
+		 */
+		Map<DiadromousFish.Gender, Map<String, Double>> aFeaturePostSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
+		
+		/*
+		 * For females 
+		 */
+		aFeature = new Hashtable<String,Double>();
+		aFeature.put("aLW", Math.exp(-4.3276)); //weight size relationship computed from BDalosesBruch 
+		aFeature.put("bLW", 2.9418);
+		//aFeature.put("GSI",0.10); //From BDalosesBruch 
+		//aFeature.put("aLW",aFeaturePreSpawning.get(Gender.FEMALE).get("aLW")/(1+aFeature.get("GSI"))); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
+		//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.FEMALE).get("bLW"));// parametre "b" de la relation taille/poids - Coefficient d'allometrie
+		aFeaturePostSpawning.put(Gender.FEMALE, aFeature);
+
+		/*
+		 * For males 
+		 */
+		aFeature = new Hashtable<String,Double>();
+		
+		aFeature.put("aLW", Math.exp(-4.5675));// parametre "a" de la relation taille/poids - Coefficient d'allometrie
+		aFeature.put("bLW", 2.9973); 
+		//aFeature.put("GSI",.05); From BDalosesBruch 
+		//aFeature.put("aLW",aFeaturePreSpawning.get(Gender.MALE).get("aLW")/(1+aFeature.get("GSI")));
+		//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
+		aFeaturePostSpawning.put(Gender.MALE,aFeature);
+
+		
+		Map<DiadromousFish.Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
+		aGameteSpawned.put(Gender.FEMALE, 131.); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
+		aGameteSpawned.put(Gender.MALE, 44.8); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
+		
+		
+		// carcass composition for fish before spawning
+		Map<DiadromousFish.Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
+		Map<String,Double> aCompo = new Hashtable<String,Double>();
+		aCompo.put("N", 2.958 / 100.); //On remplit une collection avec un put. 
+		aCompo.put("P", 0.673 / 100.);
+		aCompoCarcassPreSpawning.put(Gender.FEMALE,aCompo);
+
+		aCompo = new Hashtable<String,Double>();
+		aCompo.put("N", 2.941 / 100.);
+		aCompo.put("P", 0.666 / 100.);
+		aCompoCarcassPreSpawning.put(Gender.MALE,aCompo);
+
+		
+
+		// carcass composition for fish after spawning
+		Map<DiadromousFish.Gender, Map<String, Double>> aCompoCarcassPostSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
+		aCompo = new Hashtable<String,Double>();
+		aCompo.put("N", 3.216 / 100.); //On remplit une collection avec un put. 
+		aCompo.put("P", 0.997 / 100.);
+		aCompoCarcassPostSpawning.put(Gender.FEMALE,aCompo);
+
+		aCompo = new Hashtable<String,Double>();
+		aCompo.put("N", 2.790 / 100.); // From Haskel et al, 2017 
+		aCompo.put("P", 0.961 / 100.);
+		aCompoCarcassPostSpawning.put(Gender.MALE,aCompo);
+
+		
+
+		// Gametes composition approximated by the difference between gonads weight before and after spawning. 
+		Map<DiadromousFish.Gender, Map<String, Double>> aCompoGametes = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
+		aCompo = new Hashtable<String,Double>();
+		aCompo.put("N", 3.242 / 100.); //On remplit une collection avec un put. From Haskel et al, 2018. 
+		aCompo.put("P", 0.320 / 100.); // Haskel = %P, N, ici ratio donc divise par 100 
+		aCompoGametes.put(Gender.FEMALE,aCompo);
+
+		aCompo = new Hashtable<String,Double>();
+		aCompo.put("N", 3.250 / 100.);
+		aCompo.put("P", 0.724 / 100.);
+		aCompoGametes.put(Gender.MALE,aCompo);
+
+
+		// features for juveniles 
+
+		Map<String,Double> aJuvenileFeatures = new Hashtable<String, Double>();
+		aJuvenileFeatures.put("bLW",3.0306);
+		aJuvenileFeatures.put("aLW",Math.exp(-11.942) * Math.pow(10., aJuvenileFeatures.get("bLW")));
+		
+
+		// carcass composition for juveniles fish 
+		Map<String, Double> aCompoJuveniles = new Hashtable<String,Double>();
+		aCompoJuveniles.put("N", 2.803 / 100.); //On remplit une collection avec un put. %N in wet weight (Haskell et al, 2017) on Alosa sapidissima 
+		aCompoJuveniles.put("P", 0.887 / 100.); //%P in wet weight (from Haskell et al, 2017) on Alosa sapidissima 
+
+
+		ArrayList <String> nutrientsOfInterest= new ArrayList <String>();
+		nutrientsOfInterest.add("N");
+		nutrientsOfInterest.add("P");
+
+	
+		
+		diadromousFishGroup.fishNutrient = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
+				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
+				aJuvenileFeatures, aCompoJuveniles);
+		
+		
+		System.out.println((new XStream(new DomDriver())).toXML(diadromousFishGroup));
 	}
 
 	public DiadromousFishGroup(Pilot pilot, BasinNetwork environment, Processes processes) {
@@ -360,9 +507,15 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return lFirstMaturity;
 	}
 
+	public  FishNutrient getFishNutrient() {
+		
+		return fishNutrient; 
+	}
+	
 	public void setlFirstMaturity(double lFirstMaturity) {
 		this.lFirstMaturity = lFirstMaturity;
 	}
+	
 	
 	// ================================================================
 	// statictis for calibration

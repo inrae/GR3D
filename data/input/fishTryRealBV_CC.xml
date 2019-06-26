@@ -1,5 +1,6 @@
 <list>
 	<species.DiadromousFishGroup>
+		<useCemetery>true</useCemetery>
 		<name>species A</name>
 		<color>
 			<red>255</red>
@@ -8,11 +9,217 @@
 			<alpha>255</alpha>
 		</color>
 		<linfVonBert>60.0</linfVonBert>
-		<dMaxDisp>0.0</dMaxDisp>
+		<dMaxDisp>300.0</dMaxDisp>
 		<lFirstMaturity>40.0</lFirstMaturity>
-		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
+		<fishNutrient>
+			<nutrientsOfInterest>
+				<string>N</string>
+				<string>P</string>
+			</nutrientsOfInterest>
+			<residenceTime>30.0</residenceTime>
+			<excretionRate class="hashtable">
+				<entry>
+					<string>P</string>
+					<double>2.17E-6</double>
+				</entry>
+				<entry>
+					<string>N</string>
+					<double>2.471E-5</double>
+				</entry>
+			</excretionRate>
+			<fishFeaturesPreSpawning class="hashtable">
+				<entry>
+					<species.DiadromousFish_-Gender>MALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>bLW</string>
+							<double>2.1774</double>
+						</entry>
+						<entry>
+							<string>aLW</string>
+							<double>0.27144384321211973</double>
+						</entry>
+					</hashtable>
+				</entry>
+				<entry>
+					<species.DiadromousFish_-Gender>FEMALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>bLW</string>
+							<double>3.147</double>
+						</entry>
+						<entry>
+							<string>aLW</string>
+							<double>0.007388725660209693</double>
+						</entry>
+					</hashtable>
+				</entry>
+			</fishFeaturesPreSpawning>
+			<fishFeaturesPostSpawning class="hashtable">
+				<entry>
+					<species.DiadromousFish_-Gender>MALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>bLW</string>
+							<double>2.9973</double>
+						</entry>
+						<entry>
+							<string>aLW</string>
+							<double>0.010383887012522573</double>
+						</entry>
+					</hashtable>
+				</entry>
+				<entry>
+					<species.DiadromousFish_-Gender>FEMALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>bLW</string>
+							<double>2.9418</double>
+						</entry>
+						<entry>
+							<string>aLW</string>
+							<double>0.013199187556948952</double>
+						</entry>
+					</hashtable>
+				</entry>
+			</fishFeaturesPostSpawning>
+			<juvenileFeatures class="hashtable">
+				<entry>
+					<string>bLW</string>
+					<double>3.0306</double>
+				</entry>
+				<entry>
+					<string>aLW</string>
+					<double>0.006986429759979109</double>
+				</entry>
+			</juvenileFeatures>
+			<spawnedGametesWeight class="hashtable">
+				<entry>
+					<species.DiadromousFish_-Gender>MALE
+					</species.DiadromousFish_-Gender>
+					<double>44.8</double>
+				</entry>
+				<entry>
+					<species.DiadromousFish_-Gender>FEMALE
+					</species.DiadromousFish_-Gender>
+					<double>131.0</double>
+				</entry>
+			</spawnedGametesWeight>
+			<compoCarcassPreSpawning class="hashtable">
+				<entry>
+					<species.DiadromousFish_-Gender>MALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>P</string>
+							<double>0.00666</double>
+						</entry>
+						<entry>
+							<string>N</string>
+							<double>0.02941</double>
+						</entry>
+					</hashtable>
+				</entry>
+				<entry>
+					<species.DiadromousFish_-Gender>FEMALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>P</string>
+							<double>0.006730000000000001</double>
+						</entry>
+						<entry>
+							<string>N</string>
+							<double>0.029580000000000002</double>
+						</entry>
+					</hashtable>
+				</entry>
+			</compoCarcassPreSpawning>
+			<compoCarcassPostSpawning class="hashtable">
+				<entry>
+					<species.DiadromousFish_-Gender>MALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>P</string>
+							<double>0.00961</double>
+						</entry>
+						<entry>
+							<string>N</string>
+							<double>0.0279</double>
+						</entry>
+					</hashtable>
+				</entry>
+				<entry>
+					<species.DiadromousFish_-Gender>FEMALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>P</string>
+							<double>0.00997</double>
+						</entry>
+						<entry>
+							<string>N</string>
+							<double>0.03216</double>
+						</entry>
+					</hashtable>
+				</entry>
+			</compoCarcassPostSpawning>
+			<compoGametes class="hashtable">
+				<entry>
+					<species.DiadromousFish_-Gender>MALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>P</string>
+							<double>0.00724</double>
+						</entry>
+						<entry>
+							<string>N</string>
+							<double>0.0325</double>
+						</entry>
+					</hashtable>
+				</entry>
+				<entry>
+					<species.DiadromousFish_-Gender>FEMALE
+					</species.DiadromousFish_-Gender>
+					<hashtable>
+						<entry>
+							<string>P</string>
+							<double>0.0032</double>
+						</entry>
+						<entry>
+							<string>N</string>
+							<double>0.03242</double>
+						</entry>
+					</hashtable>
+				</entry>
+			</compoGametes>
+			<compoJuvenile class="hashtable">
+				<entry>
+					<string>P</string>
+					<double>0.00887</double>
+				</entry>
+				<entry>
+					<string>N</string>
+					<double>0.02803</double>
+				</entry>
+			</compoJuvenile>
+		</fishNutrient>
+		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv
+		</fileNameInputForInitialObservation>
+		<centileForRange>0.95</centileForRange>
+		<parameterSetfileName>data/input/reality/parameterSet.csv
+		</parameterSetfileName>
+		<parameterSetLine>0</parameterSetLine>
+		<yearOfTheUpdate>0</yearOfTheUpdate>
+		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv
+		</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
-
 		<processes>
 			<processesAtBegin>
 				<species.PopulateBasinNetworkWithANorthLimit>
@@ -99,7 +306,8 @@
 					<initialLength>2.0</initialLength>
 					<sigmaRecruitment>0.2</sigmaRecruitment>
 					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
-					<maxNumberOfSuperIndividualPerReproduction>50.0</maxNumberOfSuperIndividualPerReproduction>
+					<maxNumberOfSuperIndividualPerReproduction>50.0
+					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 

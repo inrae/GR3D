@@ -337,9 +337,11 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						riverBasin.getNumberOfNonNulRecruitmentForFinalProbOfPres().push(0.);
 					}
 					// --------------------------------------------------------------------------------------------------
-					// Remove deadfish
+					// Remove deadfish and compute the related nutrient fluxes 
 					// --------------------------------------------------------------------------------------------------
 					for (DiadromousFish fish : deadFish){
+						
+						System.out.println(group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish)); // 
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();

@@ -20,15 +20,11 @@
 package species;
 
 import environment.SeaBasin;
-import environment.Time.Season;
 import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFish.Gender;
 import species.DiadromousFish.Stage;
-import species.ReproduceAndSurviveAfterReproduction;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
@@ -44,6 +40,7 @@ public class FishNutrient {
 	
 	private static enum SpawningPosition  {PRE,POST}; // on créer un static pour réserver une même classe mémoire pour toutes les instances 
 	
+	//private static enum Gender {UNDIFFERENCIED, FEMALE, MALE}; 
 
 	private ArrayList<String> nutrientsOfInterest;
 	
@@ -59,11 +56,11 @@ public class FishNutrient {
 	 * 		key feature
 	 * 		value value
 	 */
-	private Map <Gender,Map<String, Double>> fishFeaturesPreSpawning;
+	private Map <DiadromousFish.Gender,Map<String, Double>> fishFeaturesPreSpawning;
 
-	private Map <Gender, Map<String, Double>> fishFeaturesPostSpawning;
+	private Map <DiadromousFish.Gender, Map<String, Double>> fishFeaturesPostSpawning;
 
-	private Map <String, Double> juvenileFeatures;
+	private Map<String, Double> juvenileFeatures;
 
 	
 	/**
@@ -72,7 +69,7 @@ public class FishNutrient {
 	 * value g
 	 * usually computed as the difference between unspawned gonad (inbound) and spawned gonad (outbound; "spent gonad") 
 	 */
-	private Map <Gender, Double> spawnedGametesWeight; 
+	private Map <DiadromousFish.Gender, Double> spawnedGametesWeight; 
 	
 
 	/**
@@ -109,21 +106,12 @@ public class FishNutrient {
 
 	/**
 	 * chemical composition of juveniles
-	 * <key> stage
-	 * <value> 
 	 * 		<key> chemical element
 	 * 		<value> value
 	 */
 
 	private Map<String,Double> compoJuvenile;
 	
-
-	/**
-	 * 
-	 */
-	public FishNutrient() {
-		// TODO Auto-generated constructor stub
-	}
 
 
 	/**
@@ -138,12 +126,12 @@ public class FishNutrient {
 			 
 			double residenceTime,
 			Map <String, Double> excretionRate,
-			Map<Gender, Map<String, Double>> fishFeaturesPreSpawning,
-			Map<Gender, Map<String, Double>> fishFeaturesPostSpawning,
-			Map<Gender, Double> gameteSpawned, 
-			Map<Gender, Map<String, Double>> compoCarcassPreSpawning,
-			Map<Gender, Map<String, Double>> compoCarcassPostSpawning, 
-			Map<Gender, Map<String, Double>> compoGametes,
+			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPreSpawning,
+			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPostSpawning,
+			Map<DiadromousFish.Gender, Double> gameteSpawned, 
+			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPreSpawning,
+			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning, 
+			Map<DiadromousFish.Gender, Map<String, Double>> compoGametes,
 			Map<String, Double> juvenileFeatures,
 			Map<String, Double> compoJuvenile)
 		{
@@ -161,7 +149,7 @@ public class FishNutrient {
 		this.compoJuvenile = compoJuvenile; 
 
 	}
-
+	
 	/**
 	 * compute the nutrient fluxes for a single fish (in the super individual)
 	 *  that dies before spawning  
@@ -498,6 +486,8 @@ public static void main(String[] args)	{
 	
 	System.out.println(juvenileFish.getStage() + ": " + juvenileFish.getLength() + " cm " + fn.getWeight(juvenileFish)+ " g ");
 	System.out.println("\tNutrients Fluxes for juveniles " + fn.computeNutrientsExportForJuveniles(juvenileFish).toString());
+
+	
 
 
 	/* Create XML file 
