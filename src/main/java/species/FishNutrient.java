@@ -308,6 +308,12 @@ public class FishNutrient {
 		return getWeight (fish, SpawningPosition.PRE);
 	}
 	
+	
+	
+public ArrayList<String> getNutrientsOfInterest() {
+		return nutrientsOfInterest;
+	}
+
 /**
  * @param args
  */

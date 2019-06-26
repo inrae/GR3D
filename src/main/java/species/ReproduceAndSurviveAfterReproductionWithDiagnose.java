@@ -3,6 +3,7 @@ package species;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,6 +108,15 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 				List<DiadromousFish> fishInBasin = riverBasin.getFishs(group);
 				if (fishInBasin != null){
+					
+					Map<String, Double> totalFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
+					
+					for (String nutrient : group.getFishNutrient().getNutrientsOfInterest()) {
+						
+						totalFluxes.put(nutrient, 0.); // ON MET A JOUR NOTRE map 
+						
+					}
+
 
 					// --------------------------------------------------------------------------------------------------
 					// definition of the stock recruiment relationship
@@ -341,14 +351,27 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// --------------------------------------------------------------------------------------------------
 					for (DiadromousFish fish : deadFish){
 						
-						group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); // 
+						Map<String, Double> aFlux = group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); // 
+						
+						for (String nutrient: aFlux.keySet()) {
+							
+							totalFluxes.put(nutrient,totalFluxes.get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); 
+						}
+						
+						
+						
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();
+					
+					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";"
+					+ riverBasin.getName() + "; " + totalFluxes);
+					
 				}
 				else {
 					riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
 				}
+				
 
 				// System.out.println("("+numberOfGenitors+")");
 				//System.out.println("  BEFORE " +riverBasin.getSpawnerOrigins().keySet());

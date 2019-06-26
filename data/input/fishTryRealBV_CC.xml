@@ -269,11 +269,6 @@
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
-				<species.ExportLenghtAgeDistribution>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>lengthAgeDistribution</fileNameOutput>
-				</species.ExportLenghtAgeDistribution>
 
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
