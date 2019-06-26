@@ -503,7 +503,7 @@ public static void main(String[] args)	{
 	/* Create XML file 
 	 * 
 	 */
-	//System.out.println((new	XStream(new DomDriver())).toXML(fn));
+	System.out.println((new	XStream(new DomDriver())).toXML(fn));
 
 } 
 }
