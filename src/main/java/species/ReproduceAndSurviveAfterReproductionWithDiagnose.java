@@ -341,7 +341,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// --------------------------------------------------------------------------------------------------
 					for (DiadromousFish fish : deadFish){
 						
-						System.out.println(group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish)); // 
+						group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); // 
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();

@@ -1,6 +1,5 @@
 <list>
 	<species.DiadromousFishGroup>
-		<useCemetery>true</useCemetery>
 		<name>species A</name>
 		<color>
 			<red>255</red>
@@ -29,8 +28,7 @@
 			</excretionRate>
 			<fishFeaturesPreSpawning class="hashtable">
 				<entry>
-					<species.DiadromousFish_-Gender>MALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>bLW</string>
@@ -43,8 +41,7 @@
 					</hashtable>
 				</entry>
 				<entry>
-					<species.DiadromousFish_-Gender>FEMALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>bLW</string>
@@ -59,8 +56,7 @@
 			</fishFeaturesPreSpawning>
 			<fishFeaturesPostSpawning class="hashtable">
 				<entry>
-					<species.DiadromousFish_-Gender>MALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>bLW</string>
@@ -73,8 +69,7 @@
 					</hashtable>
 				</entry>
 				<entry>
-					<species.DiadromousFish_-Gender>FEMALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>bLW</string>
@@ -99,20 +94,17 @@
 			</juvenileFeatures>
 			<spawnedGametesWeight class="hashtable">
 				<entry>
-					<species.DiadromousFish_-Gender>MALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<double>44.8</double>
 				</entry>
 				<entry>
-					<species.DiadromousFish_-Gender>FEMALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<double>131.0</double>
 				</entry>
 			</spawnedGametesWeight>
 			<compoCarcassPreSpawning class="hashtable">
 				<entry>
-					<species.DiadromousFish_-Gender>MALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>P</string>
@@ -125,8 +117,7 @@
 					</hashtable>
 				</entry>
 				<entry>
-					<species.DiadromousFish_-Gender>FEMALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>P</string>
@@ -141,8 +132,7 @@
 			</compoCarcassPreSpawning>
 			<compoCarcassPostSpawning class="hashtable">
 				<entry>
-					<species.DiadromousFish_-Gender>MALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>P</string>
@@ -155,8 +145,7 @@
 					</hashtable>
 				</entry>
 				<entry>
-					<species.DiadromousFish_-Gender>FEMALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>P</string>
@@ -171,8 +160,7 @@
 			</compoCarcassPostSpawning>
 			<compoGametes class="hashtable">
 				<entry>
-					<species.DiadromousFish_-Gender>MALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>P</string>
@@ -185,8 +173,7 @@
 					</hashtable>
 				</entry>
 				<entry>
-					<species.DiadromousFish_-Gender>FEMALE
-					</species.DiadromousFish_-Gender>
+					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
 							<string>P</string>
@@ -210,15 +197,12 @@
 				</entry>
 			</compoJuvenile>
 		</fishNutrient>
-		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv
-		</fileNameInputForInitialObservation>
+		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
 		<centileForRange>0.95</centileForRange>
-		<parameterSetfileName>data/input/reality/parameterSet.csv
-		</parameterSetfileName>
+		<parameterSetfileName>data/input/reality/parameterSet.csv</parameterSetfileName>
 		<parameterSetLine>0</parameterSetLine>
 		<yearOfTheUpdate>0</yearOfTheUpdate>
-		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv
-		</basinsToUpdateFile>
+		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
 		<processes>
 			<processesAtBegin>
@@ -331,16 +315,16 @@
 						<long>2000</long>
 						<long>2100</long>
 					</years>
-					<fileNameOutput>data/output/fluxes</fileNameOutput>
+					<fileNameOutput>fluxes</fileNameOutput>
 				</species.IdentifyPopulation>
 				<species.TypeTrajectoryCV>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<fileNameOutput>data/output/JeuParam100_2100RCP85_A_essai
+					<fileNameOutput>JeuParam100_2100RCP85_A_essai
 					</fileNameOutput>
 				</species.TypeTrajectoryCV>
 
 			</processesAtEnd>
 		</processes>
-		<useCemetery>false</useCemetery>
+		<useCemetery>true</useCemetery>
 	</species.DiadromousFishGroup>
 </list>
