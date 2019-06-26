@@ -25,7 +25,7 @@ public class PopulateWithASinglePopulation extends AquaNismsGroupProcess<Diadrom
 
 		Basin basin = group.getEnvironment().getRiverBasins()[bassinInd];
 		for (int i=0; i < nbSIPerBasin; i++){
-			group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbIndPerSI, Gender.UNDIFFERENCIED));
+			group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbIndPerSI, Gender.FEMALE));
 		}
 	}
 }

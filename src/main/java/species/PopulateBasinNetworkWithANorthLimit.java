@@ -47,7 +47,7 @@ public class PopulateBasinNetworkWithANorthLimit extends AquaNismsGroupProcess<D
 		for (RiverBasin basin : group.getEnvironment().getRiverBasins()){
 			if (basin.getLatitude()<=northLimitLatitude){
 			for (int i=0; i < nbSIPerBasin; i++){
-				group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbFishPerSI, Gender.UNDIFFERENCIED));
+				group.addAquaNism(new DiadromousFish(group.getPilot(), basin, initialLength, nbFishPerSI, Gender.FEMALE));
 			}
 		}
 		}

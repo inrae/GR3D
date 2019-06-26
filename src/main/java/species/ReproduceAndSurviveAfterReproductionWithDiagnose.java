@@ -61,6 +61,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 	private transient NormalGen genNormal;
 	private transient MortalityFunction mortalityFunction;
+	/**
+	 *  relationship between
+	 *  	recruitment in number of juvenile on spawning grounds
+	 *     stock in number of FEMALES
+	 * @unit
+	 */
 	private transient StockRecruitmentRelationship stockRecruitmentRelationship;
 	// private transient UniformGen genUniform;
 
@@ -85,10 +91,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 				double b, c, alpha, beta, amountPerSuperIndividual ,  S95, S50 ;
-				double numberOfGenitors = 0.;
+				double numberOfFemaleGenitors = 0.;
 				double numberOfAutochtones = 0.;
-				double numberOfSpawnerForFirstTime = 0.;
-				double spawnersForFirstTimeAgesSum = 0.;
+				double numberOfFemaleSpawnerForFirstTime = 0.;
+				double femaleSpawnersForFirstTimeAgesSum = 0.;
 				long survivalAmount;
 				double muRecruitment = 0.;
 				//double weightOfGenitors = 0.;
@@ -145,15 +151,16 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					Map<Integer, Long> ageOfNativeSpawners = new TreeMap<Integer, Long>(); 
 
 					// compute the number of spawners and keep the origines of the spawners
-					for( DiadromousFish fish : fishInBasin){
-						if( fish.isMature()){
+					for (DiadromousFish fish : fishInBasin){
+						
+						if (fish.getGender() == Gender.FEMALE  &  fish.isMature()){
 							
 							//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+")");
 							if (fish.getNumberOfReproduction() < 1) {
-								numberOfSpawnerForFirstTime++;
-								spawnersForFirstTimeAgesSum += fish.getAge();
+								numberOfFemaleSpawnerForFirstTime++;
+								femaleSpawnersForFirstTimeAgesSum += fish.getAge();
 							}
-							numberOfGenitors += fish.getAmount() ;
+							numberOfFemaleGenitors += fish.getAmount() ;
 
 							// spawner per origine
 							String basinName = fish.getBirthBasin().getName();
@@ -182,7 +189,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					}
 
 					// keep the spawner number
-					riverBasin.setLastSpawnerNumber(numberOfGenitors);
+					riverBasin.setLastSpawnerNumber(numberOfFemaleGenitors);
 
 					// --------------------------------------------------------------------------------------------------
 					// Diagnose  of the population dynamics in the basin
@@ -193,7 +200,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 						// initialise the mortality function for the autochnous spawners
 						// use to approximate the mortality of all the spawners to give a proxy of the Allee trap 
-						if (numberOfGenitors > 0.) {
+						if (numberOfFemaleGenitors > 0.) {
 							List<Trio<Integer, Long, Long>> mortalityData= new ArrayList<Trio<Integer, Long, Long>>();
 							// first age
 							// second effective of native spwaner
@@ -224,7 +231,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								"\tZcrash="+ stockRecruitmentRelationship.getSigmaZcrash() + 
 								"\tZ="+ riverBasin.getNativeSpawnerMortality());
 						System.out.println("\tStrap="+stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality())+
-								"\tStotal="+numberOfGenitors+"\tSautochthonous="+
+								"\tStotal="+numberOfFemaleGenitors+"\tSautochthonous="+
 								spawnerOriginsDuringReproduction.get(riverBasin.getName()));
 
 
@@ -236,7 +243,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							if (riverBasin.getNativeSpawnerMortality()>stockRecruitmentRelationship.getSigmaZcrash())
 								message="overZcrash";
 							else {
-								if (numberOfGenitors < stockTrap)
+								if (numberOfFemaleGenitors < stockTrap)
 									message = "inTrapWithStrayers";
 								else {
 									if (spawnerOriginsDuringReproduction.get(riverBasin.getName()) < stockTrap)
@@ -253,10 +260,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// Reproduction process (number of recruits)
 					// --------------------------------------------------------------------------------------------------
 					
-					if (numberOfGenitors > 0.) {
+					if (numberOfFemaleGenitors > 0.) {
 					
 						//BH Stock-Recruitment relationship with logistic depensation
-						double meanNumberOfRecruit = stockRecruitmentRelationship.getRecruitment(numberOfGenitors);
+						double meanNumberOfRecruit = stockRecruitmentRelationship.getRecruitment(numberOfFemaleGenitors);
 
 						//  lognormal random draw
 						muRecruitment = Math.log(meanNumberOfRecruit) - (Math.pow(sigmaRecruitment,2))/2;
@@ -265,11 +272,11 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						//System.out.println(group.getPilot().getCurrentTime()+"  "+Time.getSeason(group.getPilot())+"  "+ riverBasin.getName()+": " + numberOfGenitors + "  spwaners \tgive "+ numberOfRecruit + " recruits");
 						
 						// keep last % of  autochtone
-						riverBasin.getLastPercentagesOfAutochtones().push(numberOfAutochtones * 100 / numberOfGenitors);
+						riverBasin.getLastPercentagesOfAutochtones().push(numberOfAutochtones * 100 / numberOfFemaleGenitors);
 
 						// keep the number of spawners for the firt time in the basin
-						if (numberOfSpawnerForFirstTime>0){
-							riverBasin.getSpawnersForFirstTimeMeanAges().push(spawnersForFirstTimeAgesSum/numberOfSpawnerForFirstTime);
+						if (numberOfFemaleSpawnerForFirstTime>0){
+							riverBasin.getSpawnersForFirstTimeMeanAges().push(femaleSpawnersForFirstTimeAgesSum/numberOfFemaleSpawnerForFirstTime);
 						}else{
 							riverBasin.getSpawnersForFirstTimeMeanAges().push(0.);
 						}
@@ -286,7 +293,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							long effectiveAmount =  numberOfRecruit / numberOfsuperIndividual;
 
 							for (int i = 0; i < numberOfsuperIndividual; i++){
-								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount, Gender.UNDIFFERENCIED));
+								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount, Gender.FEMALE));
 							}
 
 							// stock the first year when recruitment is non nul
