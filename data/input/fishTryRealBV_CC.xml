@@ -7,9 +7,10 @@
 			<blue>0</blue>
 			<alpha>255</alpha>
 		</color>
-		<linfVonBert>60.0</linfVonBert>
+		<linfVonBert>70.0</linfVonBert>
 		<dMaxDisp>300.0</dMaxDisp>
-		<lFirstMaturity>40.0</lFirstMaturity>
+		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
+		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<fishNutrient>
 			<nutrientsOfInterest>
 				<string>N</string>
@@ -219,6 +220,7 @@
 				<environment.InformTime>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 				</environment.InformTime>
+
 				<species.PlopProcess>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<temporisation>0</temporisation>
@@ -233,7 +235,8 @@
 					<tempMinGrow>3.0</tempMinGrow>
 					<tempMaxGrow>26.0</tempMaxGrow>
 					<tempOptGrow>17.0</tempOptGrow>
-					<kOpt>0.3900707</kOpt>
+					<kOptForFemale>0.5363472</kOptForFemale>
+					<kOptForMale>0.3900707</kOptForMale>
 					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
 				</species.Grow>
 
@@ -269,6 +272,11 @@
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
+				<species.ExportLenghtAgeDistribution>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>lengthAgeDistribution</fileNameOutput>
+				</species.ExportLenghtAgeDistribution>
 
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
@@ -320,6 +328,6 @@
 
 			</processesAtEnd>
 		</processes>
-		<useCemetery>true</useCemetery>
+		<useCemetery>false</useCemetery>
 	</species.DiadromousFishGroup>
 </list>

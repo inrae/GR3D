@@ -51,19 +51,27 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit
 	 */
 	public double dMaxDisp = 300.;
-	
+
 	/**
-	 *  length at first maturity. At that length the fish become Stage.MATURE
+	 *  length at first maturity. At that length the female become Stage.MATURE
 	 * @unit cm
 	 */
-	public double lFirstMaturity = 40.;
-	
+	public double lFirstMaturityForFemale = 55.;
+
+
+	/**
+	 *  length at first maturity. At that length the female become Stage.MATURE
+	 * @unit cm
+	 */
+	public double lFirstMaturityForMale = 40.;
+
+
 	/**
 	 * Routine to compute nutrient fluxes operated by a single individual (TODO by a single super individual). 
 	 * 
 	 */
 	private  FishNutrient fishNutrient; 
-	
+
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 
 	/**
@@ -112,11 +120,19 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private transient Map<String, Duo<Double, Double>> basinsToUpdate;
 
 	/**
-	 * Brody growth coefficient of the von Bertalanffy growth curve (from the parameterset file)
+	 * Brody growth coefficient of the von Bertalanffy growth curve for female (calculated from the parameterset file)
 	 *  	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit year-1
 	 */
-	private transient double kOpt; 
+	private transient double kOptForFemale; 
+
+	/**
+	 * Brody growth coefficient of the von Bertalanffy growth curve for male (calculated from the parameterset file)
+	 *  	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit year-1
+	 */
+	private transient double kOptForMale; 
+
 	/**
 	 * minimum temperature for the reproduction (from the parameterset file)
 	 * @unit °C
@@ -129,25 +145,25 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit
 	 */
 	private transient List<Duo<Double, Double>> parameterSets;
-	
-	
+
+
 
 	public static void main(String[] args) {
 		DiadromousFishGroup diadromousFishGroup = new DiadromousFishGroup(new Pilot(), null, null);
-		
+
 		double aResidenceTime =30; 
-		
-		
+
+
 		Map <String, Double> anExcretionRate = new Hashtable <String, Double>(); 
 		anExcretionRate.put("N", 24.71E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
 		anExcretionRate.put("P", 2.17E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
-		
-		
+
+
 		/*
 		 * A feature pre spawning 
 		 */
 		Map<DiadromousFish.Gender, Map<String, Double>> aFeaturePreSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
-		
+
 		/*
 		 * For females
 		 */
@@ -170,12 +186,12 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		//aFeature.put("GSI",.08);
 		aFeaturePreSpawning.put(Gender.MALE,aFeature);
 
-		
+
 		/*
 		 * a Feature post Spawning 
 		 */
 		Map<DiadromousFish.Gender, Map<String, Double>> aFeaturePostSpawning = new Hashtable<DiadromousFish.Gender, Map<String,Double>>();
-		
+
 		/*
 		 * For females 
 		 */
@@ -191,7 +207,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		 * For males 
 		 */
 		aFeature = new Hashtable<String,Double>();
-		
+
 		aFeature.put("aLW", Math.exp(-4.5675));// parametre "a" de la relation taille/poids - Coefficient d'allometrie
 		aFeature.put("bLW", 2.9973); 
 		//aFeature.put("GSI",.05); From BDalosesBruch 
@@ -199,12 +215,12 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
 		aFeaturePostSpawning.put(Gender.MALE,aFeature);
 
-		
+
 		Map<DiadromousFish.Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
 		aGameteSpawned.put(Gender.FEMALE, 131.); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
 		aGameteSpawned.put(Gender.MALE, 44.8); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
-		
-		
+
+
 		// carcass composition for fish before spawning
 		Map<DiadromousFish.Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 		Map<String,Double> aCompo = new Hashtable<String,Double>();
@@ -217,7 +233,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		aCompo.put("P", 0.666 / 100.);
 		aCompoCarcassPreSpawning.put(Gender.MALE,aCompo);
 
-		
+
 
 		// carcass composition for fish after spawning
 		Map<DiadromousFish.Gender, Map<String, Double>> aCompoCarcassPostSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
@@ -231,7 +247,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		aCompo.put("P", 0.961 / 100.);
 		aCompoCarcassPostSpawning.put(Gender.MALE,aCompo);
 
-		
+
 
 		// Gametes composition approximated by the difference between gonads weight before and after spawning. 
 		Map<DiadromousFish.Gender, Map<String, Double>> aCompoGametes = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
@@ -251,7 +267,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		Map<String,Double> aJuvenileFeatures = new Hashtable<String, Double>();
 		aJuvenileFeatures.put("bLW",3.0306);
 		aJuvenileFeatures.put("aLW",Math.exp(-11.942) * Math.pow(10., aJuvenileFeatures.get("bLW")));
-		
+
 
 		// carcass composition for juveniles fish 
 		Map<String, Double> aCompoJuveniles = new Hashtable<String,Double>();
@@ -263,13 +279,13 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		nutrientsOfInterest.add("N");
 		nutrientsOfInterest.add("P");
 
-	
-		
+
+
 		diadromousFishGroup.fishNutrient = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
 				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 				aJuvenileFeatures, aCompoJuveniles);
-		
-		
+
+
 		System.out.println((new XStream(new DomDriver())).toXML(diadromousFishGroup));
 	}
 
@@ -357,8 +373,9 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 
 		// charge kopt et temMinRep depuis le fichier de parametre. Sinon (parameterSetLine<=0), ce sont les 
-		// valeur dasn le procoessus de reroduction qui sont utilis�
-		kOpt=Double.NaN;
+		// valeurs dans le processus de reproduction qui sont utilis�
+		kOptForFemale=Double.NaN;
+		kOptForMale=Double.NaN;
 		tempMinRep =Double.NaN;
 		if (parameterSetLine>0){
 			parameterSets = new ArrayList<Duo<Double,Double>>(10);
@@ -391,14 +408,32 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 				e.printStackTrace();
 			}
 
-			kOpt = parameterSets.get(parameterSetLine-1).getFirst();
+			double kOpt = parameterSets.get(parameterSetLine-1).getFirst();
+			// 40 correspond to the lFirstMaturity used by Rougier to calibrate the model
+			kOptForMale = kOpt *lFirstMaturityForMale / 40.;
+			kOptForFemale= kOpt * lFirstMaturityForFemale / 40.;
 			tempMinRep = parameterSets.get(parameterSetLine-1).getSecond();
 		}
 	}
 
-	public double getKOpt(){
+	/**
+	 * @param fish
+	 * @param group
+	 * @return the Brody coeff   
+	 */
+	public  double getKOpt(DiadromousFish fish) {
+		double kOpt = 0.;
+
+		if (fish.getGender() == Gender.FEMALE)
+			kOpt = kOptForFemale;
+		else if (fish.getGender() == Gender.MALE)
+			kOpt = kOptForMale;
+		else
+			kOpt=  (kOptForFemale + kOptForMale) / 2.;
+
 		return kOpt;
 	}
+
 
 	public double getTempMinRep(){
 		return tempMinRep;
@@ -503,20 +538,21 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return dMaxDisp;
 	}
 
-	public double getlFirstMaturity() {
-		return lFirstMaturity;
+	public double getlFirstMaturityForFemale() {
+		return lFirstMaturityForFemale;
 	}
 
+
+	public double getlFirstMaturityForMale() {
+		return lFirstMaturityForMale;
+	}
+
+
 	public  FishNutrient getFishNutrient() {
-		
 		return fishNutrient; 
 	}
-	
-	public void setlFirstMaturity(double lFirstMaturity) {
-		this.lFirstMaturity = lFirstMaturity;
-	}
-	
-	
+
+
 	// ================================================================
 	// statictis for calibration
 	// ================================================================
@@ -579,8 +615,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 		return sumLogWhereAbs + sumLogWherePres;
 	}
-	
-	
+
+
 	// ========================================================
 	// obeserver to explore the distribution
 	// ========================================================
@@ -597,8 +633,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return latitude;
 	}
-	
-	
+
+
 	@Observable(description="Number of colonized basins")
 	public double getNbColonizedBasins() {
 		int nb = 0;
@@ -611,7 +647,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return nb;
 	}
-	
+
 
 	@Observable(description="Northern colonized basins")
 	public double getNorthernBasins() {
@@ -626,7 +662,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return northernBasin;
 	}
 
-	
+
 	@Observable(description="Southern colonized basins")
 	public double getSouthernBasins() {
 		int southernBasin = Integer.MIN_VALUE;
@@ -671,7 +707,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return rangeDistribution;
 	}
 
-	
+
 	@Observable(description = "Range distribution")
 	public Double[] getRangeDistribution() {
 		double southernBasin = 0;
@@ -720,7 +756,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return eff;
 	}
 
-	
+
 	@Override
 	public void addAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -728,7 +764,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		fish.getPosition().addFish(fish, this);
 	}
 
-	
+
 	@Override
 	public void removeAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -736,13 +772,13 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		fish.getPosition().removeFish(fish, this);
 	}
 
-	
+
 	@Override
 	public int compareTo(DiadromousFishGroup t) {
 		return name.compareTo(t.name);
 	}
 
-	
+
 	/**
 	 * 
 	 * concat at RngSatusIndex, temperatureCatchmentFile
