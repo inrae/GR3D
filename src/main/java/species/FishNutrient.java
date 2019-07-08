@@ -203,7 +203,7 @@ public class FishNutrient {
 						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient); 
 				//double gametes = (totalWeightPre - totalWeightPost) FAUX car perte de poids somatique due a la reproduction  
 				double gametes = spawnedGametesWeight.get(fish.getGender())
-						*compoGametes.get(fish.getGender()).get(nutrient); //TODO: FAUX ! Revoir comment calculer les gamètes 
+						*compoGametes.get(fish.getGender()).get(nutrient); 
 				double excretion = totalWeightPost
 						* residenceTime 
 						* excretionRate.get(nutrient);
@@ -438,7 +438,7 @@ public static void main(String[] args)	{
 	aCompoGametes.put(Gender.FEMALE,aCompo);
 
 	aCompo = new Hashtable<String,Double>();
-	aCompo.put("N", 3.250 / 100.);
+	aCompo.put("N", 3.250 / 100.); // Approximée par la compo des gonades 
 	aCompo.put("P", 0.724 / 100.);
 	aCompoGametes.put(Gender.MALE,aCompo);
 
