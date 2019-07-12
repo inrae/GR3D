@@ -128,7 +128,6 @@ public class FishNutrient {
 			Map <String, Double> excretionRate,
 			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPreSpawning,
 			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPostSpawning,
-			//Map<DiadromousFish.Gender, Double> gameteSpawned, 
 			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPreSpawning,
 			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning, 
 			Map<DiadromousFish.Gender, Map<String, Double>> compoGametes,
@@ -141,7 +140,6 @@ public class FishNutrient {
 		this.residenceTime = residenceTime; 
 		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
 		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
-		//this.spawnedGametesWeight = gameteSpawned; 
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
 		this.compoCarcassPostSpawning = compoCarcassPostSpawning;
 		this.compoGametes = compoGametes;
@@ -240,7 +238,6 @@ public class FishNutrient {
 				
 				double gametes = this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST)
 						* compoGametes.get(fish.getGender()).get(nutrient);
-				// double gametes = spawnedGametesWeight.get(fish.getGender()) * compoGametes.get(fish.getGender()).get(nutrient);
 				double excretion = totalWeightPost 
 						* residenceTime 
 						* excretionRate.get(nutrient);
@@ -431,13 +428,6 @@ public static void main(String[] args)	{
 
 	System.out.println("aFeaturePostSpawning: " + aFeaturePostSpawning.toString());
 
-	
-	//Map<Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
-	//aGameteSpawned.put(Gender.FEMALE, 131.); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
-	//aGameteSpawned.put(Gender.MALE, 44.8); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
-	
-	//System.out.println("aGameteSpawned: " + aGameteSpawned.toString());
-	
 	// carcass composition for fish before spawning
 	Map<Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 	Map<String,Double> aCompo = new Hashtable<String,Double>();
