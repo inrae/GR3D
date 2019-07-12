@@ -69,7 +69,7 @@ public class FishNutrient {
 	 * value g
 	 * usually computed as the difference between unspawned gonad (inbound) and spawned gonad (outbound; "spent gonad") 
 	 */
-	private Map <DiadromousFish.Gender, Double> spawnedGametesWeight; 
+	//private Map <DiadromousFish.Gender, Double> spawnedGametesWeight; 
 	
 
 	/**
@@ -128,7 +128,7 @@ public class FishNutrient {
 			Map <String, Double> excretionRate,
 			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPreSpawning,
 			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPostSpawning,
-			Map<DiadromousFish.Gender, Double> gameteSpawned, 
+			//Map<DiadromousFish.Gender, Double> gameteSpawned, 
 			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPreSpawning,
 			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning, 
 			Map<DiadromousFish.Gender, Map<String, Double>> compoGametes,
@@ -141,7 +141,7 @@ public class FishNutrient {
 		this.residenceTime = residenceTime; 
 		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
 		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
-		this.spawnedGametesWeight = gameteSpawned; 
+		//this.spawnedGametesWeight = gameteSpawned; 
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
 		this.compoCarcassPostSpawning = compoCarcassPostSpawning;
 		this.compoGametes = compoGametes;
@@ -202,7 +202,7 @@ public class FishNutrient {
 				double carcass = totalWeightPost 
 						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient); 
 				//double gametes = (totalWeightPre - totalWeightPost) FAUX car perte de poids somatique due a la reproduction  
-				double gametes = spawnedGametesWeight.get(fish.getGender())
+				double gametes = this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST)
 						*compoGametes.get(fish.getGender()).get(nutrient); 
 				double excretion = totalWeightPost
 						* residenceTime 
@@ -237,14 +237,14 @@ public class FishNutrient {
 				//TODO Fix with new data 
 				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
 				//Gamete compositions depends on sex. 
-				double gametes = spawnedGametesWeight.get(fish.getGender())
+				
+				double gametes = this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST)
 						* compoGametes.get(fish.getGender()).get(nutrient);
+				// double gametes = spawnedGametesWeight.get(fish.getGender()) * compoGametes.get(fish.getGender()).get(nutrient);
 				double excretion = totalWeightPost 
 						* residenceTime 
 						* excretionRate.get(nutrient);
 				double nutrientImport = gametes + excretion;
-				
-			
 				
 				nutrientsInput.put(nutrient, nutrientImport); 	
 			}
@@ -297,6 +297,7 @@ public class FishNutrient {
 		
 		return weight;
 	}
+
 	
 	/**
 	 * Compute the weight for a fish with length (cm) 
@@ -308,9 +309,35 @@ public class FishNutrient {
 		return getWeight (fish, SpawningPosition.PRE);
 	}
 	
+	public double getGonadWeight (DiadromousFish fish, SpawningPosition spawningPosition) {
+		
+		double gonadWeight = 0.; 
+		if (fish.getStage()==Stage.MATURE);
+			if (spawningPosition == SpawningPosition.PRE)
+			gonadWeight = Math.exp(fishFeaturesPreSpawning.get(fish.getGender()).get("aLW_Gonad")
+								+ fishFeaturesPreSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
+					 else 
+						gonadWeight = Math.exp(fishFeaturesPostSpawning.get(fish.getGender()).get("aLW_Gonad")
+								+ fishFeaturesPostSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
+				
+				return gonadWeight;
+	}
+	
+
+	/**
+	 * Compute the gonad weight for a fish with length (cm) to compute the gamete emission (g). 
+	 * @param fish
+	 * @return weight (g)
+	 */
+	public double getGonadWeight (DiadromousFish fish) {
+
+		return getGonadWeight (fish, SpawningPosition.PRE);
+	}	
 	
 	
-public ArrayList<String> getNutrientsOfInterest() {
+	
+	
+				public ArrayList<String> getNutrientsOfInterest() {
 		return nutrientsOfInterest;
 	}
 
@@ -349,6 +376,8 @@ public static void main(String[] args)	{
 
 	aFeature.put("aLW", Math.exp(-4.9078)); //weight size relationship computed from BDalosesBruch 
 	aFeature.put("bLW", 3.147);
+	aFeature.put("aLW_Gonad", -5.2425); // issu de la relation taille - poids des gonades Bruch
+	aFeature.put("bLW_Gonad", 2.6729); // issu de la relation taille - poids des gonades Bruch
 	//aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
 	//aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
 	//aFeature.put("GSI",0.15); 
@@ -360,6 +389,8 @@ public static void main(String[] args)	{
 	aFeature = new Hashtable<String,Double>();
 	aFeature.put("aLW", Math.exp(-1.304)); 
 	aFeature.put("bLW", 2.1774);
+	aFeature.put("aLW_Gonad", -8.8744); 
+	aFeature.put("bLW_Gonad", 3.3838); 
 	//aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
 	//aFeature.put("GSI",.08);
 	aFeaturePreSpawning.put(Gender.MALE,aFeature);
@@ -377,6 +408,8 @@ public static void main(String[] args)	{
 	aFeature = new Hashtable<String,Double>();
 	aFeature.put("aLW", Math.exp(-4.3276)); //weight size relationship computed from BDalosesBruch 
 	aFeature.put("bLW", 2.9418);
+	aFeature.put("aLW_Gonad", -6.6234); // issu de la relation taille - poids des gonades Bruch
+	aFeature.put("bLW_Gonad", 2.8545); // issu de la relation taille - poids des gonades Bruch
 	//aFeature.put("GSI",0.10); //From BDalosesBruch 
 	//aFeature.put("aLW",aFeaturePreSpawning.get(Gender.FEMALE).get("aLW")/(1+aFeature.get("GSI"))); // parametre "a" de la relation taille/poids avec Lt en cm - Traduit la condition
 	//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.FEMALE).get("bLW"));// parametre "b" de la relation taille/poids - Coefficient d'allometrie
@@ -389,6 +422,8 @@ public static void main(String[] args)	{
 	
 	aFeature.put("aLW", Math.exp(-4.5675));// parametre "a" de la relation taille/poids - Coefficient d'allometrie
 	aFeature.put("bLW", 2.9973); 
+	aFeature.put("aLW_Gonad", -11.285); // issu de la relation taille - poids des gonades Bruch
+	aFeature.put("bLW_Gonad", 3.8331); // issu de la relation taille - poids des gonades Bruch
 	//aFeature.put("GSI",.05); From BDalosesBruch 
 	//aFeature.put("aLW",aFeaturePreSpawning.get(Gender.MALE).get("aLW")/(1+aFeature.get("GSI")));
 	//aFeature.put("bLW",aFeaturePreSpawning.get(Gender.MALE).get("bLW"));
@@ -396,11 +431,12 @@ public static void main(String[] args)	{
 
 	System.out.println("aFeaturePostSpawning: " + aFeaturePostSpawning.toString());
 
-	Map<Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
-	aGameteSpawned.put(Gender.FEMALE, 131.); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
-	aGameteSpawned.put(Gender.MALE, 44.8); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
 	
-	System.out.println("aGameteSpawned: " + aGameteSpawned.toString());
+	//Map<Gender, Double> aGameteSpawned = new Hashtable <DiadromousFish.Gender,Double>();
+	//aGameteSpawned.put(Gender.FEMALE, 131.); // Compute from the difference between spawned and unspawned ovaries ie correspond to a mean weight of eggs spawned
+	//aGameteSpawned.put(Gender.MALE, 44.8); // Compute from the difference between spawned and unspawned testes ie correspond to a mean weight of sperm spawned
+	
+	//System.out.println("aGameteSpawned: " + aGameteSpawned.toString());
 	
 	// carcass composition for fish before spawning
 	Map<Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
@@ -466,7 +502,7 @@ public static void main(String[] args)	{
 	System.out.println("nutrientsOfInterest: " + nutrientsOfInterest);
 
 	
-	FishNutrient fn = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
+	FishNutrient fn = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, 
 			aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 			aJuvenileFeatures, aCompoJuveniles);
 
