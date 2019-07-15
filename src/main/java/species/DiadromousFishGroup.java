@@ -265,7 +265,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	
 		
-		diadromousFishGroup.fishNutrient = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
+		diadromousFishGroup.fishNutrient = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, 
 				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 				aJuvenileFeatures, aCompoJuveniles);
 		
