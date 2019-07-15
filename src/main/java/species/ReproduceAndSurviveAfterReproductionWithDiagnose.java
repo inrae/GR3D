@@ -110,12 +110,17 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				if (fishInBasin != null){
 
 					//Initiate the total fluxes for this basin 
-					Map<String, Double> totalInputFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
-					for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
-						totalInputFluxes.put(nutrient, 0.); // ON MET A JOUR NOTRE map 
+					Map<String, Map<String, Double>> totalInputFluxes = new Hashtable<String, Map <String, Double>>(); //On créer la Map pour stocker les flux 
+					totalInputFluxes.put("autochtonous", new Hashtable < String, Double>()); 
+					totalInputFluxes.put("allochtonous", new Hashtable < String, Double>()); 
+					for (String origin: totalInputFluxes.keySet()) {
+						for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
+							totalInputFluxes.get(origin).put(nutrient, 0.); // ON MET A JOUR NOTRE map 
+						}
+						totalInputFluxes.get(origin).put("biomass",0.); 
 					}
 
-					totalInputFluxes.put("biomass",0.); 
+
 					// --------------------------------------------------------------------------------------------------
 					// definition of the stock recruiment relationship
 					// --------------------------------------------------------------------------------------------------
@@ -168,7 +173,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								numberOfFemaleSpawnerForFirstTime++;
 								femaleSpawnersForFirstTimeAgesSum += fish.getAge();
 							}
-							numberOfFemaleGenitors += fish.getAmount() ;
+							numberOfFemaleGenitors += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)
 
 							// spawner per origine
 							String basinName = fish.getBirthBasin().getName();
@@ -190,6 +195,11 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
 							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
 							double biomass = 0.; 
+							String origin; 
+							if(fish.getBirthBasin()== riverBasin) 
+								origin = "autochtonous"; 
+							else
+								origin = "allochtonous"; 
 							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
 
 								//Export for fishes survived after spawning (survivalAmount) : excretion + gametes
@@ -200,31 +210,31 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 								for (String nutrient: aFluxAfterSurvival.keySet()) {
 									//For survival fish
-									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 
+									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 
 
 									//For dead fish
-									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount)); 
+									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount)); 
 								}
-								
+
 								//compute biomass for dead fish 
 								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount() - survivalAmount); 
-								totalInputFluxes.put("biomass", totalInputFluxes.get("biomass") + biomass);
-								
+								totalInputFluxes.get(origin).put("biomass", totalInputFluxes.get(origin).get("biomass") + biomass);
+
 								//update the amount of individual in the super-individual 
 								fish.setAmount(survivalAmount); 
 							}
 							else {
-								//Le superinvidu est mort !!! 
+								//Le superindividu est mort !!! 
 								deadFish.add(fish);
 
 								//Export for fished died before spawning (fish.getAmount): carcasses + excretion + gametes 
 								Map<String, Double> aFlux = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); // 
-								
+
 								for (String nutrient: aFlux.keySet()) {
-									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
+									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
 								}
-								 biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());
-								 totalInputFluxes.put("biomass", totalInputFluxes.get("biomass") + biomass); 
+								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());
+								totalInputFluxes.get(origin).put("biomass", totalInputFluxes.get(origin).get("biomass") + biomass); 
 							}
 						}
 					}
