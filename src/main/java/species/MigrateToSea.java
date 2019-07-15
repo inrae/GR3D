@@ -44,7 +44,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 				List<DiadromousFish> fishes = basin.getFishs(group);
 				
 				// ON ré-initialise notre map pour chauqe bassin 
-				for (String nutrient : group.getFishNutrient().getNutrientsOfInterest()) {
+				for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 					totalOutputFluxes.put(nutrient, 0.); 
 				}
 				totalOutputFluxes.put("biomass", 0.); //création de la biomasse 
@@ -54,10 +54,10 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 						destination = group.getEnvironment().getAssociatedSeaBasin(fish.getPosition());
 						fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, destination)); //Mentionne la sortie d'un poisson de la boucle 
 					
-						double biomass = group.getFishNutrient().getWeight(fish) * fish.getAmount(); 
+						double biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount(); 
 						
 						if (fish.getStage()==Stage.IMMATURE) {
-							Map <String, Double> aFluxExportedByJuveniles= group.getFishNutrient().computeNutrientsExportForJuveniles(fish); 
+							Map <String, Double> aFluxExportedByJuveniles= group.getNutrientRoutine().computeNutrientsExportForJuveniles(fish); 
 							for (String nutrient: aFluxExportedByJuveniles.keySet()) {
 								totalOutputFluxes.put(nutrient,totalOutputFluxes.get(nutrient) + aFluxExportedByJuveniles.get(nutrient) * fish.getAmount()); 	
 							}

@@ -111,7 +111,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 					//Initiate the total fluxes for this basin 
 					Map<String, Double> totalInputFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
-					for (String nutrient : group.getFishNutrient().getNutrientsOfInterest()) {
+					for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 						totalInputFluxes.put(nutrient, 0.); // ON MET A JOUR NOTRE map 
 					}
 
@@ -193,10 +193,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
 
 								//Export for fishes survived after spawning (survivalAmount) : excretion + gametes
-								Map <String, Double> aFluxAfterSurvival = group.getFishNutrient().computeNutrientsInputForSurvivalAfterSpawning(fish); 
+								Map <String, Double> aFluxAfterSurvival = group.getNutrientRoutine().computeNutrientsInputForSurvivalAfterSpawning(fish); 
 
 								//Export for fishes that dies after spawning (fish.getAmount - survivalAmount): excretion + gametes + carcasse 
-								Map<String, Double> aFluxForDeadFish = group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); 
+								Map<String, Double> aFluxForDeadFish = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); 
 
 								for (String nutrient: aFluxAfterSurvival.keySet()) {
 									//For survival fish
@@ -207,7 +207,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								}
 								
 								//compute biomass for dead fish 
-								biomass = group.getFishNutrient().getWeight(fish) * (fish.getAmount() - survivalAmount); 
+								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount() - survivalAmount); 
 								totalInputFluxes.put("biomass", totalInputFluxes.get("biomass") + biomass);
 								
 								//update the amount of individual in the super-individual 
@@ -218,12 +218,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								deadFish.add(fish);
 
 								//Export for fished died before spawning (fish.getAmount): carcasses + excretion + gametes 
-								Map<String, Double> aFlux = group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); // 
+								Map<String, Double> aFlux = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); // 
 								
 								for (String nutrient: aFlux.keySet()) {
 									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
 								}
-								 biomass = group.getFishNutrient().getWeight(fish) * (fish.getAmount());
+								 biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());
 								 totalInputFluxes.put("biomass", totalInputFluxes.get("biomass") + biomass); 
 							}
 						}

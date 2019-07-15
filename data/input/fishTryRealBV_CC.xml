@@ -10,7 +10,7 @@
 		<linfVonBert>60.0</linfVonBert>
 		<dMaxDisp>300.0</dMaxDisp>
 		<lFirstMaturity>40.0</lFirstMaturity>
-		<fishNutrient>
+		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
 				<string>P</string>
@@ -218,7 +218,7 @@
 					<double>0.02803</double>
 				</entry>
 			</compoJuvenile>
-		</fishNutrient>
+		</nutrientRoutine>
 
 		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
 		<centileForRange>0.95</centileForRange>
