@@ -163,6 +163,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction);
 							if (survivalAmount > 0) 
 								fish.setAmount(survivalAmount);
+								
 							else
 								deadFish.add(fish);
 						}
