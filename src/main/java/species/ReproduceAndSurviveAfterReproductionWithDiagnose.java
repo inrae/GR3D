@@ -110,11 +110,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				if (fishInBasin != null){
 
 					//Initiate the total fluxes for this basin 
-					Map<String, Double> totalFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
+					Map<String, Double> totalInputFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
 					for (String nutrient : group.getFishNutrient().getNutrientsOfInterest()) {
-						totalFluxes.put(nutrient, 0.); // ON MET A JOUR NOTRE map 
+						totalInputFluxes.put(nutrient, 0.); // ON MET A JOUR NOTRE map 
 					}
 
+					totalInputFluxes.put("biomass",0.); 
 					// --------------------------------------------------------------------------------------------------
 					// definition of the stock recruiment relationship
 					// --------------------------------------------------------------------------------------------------
@@ -188,30 +189,44 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
 							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
-							if (survivalAmount > 0) {
+							double biomass = 0.; 
+							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
 
 								//Export for fishes survived after spawning (survivalAmount) : excretion + gametes
 								Map <String, Double> aFluxAfterSurvival = group.getFishNutrient().computeNutrientsInputForSurvivalAfterSpawning(fish); 
-								for (String nutrient: aFluxAfterSurvival.keySet()) {
-									totalFluxes.put(nutrient,totalFluxes.get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 	
-								}
-								fish.setAmount(survivalAmount); }
-							else {
 
+								//Export for fishes that dies after spawning (fish.getAmount - survivalAmount): excretion + gametes + carcasse 
+								Map<String, Double> aFluxForDeadFish = group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); 
+
+								for (String nutrient: aFluxAfterSurvival.keySet()) {
+									//For survival fish
+									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 
+
+									//For dead fish
+									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount)); 
+								}
+								
+								//compute biomass for dead fish 
+								biomass = group.getFishNutrient().getWeight(fish) * (fish.getAmount() - survivalAmount); 
+								totalInputFluxes.put("biomass", totalInputFluxes.get("biomass") + biomass);
+								
+								//update the amount of individual in the super-individual 
+								fish.setAmount(survivalAmount); 
+							}
+							else {
+								//Le superinvidu est mort !!! 
 								deadFish.add(fish);
 
 								//Export for fished died before spawning (fish.getAmount): carcasses + excretion + gametes 
 								Map<String, Double> aFlux = group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); // 
+								
 								for (String nutrient: aFlux.keySet()) {
-									totalFluxes.put(nutrient,totalFluxes.get(nutrient) + aFlux.get(nutrient) * (fish.getAmount()) - survivalAmount); //Fish.getAmount - survivalAmount = total fishes died. 
-
+									totalInputFluxes.put(nutrient,totalInputFluxes.get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
 								}
-
-
+								 biomass = group.getFishNutrient().getWeight(fish) * (fish.getAmount());
+								 totalInputFluxes.put("biomass", totalInputFluxes.get("biomass") + biomass); 
 							}
-
 						}
-
 					}
 
 					// keep the spawner number
@@ -366,15 +381,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// Remove deadfish and compute the related nutrient fluxes 
 					// --------------------------------------------------------------------------------------------------
 					for (DiadromousFish fish : deadFish){
-
-
-
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();
 
-					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";"
-							+ riverBasin.getName() + "; " + totalFluxes);
+					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
+							+ riverBasin.getName() + "; " + totalInputFluxes);
 
 				}
 				else {
