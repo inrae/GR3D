@@ -227,6 +227,7 @@
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
+		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<processes>
 			<processesAtBegin>
 				<species.PopulateBasinNetworkWithANorthLimit>
@@ -306,11 +307,13 @@
 					<maxNumberOfSuperIndividualPerReproduction>50.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
+					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.MigrateToSea>
 
 				<environment.updateTemperatureInRealBasin>

@@ -13,7 +13,10 @@ import fr.cemagref.simaqualife.kernel.Processes;
 import fr.cemagref.simaqualife.pilot.Pilot;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -65,7 +68,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private  NutrientRoutine nutrientRoutine; 
 	
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
-
+	
 	/**
 	 *  centile to calucale the range of species distribution
 	 * @unit
@@ -100,6 +103,11 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
 	private String outputPath = "data/output/";
+	
+	private String fileNameFluxes = "fluxes";
+	
+	private transient BufferedWriter bWForFluxes;
+	private transient String sep;
 
 	/**
 	 *  map
@@ -394,6 +402,35 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			kOpt = parameterSets.get(parameterSetLine-1).getFirst();
 			tempMinRep = parameterSets.get(parameterSetLine-1).getSecond();
 		}
+		
+		// open an bufferad writer to export fluxes
+		if (fileNameFluxes != null){
+			sep = ";";
+		    new File(this.outputPath +fileNameFluxes).getParentFile().mkdirs();
+			try {
+				bWForFluxes = new BufferedWriter(new FileWriter(new File(this.outputPath+
+						fileNameFluxes +this.getSimulationId()+ ".csv")));
+
+				bWForFluxes.write("timestep"+sep+"year"+sep+"season"+sep+"basin"
+						+sep+"fluxType"+sep+"origine"+sep+"biomass");
+				for (String nutrient : nutrientRoutine.getNutrientsOfInterest()) {
+					bWForFluxes.write(sep+nutrient);
+				}
+				bWForFluxes.write("\n");
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	
+	
+	/**
+	 * @return the bWForFluxes
+	 */
+	public BufferedWriter getbWForFluxes() {
+		return bWForFluxes;
 	}
 
 	public double getKOpt(){
