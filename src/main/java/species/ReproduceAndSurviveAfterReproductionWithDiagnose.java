@@ -109,7 +109,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				List<DiadromousFish> fishInBasin = riverBasin.getFishs(group);
 				if (fishInBasin != null){
 					
-					Map<String, Double> totalFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
+					Map<String, Double> totalFluxes = new Hashtable<String, Double>(); //On crï¿½er la Map pour stocker les flux 
 					
 					for (String nutrient : group.getFishNutrient().getNutrientsOfInterest()) {
 						
@@ -364,8 +364,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					}
 					deadFish.clear();
 					
-					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";"
-					+ riverBasin.getName() + "; " + totalFluxes);
+					//System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";"
+					//+ riverBasin.getName() + "; " + totalFluxes);
 					
 				}
 				else {
