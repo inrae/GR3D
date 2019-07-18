@@ -62,7 +62,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * Routine to compute nutrient fluxes operated by a single individual (TODO by a single super individual). 
 	 * 
 	 */
-	private  FishNutrient fishNutrient; 
+	private  NutrientRoutine nutrientRoutine; 
 	
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 
@@ -265,7 +265,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	
 		
-		diadromousFishGroup.fishNutrient = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
+		diadromousFishGroup.nutrientRoutine = new NutrientRoutine(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, 
 				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 				aJuvenileFeatures, aCompoJuveniles);
 		
@@ -507,9 +507,9 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return lFirstMaturity;
 	}
 
-	public  FishNutrient getFishNutrient() {
+	public  NutrientRoutine getNutrientRoutine() {
 		
-		return fishNutrient; 
+		return nutrientRoutine; 
 	}
 	
 	public void setlFirstMaturity(double lFirstMaturity) {

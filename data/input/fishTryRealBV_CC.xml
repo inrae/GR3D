@@ -10,7 +10,7 @@
 		<linfVonBert>60.0</linfVonBert>
 		<dMaxDisp>300.0</dMaxDisp>
 		<lFirstMaturity>40.0</lFirstMaturity>
-		<fishNutrient>
+		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
 				<string>P</string>
@@ -31,6 +31,14 @@
 					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
+							<string>bLW_Gonad</string>
+							<double>3.3838</double>
+						</entry>
+						<entry>
+							<string>aLW_Gonad</string>
+							<double>-8.8744</double>
+						</entry>
+						<entry>
 							<string>bLW</string>
 							<double>2.1774</double>
 						</entry>
@@ -43,6 +51,14 @@
 				<entry>
 					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
+						<entry>
+							<string>bLW_Gonad</string>
+							<double>2.6729</double>
+						</entry>
+						<entry>
+							<string>aLW_Gonad</string>
+							<double>-5.2425</double>
+						</entry>
 						<entry>
 							<string>bLW</string>
 							<double>3.147</double>
@@ -59,6 +75,14 @@
 					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
+							<string>bLW_Gonad</string>
+							<double>3.8331</double>
+						</entry>
+						<entry>
+							<string>aLW_Gonad</string>
+							<double>-11.285</double>
+						</entry>
+						<entry>
 							<string>bLW</string>
 							<double>2.9973</double>
 						</entry>
@@ -71,6 +95,14 @@
 				<entry>
 					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
 					<hashtable>
+						<entry>
+							<string>bLW_Gonad</string>
+							<double>2.8545</double>
+						</entry>
+						<entry>
+							<string>aLW_Gonad</string>
+							<double>-6.6234</double>
+						</entry>
 						<entry>
 							<string>bLW</string>
 							<double>2.9418</double>
@@ -92,16 +124,6 @@
 					<double>0.006986429759979109</double>
 				</entry>
 			</juvenileFeatures>
-			<spawnedGametesWeight class="hashtable">
-				<entry>
-					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
-					<double>44.8</double>
-				</entry>
-				<entry>
-					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
-					<double>131.0</double>
-				</entry>
-			</spawnedGametesWeight>
 			<compoCarcassPreSpawning class="hashtable">
 				<entry>
 					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
@@ -196,7 +218,8 @@
 					<double>0.02803</double>
 				</entry>
 			</compoJuvenile>
-		</fishNutrient>
+		</nutrientRoutine>
+
 		<fileNameInputForInitialObservation>data/input/reality/Obs1900.csv</fileNameInputForInitialObservation>
 		<centileForRange>0.95</centileForRange>
 		<parameterSetfileName>data/input/reality/parameterSet.csv</parameterSetfileName>
@@ -245,19 +268,16 @@
 					<meanBvSurface>17351</meanBvSurface>
 					<standardDeviationBvSurface>35594</standardDeviationBvSurface>
 					<meanInterDistance>300.0</meanInterDistance>
-					<standardDeviationInterDistance>978.0
-					</standardDeviationInterDistance>
+					<standardDeviationInterDistance>978.0</standardDeviationInterDistance>
 					<pHomingForReachEquil>0.75</pHomingForReachEquil>
 					<pHomingAfterEquil>0.75</pHomingAfterEquil>
 					<NbYearForInstallPop>0</NbYearForInstallPop>
 					<riverMigrationSeason>SPRING</riverMigrationSeason>
 					<alpha2Rep>0.0</alpha2Rep>
 					<meanSpawnersLengthAtRepro>45.0</meanSpawnersLengthAtRepro>
-					<standardDeviationOfSpawnersLengthAtRepro>2.0
-					</standardDeviationOfSpawnersLengthAtRepro>
+					<standardDeviationOfSpawnersLengthAtRepro>2.0</standardDeviationOfSpawnersLengthAtRepro>
 					<weightOfDeathBasin>0.4</weightOfDeathBasin>
 				</species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
-
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<tempMinMortGenInRiv>10.0</tempMinMortGenInRiv>
@@ -268,8 +288,6 @@
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
-
-
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
@@ -314,8 +332,7 @@
 				</species.IdentifyPopulation>
 				<species.TypeTrajectoryCV>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<fileNameOutput>JeuParam100_2100RCP85_A_essai
-					</fileNameOutput>
+					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
 				</species.TypeTrajectoryCV>
 
 			</processesAtEnd>
