@@ -307,13 +307,13 @@
 					<maxNumberOfSuperIndividualPerReproduction>50.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
-					<displayFluxesOnConsole>false</displayFluxesOnConsole>
+					<displayFluxesOnConsole>true</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<displayFluxesOnConsole>false</displayFluxesOnConsole>
+					<displayFluxesOnConsole>true</displayFluxesOnConsole>
 				</species.MigrateToSea>
 
 				<environment.updateTemperatureInRealBasin>
@@ -331,7 +331,7 @@
 						<long>2000</long>
 						<long>2100</long>
 					</years>
-					<fileNameOutput>fluxes</fileNameOutput>
+					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
 				</species.IdentifyPopulation>
 				<species.TypeTrajectoryCV>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>

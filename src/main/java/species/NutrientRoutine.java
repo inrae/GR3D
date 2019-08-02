@@ -356,8 +356,8 @@ public class NutrientRoutine {
 
 
 		Map <String, Double> anExcretionRate = new Hashtable <String, Double>(); 
-		anExcretionRate.put("N", 24.71E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
-		anExcretionRate.put("P", 2.17E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
+		anExcretionRate.put("N", 24.71E-6); //values from Barber et al, Alewifes  in ug/g wet mass/hour : convertit en g
+		anExcretionRate.put("P", 2.17E-6); //values from Barber et al, Alewifes in ug/g wet mass/hour: convertit en g
 
 		System.out.println("anExcretionRate: " + anExcretionRate.toString()); //
 
@@ -431,13 +431,13 @@ public class NutrientRoutine {
 		// carcass composition for fish before spawning
 		Map<Gender, Map<String, Double>> aCompoCarcassPreSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
 		Map<String,Double> aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 2.958 / 100.); //On remplit une collection avec un put. 
-		aCompo.put("P", 0.673 / 100.);
+		aCompo.put("N", 2.958 / 100.); //On remplit une collection avec un put. Values from Haskell (2018) Alosa sapidissima (%)
+		aCompo.put("P", 0.673 / 100.); //Values from Haskell (2018) Alosa sapidissima (%)
 		aCompoCarcassPreSpawning.put(Gender.FEMALE,aCompo);
 
 		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 2.941 / 100.);
-		aCompo.put("P", 0.666 / 100.);
+		aCompo.put("N", 2.941 / 100.); //Values from Haskell (2018) Alosa sapidissima (%)
+		aCompo.put("P", 0.666 / 100.);// Values from Haskell (2018) Alosa sapidissima (%)
 		aCompoCarcassPreSpawning.put(Gender.MALE,aCompo);
 
 		System.out.println("aCompoCarcassPreSpawning: " + aCompoCarcassPreSpawning.toString()); //

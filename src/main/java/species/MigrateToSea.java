@@ -84,7 +84,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 					try {
 
 						bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
-						+";"+ basin.getName() +  ";IMPORT; NONE");
+						+";"+ basin.getName() + ";" + basin.getJuvenileNumber() + ";EXPORT; NONE");
 						bW.write(";" + totalOutputFluxes.get("biomass"));
 						for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 							bW.write(";" + totalOutputFluxes.get(nutrient));

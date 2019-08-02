@@ -409,10 +409,10 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		    new File(this.outputPath +fileNameFluxes).getParentFile().mkdirs();
 			try {
 				bWForFluxes = new BufferedWriter(new FileWriter(new File(this.outputPath+
-						fileNameFluxes +this.getSimulationId()+ ".csv")));
+						fileNameFluxes +this.getSimulationId() + ".csv")));
 
 				bWForFluxes.write("timestep"+sep+"year"+sep+"season"+sep+"basin"
-						+sep+"fluxType"+sep+"origine"+sep+"biomass");
+						+sep+"abundance" + sep + "fluxType"+sep+"origine"+sep+"biomass");
 				for (String nutrient : nutrientRoutine.getNutrientsOfInterest()) {
 					bWForFluxes.write(sep+nutrient);
 				}

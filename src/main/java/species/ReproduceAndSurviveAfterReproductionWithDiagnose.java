@@ -169,6 +169,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// age of autochnonous spawnser
 					Map<Integer, Long> ageOfNativeSpawners = new TreeMap<Integer, Long>(); 
 
+					
 					// compute the number of spawners and keep the origines of the spawners
 					for (DiadromousFish fish : fishInBasin){
 
@@ -310,7 +311,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								}
 							}
 						}
-						System.out.println("\t"+message);
+						//System.out.println("\t"+message);
 					}
 
 					// --------------------------------------------------------------------------------------------------
@@ -401,18 +402,17 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					}
 					deadFish.clear();
 
-
 					if 	(displayFluxesOnConsole)
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
-								+ riverBasin.getName() + "; " + totalInputFluxes);
-
+								+ riverBasin.getName() + ";" + riverBasin.getSpawnerNumber() +  "; " + totalInputFluxes); 
 					BufferedWriter bW = group.getbWForFluxes();
 					if ( bW != null) {
 						try {
 							for (fluxOrigin origin : totalInputFluxes.keySet()) {
 								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
-								+";"+ riverBasin.getName() +  ";IMPORT;"+origin);
+								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + ";IMPORT;"+origin);
 								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
+						
 								for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 									bW.write(";" + totalInputFluxes.get(origin).get(nutrient));
 								}
@@ -429,11 +429,13 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				}
 
 
-				// System.out.println("("+numberOfGenitors+")");
+				//System.out.println("("+numberOfGenitors+")");
 				//System.out.println("  BEFORE " +riverBasin.getSpawnerOrigins().keySet());
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
+			
+			
 			// --------------------------------------------------------------------------------------------------
 			// update the observers
 			// --------------------------------------------------------------------------------------------------
