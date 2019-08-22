@@ -11,7 +11,7 @@
 		<dMaxDisp>300.0</dMaxDisp>
 		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
-		<fishNutrient>
+		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
 				<string>P</string>
