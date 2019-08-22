@@ -1,6 +1,8 @@
 package species;
 
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -59,9 +61,13 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 	private double maxNumberOfSuperIndividualPerReproduction = 50.;
 	private boolean withDiagnose = true;
 
+	private boolean displayFluxesOnConsole = true;
+
 
 	private transient NormalGen genNormal;
 	private transient MortalityFunction mortalityFunction;
+
+	private  enum fluxOrigin {AUTOCHTONOUS, ALLOCHTONOUS};
 	/**
 	 *  relationship between
 	 *  	recruitment in number of juvenile on spawning grounds
@@ -108,20 +114,23 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 				List<DiadromousFish> fishInBasin = riverBasin.getFishs(group);
 				if (fishInBasin != null){
-					
-					Map<String, Double> totalFluxes = new Hashtable<String, Double>(); //On créer la Map pour stocker les flux 
-					
-					for (String nutrient : group.getFishNutrient().getNutrientsOfInterest()) {
-						
-						totalFluxes.put(nutrient, 0.); // ON MET A JOUR NOTRE map 
-						
+
+					//Initiate the total fluxes for this basin 
+					Map<fluxOrigin, Map<String, Double>> totalInputFluxes = new Hashtable<fluxOrigin, Map <String, Double>>(); //On crï¿½er la Map pour stocker les flux 
+					totalInputFluxes.put(fluxOrigin.AUTOCHTONOUS, new Hashtable < String, Double>()); 
+					totalInputFluxes.put(fluxOrigin.ALLOCHTONOUS, new Hashtable < String, Double>()); 
+					for (fluxOrigin origin: totalInputFluxes.keySet()) {
+						for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
+							totalInputFluxes.get(origin).put(nutrient, 0.); // ON MET A JOUR NOTRE map 
+						}
+						totalInputFluxes.get(origin).put("biomass",0.); 
 					}
 
 
 					// --------------------------------------------------------------------------------------------------
 					// definition of the stock recruiment relationship
 					// --------------------------------------------------------------------------------------------------
-					
+
 					// effective temperature for reproduction (priority to the ANG value) 
 					double tempEffectRep;
 					if (Double.isNaN(group.getTempMinRep())){
@@ -152,7 +161,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 					// initilisation of the stock recruitment relationship
 					stockRecruitmentRelationship.init(alpha, beta, S50, S95);
-						
+
 					// --------------------------------------------------------------------------------------------------
 					// calulation of the spawner number
 					// --------------------------------------------------------------------------------------------------
@@ -160,17 +169,18 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// age of autochnonous spawnser
 					Map<Integer, Long> ageOfNativeSpawners = new TreeMap<Integer, Long>(); 
 
+					
 					// compute the number of spawners and keep the origines of the spawners
 					for (DiadromousFish fish : fishInBasin){
-						
+
 						if (fish.getGender() == Gender.FEMALE  &  fish.isMature()){
-							
+
 							//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+")");
 							if (fish.getNumberOfReproduction() < 1) {
 								numberOfFemaleSpawnerForFirstTime++;
 								femaleSpawnersForFirstTimeAgesSum += fish.getAge();
 							}
-							numberOfFemaleGenitors += fish.getAmount() ;
+							numberOfFemaleGenitors += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)
 
 							// spawner per origine
 							String basinName = fish.getBirthBasin().getName();
@@ -190,11 +200,49 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							fish.incNumberOfReproduction();	
 
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
-							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction);
-							if (survivalAmount > 0) 
-								fish.setAmount(survivalAmount);
+							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
+							double biomass = 0.; 
+							fluxOrigin origin; 
+							if(fish.getBirthBasin()== riverBasin) 
+								origin = fluxOrigin.AUTOCHTONOUS; 
 							else
+								origin = fluxOrigin.ALLOCHTONOUS;
+							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
+
+								//Export for fishes survived after spawning (survivalAmount) : excretion + gametes
+								Map <String, Double> aFluxAfterSurvival = group.getNutrientRoutine().computeNutrientsInputForSurvivalAfterSpawning(fish); 
+
+								//Export for fishes that dies after spawning (fish.getAmount - survivalAmount): excretion + gametes + carcasse 
+								Map<String, Double> aFluxForDeadFish = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); 
+
+								for (String nutrient: aFluxAfterSurvival.keySet()) {
+									//For survival fish
+									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 
+
+									//For dead fish
+									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount)); 
+								}
+
+								//compute biomass for dead fish 
+								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount() - survivalAmount); 
+								totalInputFluxes.get(origin).put("biomass", totalInputFluxes.get(origin).get("biomass") + biomass);
+
+								//update the amount of individual in the super-individual 
+								fish.setAmount(survivalAmount); 
+							}
+							else {
+								//Le superindividu est mort !!! 
 								deadFish.add(fish);
+
+								//Export for fished died before spawning (fish.getAmount): carcasses + excretion + gametes 
+								Map<String, Double> aFlux = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); // 
+
+								for (String nutrient: aFlux.keySet()) {
+									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
+								}
+								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());
+								totalInputFluxes.get(origin).put("biomass", totalInputFluxes.get(origin).get("biomass") + biomass); 
+							}
 						}
 					}
 
@@ -263,15 +311,15 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								}
 							}
 						}
-						System.out.println("\t"+message);
+						//System.out.println("\t"+message);
 					}
 
 					// --------------------------------------------------------------------------------------------------
 					// Reproduction process (number of recruits)
 					// --------------------------------------------------------------------------------------------------
-					
+
 					if (numberOfFemaleGenitors > 0.) {
-					
+
 						//BH Stock-Recruitment relationship with logistic depensation
 						double meanNumberOfRecruit = stockRecruitmentRelationship.getRecruitment(numberOfFemaleGenitors);
 
@@ -280,7 +328,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						long numberOfRecruit = Math.round(Math.exp(genNormal.nextDouble()*sigmaRecruitment + muRecruitment));
 
 						//System.out.println(group.getPilot().getCurrentTime()+"  "+Time.getSeason(group.getPilot())+"  "+ riverBasin.getName()+": " + numberOfGenitors + "  spwaners \tgive "+ numberOfRecruit + " recruits");
-						
+
 						// keep last % of  autochtone
 						riverBasin.getLastPercentagesOfAutochtones().push(numberOfAutochtones * 100 / numberOfFemaleGenitors);
 
@@ -350,34 +398,44 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// Remove deadfish and compute the related nutrient fluxes 
 					// --------------------------------------------------------------------------------------------------
 					for (DiadromousFish fish : deadFish){
-						
-						Map<String, Double> aFlux = group.getFishNutrient().computeNutrientsInputForDeathAfterSpawning(fish); // 
-						
-						for (String nutrient: aFlux.keySet()) {
-							
-							totalFluxes.put(nutrient,totalFluxes.get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); 
-						}
-						
-						
-						
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();
-					
-					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";"
-					+ riverBasin.getName() + "; " + totalFluxes);
-					
+
+					if 	(displayFluxesOnConsole)
+						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
+								+ riverBasin.getName() + ";" + riverBasin.getSpawnerNumber() +  "; " + totalInputFluxes); 
+					BufferedWriter bW = group.getbWForFluxes();
+					if ( bW != null) {
+						try {
+							for (fluxOrigin origin : totalInputFluxes.keySet()) {
+								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
+								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + ";IMPORT;"+origin);
+								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
+						
+								for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
+									bW.write(";" + totalInputFluxes.get(origin).get(nutrient));
+								}
+								bW.write("\n");
+							}
+						} catch (IOException e) {
+
+							e.printStackTrace();
+						}
+					}
 				}
 				else {
 					riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
 				}
-				
 
-				// System.out.println("("+numberOfGenitors+")");
+
+				//System.out.println("("+numberOfGenitors+")");
 				//System.out.println("  BEFORE " +riverBasin.getSpawnerOrigins().keySet());
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
+			
+			
 			// --------------------------------------------------------------------------------------------------
 			// update the observers
 			// --------------------------------------------------------------------------------------------------

@@ -13,7 +13,10 @@ import fr.cemagref.simaqualife.kernel.Processes;
 import fr.cemagref.simaqualife.pilot.Pilot;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -51,7 +54,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit
 	 */
 	public double dMaxDisp = 300.;
-
+	
 	/**
 	 *  length at first maturity. At that length the female become Stage.MATURE
 	 * @unit cm
@@ -70,8 +73,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * Routine to compute nutrient fluxes operated by a single individual (TODO by a single super individual). 
 	 * 
 	 */
-	private  FishNutrient fishNutrient; 
-
+	private  NutrientRoutine nutrientRoutine; 
+	
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 
 	/**
@@ -108,6 +111,11 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
 	private String outputPath = "data/output/";
+	
+	private String fileNameFluxes = "fluxes";
+	
+	private transient BufferedWriter bWForFluxes;
+	private transient String sep;
 
 	/**
 	 *  map
@@ -414,8 +422,30 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			kOptForFemale= kOpt * lFirstMaturityForFemale / 40.;
 			tempMinRep = parameterSets.get(parameterSetLine-1).getSecond();
 		}
+		
+		// open an bufferad writer to export fluxes
+		if (fileNameFluxes != null){
+			sep = ";";
+		    new File(this.outputPath +fileNameFluxes).getParentFile().mkdirs();
+			try {
+				bWForFluxes = new BufferedWriter(new FileWriter(new File(this.outputPath+
+						fileNameFluxes +this.getSimulationId() + ".csv")));
+
+				bWForFluxes.write("timestep"+sep+"year"+sep+"season"+sep+"basin"
+						+sep+"abundance" + sep + "fluxType"+sep+"origine"+sep+"biomass");
+				for (String nutrient : nutrientRoutine.getNutrientsOfInterest()) {
+					bWForFluxes.write(sep+nutrient);
+				}
+				bWForFluxes.write("\n");
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
+	
+	
 	/**
 	 * @param fish
 	 * @param group
@@ -433,7 +463,13 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 		return kOpt;
 	}
+public BufferedWriter getbWForFluxes() {
+		return bWForFluxes;
+	}
 
+	public double getKOpt(){
+		return kOpt;
+	}
 
 	public double getTempMinRep(){
 		return tempMinRep;
@@ -549,10 +585,19 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 
 	public  FishNutrient getFishNutrient() {
+		
 		return fishNutrient; 
 	}
-
-
+public  NutrientRoutine getNutrientRoutine() {
+		
+		return nutrientRoutine; 
+	}
+	
+	public void setlFirstMaturity(double lFirstMaturity) {
+		this.lFirstMaturity = lFirstMaturity;
+	}
+	
+	
 	// ================================================================
 	// statictis for calibration
 	// ================================================================
@@ -615,8 +660,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 		return sumLogWhereAbs + sumLogWherePres;
 	}
-
-
+	
+	
 	// ========================================================
 	// obeserver to explore the distribution
 	// ========================================================
@@ -633,8 +678,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return latitude;
 	}
-
-
+	
+	
 	@Observable(description="Number of colonized basins")
 	public double getNbColonizedBasins() {
 		int nb = 0;
@@ -647,7 +692,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return nb;
 	}
-
+	
 
 	@Observable(description="Northern colonized basins")
 	public double getNorthernBasins() {
@@ -662,7 +707,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return northernBasin;
 	}
 
-
+	
 	@Observable(description="Southern colonized basins")
 	public double getSouthernBasins() {
 		int southernBasin = Integer.MIN_VALUE;
@@ -707,7 +752,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return rangeDistribution;
 	}
 
-
+	
 	@Observable(description = "Range distribution")
 	public Double[] getRangeDistribution() {
 		double southernBasin = 0;
@@ -756,7 +801,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return eff;
 	}
 
-
+	
 	@Override
 	public void addAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -764,7 +809,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		fish.getPosition().addFish(fish, this);
 	}
 
-
+	
 	@Override
 	public void removeAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -772,13 +817,13 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		fish.getPosition().removeFish(fish, this);
 	}
 
-
+	
 	@Override
 	public int compareTo(DiadromousFishGroup t) {
 		return name.compareTo(t.name);
 	}
 
-
+	
 	/**
 	 * 
 	 * concat at RngSatusIndex, temperatureCatchmentFile
