@@ -299,6 +299,9 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		super(pilot, environment, processes);
 	}
 
+	public DiadromousFishGroup() {
+		super();
+	}
 
 	public double getPattractive(String basinName){
 		// TODO pass in argument a Basin
