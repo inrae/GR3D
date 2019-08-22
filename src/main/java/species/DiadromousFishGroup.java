@@ -288,10 +288,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		nutrientsOfInterest.add("P");
 
 
-
-		diadromousFishGroup.fishNutrient = new FishNutrient(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aGameteSpawned, 
-				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
-				aJuvenileFeatures, aCompoJuveniles);
+		diadromousFishGroup.nutrientRoutine = new NutrientRoutine(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, 
+				aCompoGametes, aJuvenileFeatures, aCompoJuveniles);
 
 
 		System.out.println((new XStream(new DomDriver())).toXML(diadromousFishGroup));
@@ -467,9 +465,6 @@ public BufferedWriter getbWForFluxes() {
 		return bWForFluxes;
 	}
 
-	public double getKOpt(){
-		return kOpt;
-	}
 
 	public double getTempMinRep(){
 		return tempMinRep;
@@ -584,17 +579,8 @@ public BufferedWriter getbWForFluxes() {
 	}
 
 
-	public  FishNutrient getFishNutrient() {
-		
-		return fishNutrient; 
-	}
 public  NutrientRoutine getNutrientRoutine() {
-		
 		return nutrientRoutine; 
-	}
-	
-	public void setlFirstMaturity(double lFirstMaturity) {
-		this.lFirstMaturity = lFirstMaturity;
 	}
 	
 	
