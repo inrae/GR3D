@@ -38,7 +38,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class NutrientRoutine {
 
 
-	private static enum SpawningPosition  {PRE,POST}; // on créer un static pour réserver une même classe mémoire pour toutes les instances 
+	private static enum SpawningPosition  {PRE,POST}; // on crï¿½er un static pour rï¿½server une mï¿½me classe mï¿½moire pour toutes les instances 
 
 	//private static enum Gender {UNDIFFERENCIED, FEMALE, MALE}; 
 
@@ -50,7 +50,7 @@ public class NutrientRoutine {
 
 	/**
 	 * Main feature for weight (g) computation before spawning i.e. gametes expelling according to gender, for a given length (cm) 
-	 * //Voir pour un retour à la ligne lors du commentaire 
+	 * //Voir pour un retour ï¿½ la ligne lors du commentaire 
 	 * key gender
 	 * value
 	 * 		key feature
@@ -81,9 +81,9 @@ public class NutrientRoutine {
 	 */
 	private Map<DiadromousFish.Gender,Map<String,Double>> compoCarcassPreSpawning;
 
-	//package permettant la création d'une table de hachage ie fonctionnant en clé -valeur. Clé unique, mais valeur peut être associée à plusieurs clés; 
-	//La class d'objet Map a pour point faible la taille des données à stocker. Plus on a de valeur dans la table, plus c'est lourd et lent! Donc, trouver un compromis entre temps de calcul et espace.
-	//N'accepte pas la valeur nulle et thread safe i.e. utilisable simultanément par plusieurs éléments du programme. 
+	//package permettant la crï¿½ation d'une table de hachage ie fonctionnant en clï¿½ -valeur. Clï¿½ unique, mais valeur peut ï¿½tre associï¿½e ï¿½ plusieurs clï¿½s; 
+	//La class d'objet Map a pour point faible la taille des donnï¿½es ï¿½ stocker. Plus on a de valeur dans la table, plus c'est lourd et lent! Donc, trouver un compromis entre temps de calcul et espace.
+	//N'accepte pas la valeur nulle et thread safe i.e. utilisable simultanï¿½ment par plusieurs ï¿½lï¿½ments du programme. 
 
 	/**
 	 * chemical composition of carcass after spawning i.e. soma + spent gonad (without gametes)
@@ -113,7 +113,10 @@ public class NutrientRoutine {
 	private Map<String,Double> compoJuvenile;
 
 
-
+	public NutrientRoutine() {
+		
+	}
+	
 	/**
 	 * Constructor based on the 5 Map of fish composition 
 	 * @param fishFeaturesPreSpawning
@@ -155,7 +158,7 @@ public class NutrientRoutine {
 	 */
 	public Map<String,Double> computeNutrientsInputForDeathBeforeSpawning(DiadromousFish fish, ArrayList<String> nutrientsOfInterest) { 
 
-		Map<String,Double> nutrientsInput = new Hashtable<String, Double>(); // On créer ici une Map, classe mère des hashtable (Homme = classe mere ie Map//Jules = hashtable)
+		Map<String,Double> nutrientsInput = new Hashtable<String, Double>(); // On crï¿½er ici une Map, classe mï¿½re des hashtable (Homme = classe mere ie Map//Jules = hashtable)
 		for (String nutrient : nutrientsOfInterest) {
 
 			if (fish.getStage()== Stage.MATURE) {
@@ -464,7 +467,7 @@ public class NutrientRoutine {
 		aCompoGametes.put(Gender.FEMALE,aCompo);
 
 		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 3.250 / 100.); // Approximée par la compo des gonades 
+		aCompo.put("N", 3.250 / 100.); // Approximï¿½e par la compo des gonades 
 		aCompo.put("P", 0.724 / 100.);
 		aCompoGametes.put(Gender.MALE,aCompo);
 
@@ -496,7 +499,7 @@ public class NutrientRoutine {
 				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
 				aJuvenileFeatures, aCompoJuveniles);
 
-		SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des température pour chaque saison 
+		SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des tempï¿½rature pour chaque saison 
 		Pilot pilot = new Pilot ();
 		DiadromousFish fishFemale = new DiadromousFish (pilot, basin, 52., 1L, Gender.FEMALE); //Idem ici, on regarde comment est construit DiadromousFih et on lui donne les valeur de ce qu'il nous demande. 
 		fishFemale.setStage(Stage.MATURE);

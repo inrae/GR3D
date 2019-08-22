@@ -117,16 +117,6 @@
 					<double>0.006986429759979109</double>
 				</entry>
 			</juvenileFeatures>
-			<spawnedGametesWeight class="hashtable">
-				<entry>
-					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
-					<double>44.8</double>
-				</entry>
-				<entry>
-					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
-					<double>131.0</double>
-				</entry>
-			</spawnedGametesWeight>
 			<compoCarcassPreSpawning class="hashtable">
 				<entry>
 					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
