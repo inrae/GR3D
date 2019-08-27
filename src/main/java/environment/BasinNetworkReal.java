@@ -2,7 +2,7 @@ package environment;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.vividsolutions.jts.geom.MultiPolygon;
+
 
 import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
 import fr.cemagref.simaqualife.pilot.Pilot;
@@ -25,7 +25,11 @@ import miscellaneous.QueueMemoryMap;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.feature.FeatureIterator;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.opengis.feature.simple.SimpleFeature;
 
 public class BasinNetworkReal extends BasinNetwork {
@@ -84,7 +88,7 @@ public class BasinNetworkReal extends BasinNetwork {
 		public double getSurface() {
 			return surface;
 		}
-		
+
 		public double getPDam(){
 			return pDam;
 		}
@@ -100,23 +104,25 @@ public class BasinNetworkReal extends BasinNetwork {
 
 	private Map<String, Path2D.Double> loadBasins(String basinShpFile) {
 		Map<String, Path2D.Double> mapBasin = new HashMap<String, Path2D.Double>();
-		FileDataStore basinStore = null;
-		FeatureIterator<SimpleFeature> iterator = null;
+		ShapefileDataStore basinStore = null;
+		SimpleFeatureIterator  iterator = null;
 		try {
-			basinStore = FileDataStoreFinder.getDataStore(new File(basinShpFile));
-			FeatureSource<?, SimpleFeature> featureBasin = basinStore.getFeatureSource();
-			iterator = featureBasin.getFeatures().features();
+			File aFile = new File(basinShpFile);
+			 basinStore = new ShapefileDataStore(aFile.toURI().toURL());
+
+			ContentFeatureSource  featureBasin = basinStore.getFeatureSource();
+			 iterator = featureBasin.getFeatures().features();
 			while (iterator.hasNext()) {
 				SimpleFeature feature = iterator.next();
 				MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry();
 				// build the shape for each basin
 				Path2D.Double shape = new Path2D.Double();
-						shape.moveTo((multiPolygon.getCoordinates())[0].x, (multiPolygon.getCoordinates())[0].y);
-						for (int i = 1; i < multiPolygon.getCoordinates().length; i++) {
-							shape.lineTo((multiPolygon.getCoordinates())[i].x, (multiPolygon.getCoordinates())[i].y);
-						}
-						shape.closePath();
-						mapBasin.put((String) feature.getAttribute("NOM"), shape);
+				shape.moveTo((multiPolygon.getCoordinates())[0].x, (multiPolygon.getCoordinates())[0].y);
+				for (int i = 1; i < multiPolygon.getCoordinates().length; i++) {
+					shape.lineTo((multiPolygon.getCoordinates())[i].x, (multiPolygon.getCoordinates())[i].y);
+				}
+				shape.closePath();
+				mapBasin.put((String) feature.getAttribute("NOM"), shape);
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -124,6 +130,7 @@ public class BasinNetworkReal extends BasinNetwork {
 			iterator.close();
 			basinStore.dispose();
 		}
+		
 		return mapBasin;
 	}
 
@@ -136,6 +143,8 @@ public class BasinNetworkReal extends BasinNetwork {
 		// shape files can be omitted (for batch mode)
 		// load the shape of the seaBasin
 		Map<String, Path2D.Double> mapSeaBasin = null;
+		//String cwd = System.getProperty("user.dir").concat("/");
+		//System.out.println(cwd);
 		if (seaBasinShpFile != null && seaBasinShpFile.length() > 0) {
 			mapSeaBasin = loadBasins(seaBasinShpFile);
 		}
@@ -310,7 +319,7 @@ public class BasinNetworkReal extends BasinNetwork {
 	public String getTemperatureCatchmentFile() {
 		return temperatureCatchmentFile;
 	}
-	
+
 }
 
 
