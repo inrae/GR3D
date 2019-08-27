@@ -114,9 +114,9 @@ public class NutrientRoutine {
 
 
 	public NutrientRoutine() {
-		
+
 	}
-	
+
 	/**
 	 * Constructor based on the 5 Map of fish composition 
 	 * @param fishFeaturesPreSpawning
@@ -287,7 +287,7 @@ public class NutrientRoutine {
 	public double getWeight (DiadromousFish fish, SpawningPosition spawningPosition) {
 
 		double weight = 0.; 
-			if (fish.getStage()==Stage.IMMATURE) 
+		if (fish.getStage()==Stage.IMMATURE) 
 			weight = juvenileFeatures.get("aLW") * Math.pow(fish.getLength(),juvenileFeatures.get("bLW"));
 		else  //Stage.MATURE
 			if (spawningPosition == SpawningPosition.PRE)
@@ -312,14 +312,14 @@ public class NutrientRoutine {
 	public double getGonadWeight (DiadromousFish fish, SpawningPosition spawningPosition) {
 
 		double gonadWeight = 0.; 
-			if (fish.getStage()==Stage.MATURE);
-				if (spawningPosition == SpawningPosition.PRE)
-			gonadWeight = Math.exp(fishFeaturesPreSpawning.get(fish.getGender()).get("aLW_Gonad")
-					+ fishFeaturesPreSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
-		else 
-			gonadWeight = Math.exp(fishFeaturesPostSpawning.get(fish.getGender()).get("aLW_Gonad")
-					+ fishFeaturesPostSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
-
+		if (fish.getStage()==Stage.MATURE) {
+			if (spawningPosition == SpawningPosition.PRE)
+				gonadWeight = Math.exp(fishFeaturesPreSpawning.get(fish.getGender()).get("aLW_Gonad")
+						+ fishFeaturesPreSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
+			else 
+				gonadWeight = Math.exp(fishFeaturesPostSpawning.get(fish.getGender()).get("aLW_Gonad")
+						+ fishFeaturesPostSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
+		}
 		return gonadWeight;
 	}
 
