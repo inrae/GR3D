@@ -120,20 +120,18 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 	 * @param fish
 	 * @param group
 	 * @return the Brody coeff   from Diadromousgroup if exists or from this grow process
+	 * depends of the fish gender .In case of undifferentiaced fish, the mean for male and female is considered
 	 */
 	public  double getKOpt(DiadromousFish fish, DiadromousFishGroup group) {
-		 double kOpt = 0.;
-		 if (Double.isNaN(group.getKOpt(fish))){
+		 double kOpt = group.getKOpt(fish);
+		 if (Double.isNaN(kOpt)){ // no definition for the group
 				if (fish.getGender() == Gender.FEMALE)
 					kOpt = kOptForFemale;
 				else if (fish.getGender() == Gender.MALE)
 					kOpt = kOptForMale;
 				else
 					kOpt=  (kOptForFemale + kOptForMale) / 2.;
-		 }
-		 else
-			 kOpt = group.getKOpt(fish);
-		 
+		 }	 
 		 
 		 return kOpt;
 		
