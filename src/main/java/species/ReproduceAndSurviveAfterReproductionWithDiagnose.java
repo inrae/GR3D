@@ -60,6 +60,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 	private double survivalRateAfterReproduction = 0.1;
 	private double maxNumberOfSuperIndividualPerReproduction = 50.;
 	private boolean withDiagnose = true;
+	private double proportionOfFemaleAtBirth =0.5;
 
 	private boolean displayFluxesOnConsole = true;
 
@@ -98,7 +99,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 				double b, c, alpha, beta, amountPerSuperIndividual ,  S95, S50 ;
-				double numberOfFemaleGenitors = 0.;
+				double numberOfFemaleSpawners = 0.;
+				double numberOfMaleSpawners = 0.;
 				double numberOfAutochtones = 0.;
 				double numberOfFemaleSpawnerForFirstTime = 0.;
 				double femaleSpawnersForFirstTimeAgesSum = 0.;
@@ -169,25 +171,30 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// age of autochnonous spawnser
 					Map<Integer, Long> ageOfNativeSpawners = new TreeMap<Integer, Long>(); 
 
-					
-					// compute the number of spawners and keep the origines of the spawners
+					// compute the number of female spawners and keep the origine of the female spawners
 					for (DiadromousFish fish : fishInBasin){
 
-						if (fish.getGender() == Gender.FEMALE  &  fish.isMature()){
-
-							//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+")");
-							if (fish.getNumberOfReproduction() < 1) {
-								numberOfFemaleSpawnerForFirstTime++;
-								femaleSpawnersForFirstTimeAgesSum += fish.getAge();
+						if (fish.isMature()) {
+							
+							// number of spawners per gender
+							if (fish.getGender() == Gender.FEMALE) {
+								//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+")");
+								if (fish.getNumberOfReproduction() < 1) {
+									numberOfFemaleSpawnerForFirstTime++;
+									femaleSpawnersForFirstTimeAgesSum += fish.getAge();
+								}
+								numberOfFemaleSpawners += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)								
 							}
-							numberOfFemaleGenitors += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)
-
+							else if (fish.getGender() == Gender.MALE) {
+								numberOfMaleSpawners += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)
+							}
+							
 							// spawner per origine
 							String basinName = fish.getBirthBasin().getName();
 							spawnerOriginsDuringReproduction.put(basinName, spawnerOriginsDuringReproduction.get(basinName) + fish.getAmount() );
 
 							// number of autochtonous fish per age
-							if (riverBasin == fish.getBirthBasin()){ 
+							if (riverBasin == fish.getBirthBasin()){
 								numberOfAutochtones += fish.getAmount();
 								Integer age = (int) Math.floor(fish.getAge()); //ASK floor() or ceil()
 								if (ageOfNativeSpawners.containsKey(age))
@@ -195,18 +202,24 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								else
 									ageOfNativeSpawners.put(age, fish.getAmount());
 							}
-
+							
 							// increment number of reproduction (for possible iteroparty)
 							fish.incNumberOfReproduction();	
 
-							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
-							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
-							double biomass = 0.; 
-							fluxOrigin origin; 
-							if(fish.getBirthBasin()== riverBasin) 
-								origin = fluxOrigin.AUTOCHTONOUS; 
+							// origin of the spwaner
+							fluxOrigin spawnerOrigin; 
+							if (fish.getBirthBasin() == riverBasin) 
+								spawnerOrigin = fluxOrigin.AUTOCHTONOUS; 
 							else
-								origin = fluxOrigin.ALLOCHTONOUS;
+								spawnerOrigin = fluxOrigin.ALLOCHTONOUS;
+							
+							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
+							double biomass = 0.; 
+							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
+
+							
+							// update the amount of fish or kill the fish if survival amount = 0
+							// compute nutrient fluxes
 							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
 
 								//Export for fishes survived after spawning (survivalAmount) : excretion + gametes
@@ -217,15 +230,15 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 								for (String nutrient: aFluxAfterSurvival.keySet()) {
 									//For survival fish
-									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 
+									totalInputFluxes.get(spawnerOrigin).put(nutrient,totalInputFluxes.get(spawnerOrigin).get(nutrient) + aFluxAfterSurvival.get(nutrient) * survivalAmount); 
 
 									//For dead fish
-									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount)); 
+									totalInputFluxes.get(spawnerOrigin).put(nutrient,totalInputFluxes.get(spawnerOrigin).get(nutrient) + aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount)); 
 								}
 
 								//compute biomass for dead fish 
 								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount() - survivalAmount); 
-								totalInputFluxes.get(origin).put("biomass", totalInputFluxes.get(origin).get("biomass") + biomass);
+								totalInputFluxes.get(spawnerOrigin).put("biomass", totalInputFluxes.get(spawnerOrigin).get("biomass") + biomass);
 
 								//update the amount of individual in the super-individual 
 								fish.setAmount(survivalAmount); 
@@ -238,27 +251,27 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								Map<String, Double> aFlux = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); // 
 
 								for (String nutrient: aFlux.keySet()) {
-									totalInputFluxes.get(origin).put(nutrient,totalInputFluxes.get(origin).get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
+									totalInputFluxes.get(spawnerOrigin).put(nutrient,totalInputFluxes.get(spawnerOrigin).get(nutrient) + aFlux.get(nutrient) * fish.getAmount()); //Fish.getAmount - survivalAmount = total fishes died. 
 								}
 								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());
-								totalInputFluxes.get(origin).put("biomass", totalInputFluxes.get(origin).get("biomass") + biomass); 
+								totalInputFluxes.get(spawnerOrigin).put("biomass", totalInputFluxes.get(spawnerOrigin).get("biomass") + biomass); 
 							}
 						}
 					}
 
-					// keep the spawner number
-					riverBasin.setLastSpawnerNumber(numberOfFemaleGenitors);
+					// keep the  number of female spawner
+					riverBasin.setLastFemaleSpawnerNumber(numberOfFemaleSpawners);
 
 					// --------------------------------------------------------------------------------------------------
 					// Diagnose  of the population dynamics in the basin
 					// --------------------------------------------------------------------------------------------------
-					if (withDiagnose==true) {
+					if (withDiagnose == true) {
 						// calculate and keep the features of the stock recruitment relationships
 						riverBasin.setMortalityCrash(stockRecruitmentRelationship.getSigmaZcrash());
 
 						// initialise the mortality function for the autochnous spawners
 						// use to approximate the mortality of all the spawners to give a proxy of the Allee trap 
-						if (numberOfFemaleGenitors > 0.) {
+						if (numberOfFemaleSpawners > 0.) {
 							List<Trio<Integer, Long, Long>> mortalityData= new ArrayList<Trio<Integer, Long, Long>>();
 							// first age
 							// second effective of native spwaner
@@ -289,50 +302,37 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								"\tZcrash="+ stockRecruitmentRelationship.getSigmaZcrash() + 
 								"\tZ="+ riverBasin.getNativeSpawnerMortality());
 						System.out.println("\tStrap="+stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality())+
-								"\tStotal="+numberOfFemaleGenitors+"\tSautochthonous="+
+								"\tStotal="+numberOfFemaleSpawners+"\tSautochthonous="+
 								spawnerOriginsDuringReproduction.get(riverBasin.getName()));
 
-
-						String message;
-						if (Double.isNaN(riverBasin.getNativeSpawnerMortality()))
-							message="noSense";
-						else {
-							double stockTrap=stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality());
-							if (riverBasin.getNativeSpawnerMortality()>stockRecruitmentRelationship.getSigmaZcrash())
-								message="overZcrash";
-							else {
-								if (numberOfFemaleGenitors < stockTrap)
-									message = "inTrapWithStrayers";
-								else {
-									if (spawnerOriginsDuringReproduction.get(riverBasin.getName()) < stockTrap)
-										message = "inTrapWithOnlyNatives";
-									else
-										message = "sustain";
-								}
-							}
-						}
-						//System.out.println("\t"+message);
+						// System.out.println("\t"+ riverBasin.getPopulationStatus());
 					}
 
 					// --------------------------------------------------------------------------------------------------
-					// Reproduction process (number of recruits)
+					// Reproduction process (compute the number of recruits)
+					//  need to have at least one female and one male
+					//  use the proportion of female at birth to compute the number of recruits of each gender
 					// --------------------------------------------------------------------------------------------------
 
-					if (numberOfFemaleGenitors > 0.) {
+					if (numberOfFemaleSpawners > 0. && numberOfMaleSpawners >0.) {
 
 						//BH Stock-Recruitment relationship with logistic depensation
-						double meanNumberOfRecruit = stockRecruitmentRelationship.getRecruitment(numberOfFemaleGenitors);
+						double meanNumberOfRecruit = stockRecruitmentRelationship.getRecruitment(numberOfFemaleSpawners);
 
 						//  lognormal random draw
 						muRecruitment = Math.log(meanNumberOfRecruit) - (Math.pow(sigmaRecruitment,2))/2;
 						long numberOfRecruit = Math.round(Math.exp(genNormal.nextDouble()*sigmaRecruitment + muRecruitment));
-
+						long numberOfFemaleRecruit =  Math.round(numberOfRecruit *  proportionOfFemaleAtBirth);
+						long numberOfMaleRecruit  = numberOfRecruit - numberOfFemaleRecruit;
+						
 						//System.out.println(group.getPilot().getCurrentTime()+"  "+Time.getSeason(group.getPilot())+"  "+ riverBasin.getName()+": " + numberOfGenitors + "  spwaners \tgive "+ numberOfRecruit + " recruits");
 
+						// ----------------------------------------------
+						// keep information when reproduction
 						// keep last % of  autochtone
-						riverBasin.getLastPercentagesOfAutochtones().push(numberOfAutochtones * 100 / numberOfFemaleGenitors);
+						riverBasin.getLastPercentagesOfAutochtones().push(numberOfAutochtones * 100 / numberOfFemaleSpawners);
 
-						// keep the number of spawners for the firt time in the basin
+						// keep the number of spawners for the first time in the basin
 						if (numberOfFemaleSpawnerForFirstTime>0){
 							riverBasin.getSpawnersForFirstTimeMeanAges().push(femaleSpawnersForFirstTimeAgesSum/numberOfFemaleSpawnerForFirstTime);
 						}else{
@@ -345,15 +345,34 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						// Creation of new superFish
 						if (numberOfRecruit > 0){
 
+							long numberOfsuperIndividual, effectiveAmount, remainingFish;
+							
 							// features of the super individuals
-							int numberOfsuperIndividual = Math.max(1, 
-									(int) Math.round(numberOfRecruit / amountPerSuperIndividual));
-							long effectiveAmount =  numberOfRecruit / numberOfsuperIndividual;
-
-							for (int i = 0; i < numberOfsuperIndividual; i++){
+							// for female
+							numberOfsuperIndividual = Math.max(1L, 
+									Math.round(numberOfFemaleRecruit / amountPerSuperIndividual));
+							 effectiveAmount =  (long) Math.floor(numberOfFemaleRecruit / numberOfsuperIndividual);
+							for (long i = 0; i < (numberOfsuperIndividual-1); i++){
 								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount, Gender.FEMALE));
 							}
-
+							// the last Super indivial could be larger to include remainging fish
+							 remainingFish = numberOfFemaleRecruit - numberOfsuperIndividual * effectiveAmount;
+							group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount + remainingFish, Gender.FEMALE));
+							
+							
+							// for male
+							numberOfsuperIndividual = Math.max(1L, 
+									Math.round(numberOfMaleRecruit / amountPerSuperIndividual));
+							 effectiveAmount =  (long) Math.floor(numberOfMaleRecruit / numberOfsuperIndividual);
+							for (long i = 0; i < (numberOfsuperIndividual-1); i++){
+								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount, Gender.MALE));
+							}
+							// the last Super indivial could be larger to include remainging fish
+							remainingFish = numberOfMaleRecruit - numberOfsuperIndividual * effectiveAmount;
+							group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount + remainingFish, Gender.FEMALE));
+							
+							// ----------------------------------------------
+							// keep information when reproduction with success
 							// stock the first year when recruitment is non nul
 							if (riverBasin.getYearOfFirstNonNulRep() == 0){
 								riverBasin.setYearOfFirstNonNulRep(Time.getYear(group.getPilot()));
@@ -386,6 +405,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					}
 					else {
 						// stock information when no spawners reproduce
+						System.out.println(riverBasin.getName()+ "\tF:"+numberOfFemaleSpawners+ " M:"+numberOfMaleSpawners);
 						riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
 						riverBasin.getLastRecruitmentExpectations().push((long) 0);
 						riverBasin.getLastRecruitments().push((long) 0);
@@ -412,7 +432,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
 								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + ";IMPORT;"+origin);
 								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
-						
+
 								for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 									bW.write(";" + totalInputFluxes.get(origin).get(nutrient));
 								}
@@ -434,8 +454,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
-			
-			
+
+
 			// --------------------------------------------------------------------------------------------------
 			// update the observers
 			// --------------------------------------------------------------------------------------------------

@@ -302,6 +302,7 @@
 					<delta__t>0.33</delta__t>
 					<survOptRep>0.0017</survOptRep>
 					<lambda>4.1E-4</lambda>
+					<proportionOfFemaleAtBirth>0.5</proportionOfFemaleAtBirth>
 					<initialLength>2.0</initialLength>
 					<sigmaRecruitment>0.2</sigmaRecruitment>
 					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
