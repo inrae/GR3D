@@ -41,7 +41,7 @@ public class RiverBasin extends Basin {
 	private double nativeSpawnerMortality; // mortality coefficient between recruitement and spawning for fish born in this basin
 	private double mortalityCrash;
 	private double stockTrap; 
-	private double lastSpawnerNumber;
+	private double lastFemaleSpawnerNumber;
 	
 	protected static transient ObservablesHandler cobservable;
 
@@ -266,17 +266,17 @@ public class RiverBasin extends Basin {
 	}
 	
 	/**
-	 * @return the lastSpawnerNumber
+	 * @return the last number of female spawners
 	 */
-	public double getLastSpawnerNumber() {
-		return lastSpawnerNumber;
+	public double getLastFemaleSpawnerNumber() {
+		return lastFemaleSpawnerNumber;
 	}
 
 	/**
 	 * @param lastSpawner the lastSpawnerNumber to set
 	 */
-	public void setLastSpawnerNumber(double lastSpawner) {
-		this.lastSpawnerNumber = lastSpawner;
+	public void setLastFemaleSpawnerNumber(double lastSpawner) {
+		this.lastFemaleSpawnerNumber = lastSpawner;
 	}
 
 	public String getPopulationStatus() {
@@ -288,10 +288,10 @@ public class RiverBasin extends Basin {
 			if (nativeSpawnerMortality> mortalityCrash)
 				populationStatus="overZcrash";
 			else {
-				if (lastSpawnerNumber < stockTrap)
+				if (lastFemaleSpawnerNumber < stockTrap)
 					populationStatus = "inTrapWithStrayers";
 				else {
-					if (lastSpawnerNumber * lastPercentagesOfAutochtones.getLastItem() < stockTrap)
+					if (lastFemaleSpawnerNumber * lastPercentagesOfAutochtones.getLastItem() < stockTrap)
 						populationStatus = "inTrapWithOnlyNatives";
 					else
 						populationStatus = "sustain";
