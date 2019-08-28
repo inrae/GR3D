@@ -76,6 +76,14 @@
 					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
 					<hashtable>
 						<entry>
+							<string>bLW_Gonad</string>
+							<double>3.8331</double>
+						</entry>
+						<entry>
+							<string>aLW_Gonad</string>
+							<double>-11.285</double>
+						</entry>
+						<entry>
 							<string>bLW</string>
 							<double>2.9973</double>
 						</entry>
