@@ -36,6 +36,9 @@ import species.DiadromousFish.Gender;
 
 import org.openide.util.lookup.ServiceProvider;
 
+/**
+ *
+ */
 @ServiceProvider(service = AquaNismsGroup.class)
 public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNetwork> implements Comparable<DiadromousFishGroup> {
 
@@ -43,32 +46,11 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public Color color = Color.RED;
 
 	/**
-	 * L infinity of the van Bertalanffy growth curve
-	 * L = Linf *(1-exp(-K*(t-t0))
-	 * @unit cm
-	 */
-	public double linfVonBert = 60.;
-
-	/**
 	 *  ????
 	 * @unit
 	 */
 	public double dMaxDisp = 300.;
 	
-	/**
-	 *  length at first maturity. At that length the female become Stage.MATURE
-	 * @unit cm
-	 */
-	public double lFirstMaturityForFemale = 55.;
-
-
-	/**
-	 *  length at first maturity. At that length the female become Stage.MATURE
-	 * @unit cm
-	 */
-	public double lFirstMaturityForMale = 40.;
-
-
 	/**
 	 * Routine to compute nutrient fluxes operated by a single individual (TODO by a single super individual). 
 	 * 
@@ -128,6 +110,28 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private transient Map<String, Duo<Double, Double>> basinsToUpdate;
 
 	/**
+	 *  length when fish hatchs ( when the diadromousFish is created after reproduction)
+	 *  no diffrence between gender
+	 * @unit cm
+	 */
+	private double lengthAtHatching = 2.;
+	
+	/**
+	 * L infinity of the van Bertalanffy growth curve for  female
+	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit cm
+	 */
+	public double linfVonBertForFemale = 60.;
+	
+	/**
+	 * L infinity of the van Bertalanffy growth curve for  male
+	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit cm
+	 */
+	public double linfVonBertForMale = 60.;
+	
+	
+	/**
 	 * Brody growth coefficient of the von Bertalanffy growth curve for female (calculated from the parameterset file)
 	 *  	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit year-1
@@ -140,6 +144,20 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit year-1
 	 */
 	private transient double kOptForMale; 
+	
+	/**
+	 *  length at first maturity. At that length the female become Stage.MATURE
+	 * @unit cm
+	 */
+	public double lFirstMaturityForFemale = 55.;
+
+
+	/**
+	 *  length at first maturity. At that length the female become Stage.MATURE
+	 * @unit cm
+	 */
+	public double lFirstMaturityForMale = 40.;
+	
 
 	/**
 	 * minimum temperature for the reproduction (from the parameterset file)
@@ -560,28 +578,38 @@ public BufferedWriter getbWForFluxes() {
 		return color;
 	}
 
-	public double getLinfVonBert() {
-		return linfVonBert;
+	public double getLinfVonBert(DiadromousFish fish) {
+		if ( fish.getGender() == Gender.FEMALE)
+			return linfVonBertForFemale;
+		else if (fish.getGender() == Gender.MALE)
+			return linfVonBertForMale;
+		else
+			return (linfVonBertForFemale+linfVonBertForMale)/2.;
 	}
 
-	public void setLinfVonBert(double linfVonBert) {
-		this.linfVonBert = linfVonBert;
+
+	public double getlFirstMaturity(DiadromousFish fish) {
+		if ( fish.getGender() == Gender.FEMALE)
+			return lFirstMaturityForFemale;
+		else if (fish.getGender() == Gender.MALE)
+			return lFirstMaturityForMale;
+		else
+			return (lFirstMaturityForFemale+lFirstMaturityForFemale)/2.;
+	}
+	
+
+	/**
+	 * @return the lengthAtHatching
+	 */
+	public double getLengthAtHatching() {
+		return lengthAtHatching;
 	}
 
+	
 	public double getdMaxDisp() {
 		return dMaxDisp;
 	}
-
-	public double getlFirstMaturityForFemale() {
-		return lFirstMaturityForFemale;
-	}
-
-
-	public double getlFirstMaturityForMale() {
-		return lFirstMaturityForMale;
-	}
-
-
+	
 public  NutrientRoutine getNutrientRoutine() {
 		return nutrientRoutine; 
 	}

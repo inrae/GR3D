@@ -94,22 +94,20 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 
 					// 2) Update the fish length with a lognormal normal draw  of increment
 					// limit the fish length to Linf
-					if (fish.getLength() < group.getLinfVonBert()){
-						muDeltaLVonBert = Math.log((group.getLinfVonBert() - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
+					if (fish.getLength() < group.getLinfVonBert(fish)){
+						muDeltaLVonBert = Math.log((group.getLinfVonBert(fish) - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
 						growthIncrement = Math.exp(genNormal.nextDouble()*sigmaDeltaLVonBert + muDeltaLVonBert);
 					
 						
-						fish.setLength(Math.min(group.getLinfVonBert(), fish.getLength() + growthIncrement));											
+						fish.setLength(Math.min(group.getLinfVonBert(fish), fish.getLength() + growthIncrement));											
 					}
 					else {
-						fish.setLength(group.getLinfVonBert());
+						fish.setLength(group.getLinfVonBert(fish));
 					}
 					//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+"): "+ growthIncrement);
 					// test if fish become mature
-					if (fish.getStage() == Stage.IMMATURE){
-						if (fish.getLength() > group.getlFirstMaturityForFemale()){
+					if (fish.getStage() == Stage.IMMATURE && fish.getLength() > group.getlFirstMaturity(fish)){
 							fish.setStage(Stage.MATURE); 
-						}
 					}
 					//System.out.println("la temp�rature du lieu de vie du poisson est :" + fish.getPosition().getCurrentTemperature() + ", la saison est :" + Time.getSeason() + " et sa nouvelle taille est :" + fish.getLength());
 				}

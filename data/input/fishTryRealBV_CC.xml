@@ -7,10 +7,12 @@
 			<blue>0</blue>
 			<alpha>255</alpha>
 		</color>
-		<linfVonBert>70.0</linfVonBert>
 		<dMaxDisp>300.0</dMaxDisp>
+		<linfVonBertForFemale>70.0</linfVonBertForFemale>
+		<linfVonBertForMale>70.0</linfVonBertForMale>
 		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
+		<lengthAtHatching>2</lengthAtHatching>
 		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
@@ -233,7 +235,7 @@
 				<species.PopulateBasinNetworkWithANorthLimit>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<nbSIPerBasin>200</nbSIPerBasin>
-					<initialLength>2.0</initialLength>
+					<initialLength>20.0</initialLength>
 					<nbFishPerSI>2500</nbFishPerSI>
 					<northLimitLatitude>43.54</northLimitLatitude>
 				</species.PopulateBasinNetworkWithANorthLimit>

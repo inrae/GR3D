@@ -44,7 +44,6 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 	private double delta_t=0.33; // duration of the mortality considered in the reproduction process (ex.: from eggs to juvenile in estuary for alosa alosa = 0.33)
 	private double survOptRep = 0.0017;
 	private double lambda = 0.00041;
-	private double initialLength = 2.;
 	private double sigmaRecruitment = 0.3;
 	private double survivalRateAfterReproduction = 0.1;
 	private double maxNumberOfSuperIndividualPerReproduction = 50.;
@@ -237,7 +236,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 							long effectiveAmount =  numberOfRecruit / numberOfsuperIndividual;
 						
 							for (int i=0; i<numberOfsuperIndividual; i++){
-								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount, Gender.UNDIFFERENCIED));
+								group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, group.getLengthAtHatching(), effectiveAmount, Gender.UNDIFFERENCIED));
 							}
 							
 							// stock the first year when recruitment is non nul
