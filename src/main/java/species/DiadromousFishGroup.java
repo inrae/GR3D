@@ -619,13 +619,13 @@ public  NutrientRoutine getNutrientRoutine() {
 	// statictis for calibration
 	// ================================================================
 	@Observable(description="Spawners For First Time Summary Statistic")
-	public double computeSpawnerForFirstTimeSummaryStatistic() {
+	public double computeFemaleSpawnerForFirstTimeSummaryStatistic() {
 		double sum = 0;
 		//TODO move TARGET to the right place
 		double TARGET = 5.0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
-			if (riverBasin.getSpawnersForFirstTimeMeanAges().getMeanWithoutZero() > 0.) {
-				double val = riverBasin.getSpawnersForFirstTimeMeanAges().getMeanWithoutZero()  - TARGET;
+			if (riverBasin.getFemaleSpawnersForFirstTimeMeanAges().getMeanWithoutZero() > 0.) {
+				double val = riverBasin.getFemaleSpawnersForFirstTimeMeanAges().getMeanWithoutZero()  - TARGET;
 				sum += val * val;
 			}
 		}

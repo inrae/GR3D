@@ -334,9 +334,9 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 						// keep the number of spawners for the first time in the basin
 						if (numberOfFemaleSpawnerForFirstTime>0){
-							riverBasin.getSpawnersForFirstTimeMeanAges().push(femaleSpawnersForFirstTimeAgesSum/numberOfFemaleSpawnerForFirstTime);
+							riverBasin.getFemaleSpawnersForFirstTimeMeanAges().push(femaleSpawnersForFirstTimeAgesSum/numberOfFemaleSpawnerForFirstTime);
 						}else{
-							riverBasin.getSpawnersForFirstTimeMeanAges().push(0.);
+							riverBasin.getFemaleSpawnersForFirstTimeMeanAges().push(0.);
 						}
 
 						//System.out.println("nb spawners in basin " + riverBasin.getName() + " : " + numberOfGenitors);
