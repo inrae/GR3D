@@ -316,9 +316,10 @@ public class NutrientRoutine {
 			if (spawningPosition == SpawningPosition.PRE)
 				gonadWeight = Math.exp(fishFeaturesPreSpawning.get(fish.getGender()).get("aLW_Gonad")
 						+ fishFeaturesPreSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
-			else 
+			else {
 				gonadWeight = Math.exp(fishFeaturesPostSpawning.get(fish.getGender()).get("aLW_Gonad")
 						+ fishFeaturesPostSpawning.get(fish.getGender()).get("bLW_Gonad") * Math.log(fish.getLength())); 
+			}
 		}
 		return gonadWeight;
 	}
