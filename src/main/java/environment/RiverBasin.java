@@ -1,6 +1,7 @@
 package environment;
 
-import org.jfree.data.time.MovingAverage;
+import java.util.Hashtable;
+import java.util.Map;
 
 import miscellaneous.QueueMemory;
 import miscellaneous.QueueMemoryMap;
@@ -8,6 +9,7 @@ import fr.cemagref.observation.kernel.Observable;
 import fr.cemagref.observation.kernel.ObservablesHandler;
 import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFish;
+import species.DiadromousFish.Gender;
 import species.DiadromousFishGroup;
 
 /**
@@ -35,7 +37,7 @@ public class RiverBasin extends Basin {
 	private QueueMemory<Double> lastRecsOverProdCaps;
 	private QueueMemory<Double> lastPercentagesOfAutochtones;
 	private QueueMemory<Double> numberOfNonNulRecruitmentDuringLastYears; // Prob of non nul recruitment during the last "memorySize" years... if 10 non nul recruitment during the last 10 year, p=0.999... if 8 non nul recruitment during the last 10 years, p = 0.8... if 0 recruitment, p = 0.001
-	private QueueMemory<Double> femaleSpawnersForFirstTimeMeanAges;
+	private Map<DiadromousFish.Gender, QueueMemory<Double>> spawnersForFirstTimeMeanAges;;
 	private QueueMemory<Double> numberOfNonNulRecruitmentForFinalProbOfPres;
 	
 	private double nativeSpawnerMortality; // mortality coefficient between recruitement and spawning for fish born in this basin
@@ -98,7 +100,11 @@ public class RiverBasin extends Basin {
 		this.lastRecsOverProdCaps = new QueueMemory<Double>(memorySize);
 		this.lastPercentagesOfAutochtones = new QueueMemory<Double>(memorySize);
 		this.numberOfNonNulRecruitmentDuringLastYears = new QueueMemory<Double>(memorySize);
-		this.femaleSpawnersForFirstTimeMeanAges = new QueueMemory<Double>(memorySize);
+		
+		this.spawnersForFirstTimeMeanAges = new Hashtable<DiadromousFish.Gender, QueueMemory<Double>>();
+		this.spawnersForFirstTimeMeanAges.put( DiadromousFish.Gender.FEMALE, new QueueMemory<Double>(memorySize) );
+		this.spawnersForFirstTimeMeanAges.put( DiadromousFish.Gender.MALE, new QueueMemory<Double>(memorySize) );
+		
 		this.numberOfNonNulRecruitmentForFinalProbOfPres = new QueueMemory<Double>(memorySizeLongQueue);
 
 		if (cobservable == null) {
@@ -189,8 +195,12 @@ public class RiverBasin extends Basin {
 		return numberOfNonNulRecruitmentDuringLastYears;
 	}
 
-	public QueueMemory<Double> getFemaleSpawnersForFirstTimeMeanAges() {
-		return femaleSpawnersForFirstTimeMeanAges;
+	/*public QueueMemory<Double> getFemaleSpawnersForFirstTimeMeanAges() {
+		return spawnersForFirstTimeMeanAges.get(Gender.FEMALE);
+	}*/
+	
+	public QueueMemory<Double> getSpawnersForFirstTimeMeanAges(DiadromousFish.Gender gender) {
+		return spawnersForFirstTimeMeanAges.get(gender);
 	}
 
 	public QueueMemory<Double> getNumberOfNonNulRecruitmentForFinalProbOfPres(){

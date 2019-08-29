@@ -102,8 +102,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				double numberOfFemaleSpawners = 0.;
 				double numberOfMaleSpawners = 0.;
 				double numberOfAutochtones = 0.;
+				
 				double numberOfFemaleSpawnerForFirstTime = 0.;
 				double femaleSpawnersForFirstTimeAgesSum = 0.;
+				double numberOfMaleSpawnerForFirstTime = 0.;
+				double maleSpawnersForFirstTimeAgesSum = 0.;
+				
 				long survivalAmount;
 				double muRecruitment = 0.;
 				//double weightOfGenitors = 0.;
@@ -179,14 +183,18 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							// number of spawners per gender
 							if (fish.getGender() == Gender.FEMALE) {
 								//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+")");
+								numberOfFemaleSpawners += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)		
 								if (fish.getNumberOfReproduction() < 1) {
 									numberOfFemaleSpawnerForFirstTime++;
 									femaleSpawnersForFirstTimeAgesSum += fish.getAge();
 								}
-								numberOfFemaleSpawners += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)								
 							}
 							else if (fish.getGender() == Gender.MALE) {
 								numberOfMaleSpawners += fish.getAmount() ; // on ajoute a chaque fois le fish.getAmount (CcumSum)
+								if (fish.getNumberOfReproduction() < 1) {
+									numberOfMaleSpawnerForFirstTime++;
+									maleSpawnersForFirstTimeAgesSum += fish.getAge();
+								}
 							}
 							
 							// spawner per origine
@@ -333,12 +341,17 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						riverBasin.getLastPercentagesOfAutochtones().push(numberOfAutochtones * 100 / numberOfFemaleSpawners);
 
 						// keep the number of spawners for the first time in the basin
-						if (numberOfFemaleSpawnerForFirstTime>0){
-							riverBasin.getFemaleSpawnersForFirstTimeMeanAges().push(femaleSpawnersForFirstTimeAgesSum/numberOfFemaleSpawnerForFirstTime);
-						}else{
-							riverBasin.getFemaleSpawnersForFirstTimeMeanAges().push(0.);
-						}
+						if (numberOfFemaleSpawnerForFirstTime>0)
+							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).push(femaleSpawnersForFirstTimeAgesSum/numberOfFemaleSpawnerForFirstTime);
+						else
+							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).push(0.);
+						if (numberOfMaleSpawnerForFirstTime>0)
+							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).push(maleSpawnersForFirstTimeAgesSum/numberOfMaleSpawnerForFirstTime);
+						else
+							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).push(0.);
 
+						//TODO the same with male
+						
 						//System.out.println("nb spawners in basin " + riverBasin.getName() + " : " + numberOfGenitors);
 						//System.out.println("nb recruit in basin " + riverBasin.getName() + " : " + numberOfRecruit);
 

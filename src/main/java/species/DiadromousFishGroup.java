@@ -46,8 +46,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public Color color = Color.RED;
 
 	/**
-	 *  ????
-	 * @unit
+	 *  distance maximum of dispersion
+	 * @unit km
 	 */
 	public double dMaxDisp = 300.;
 	
@@ -60,7 +60,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 
 	/**
-	 *  centile to calucale the range of species distribution
+	 *  centile to calcucale the range of species distribution
 	 * @unit
 	 */
 	public double centileForRange = 0.95;
@@ -491,6 +491,7 @@ public BufferedWriter getbWForFluxes() {
 		return tempMinRep;
 	}
 
+	
 	@Observable(description = "Nb of SI")
 	public int getNbSI() {
 		int nbSI = 0;
@@ -501,6 +502,7 @@ public BufferedWriter getbWForFluxes() {
 		return nbSI;
 	}
 
+	
 	@Observable(description = "Sizes mean of SI")
 	public double getSizesMeanOfSI() {
 		double totalEffective = 0;
@@ -518,6 +520,7 @@ public BufferedWriter getbWForFluxes() {
 		else
 			return Double.NaN;
 	}
+	
 
 	@Observable(description = "# of SI with ind < 10")
 	public double getNbLittleSI() {
@@ -533,6 +536,7 @@ public BufferedWriter getbWForFluxes() {
 		return nb;
 	}
 
+	
 	public double getMeanLengthOfMatureFish(){
 		double sumOfLength = 0.;
 		double numberOfMatureFish = 0.;
@@ -618,20 +622,33 @@ public  NutrientRoutine getNutrientRoutine() {
 	// ================================================================
 	// statictis for calibration
 	// ================================================================
-	@Observable(description="Spawners For First Time Summary Statistic")
+	@Observable(description="Female spawners For First Time Summary Statistic")
 	public double computeFemaleSpawnerForFirstTimeSummaryStatistic() {
 		double sum = 0;
 		//TODO move TARGET to the right place
 		double TARGET = 5.0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
-			if (riverBasin.getFemaleSpawnersForFirstTimeMeanAges().getMeanWithoutZero() > 0.) {
-				double val = riverBasin.getFemaleSpawnersForFirstTimeMeanAges().getMeanWithoutZero()  - TARGET;
+			if (riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero() > 0.) {
+				double val = riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero()  - TARGET;
 				sum += val * val;
 			}
 		}
 		return sum;
 	}
 
+	@Observable(description="Male spawners For First Time Summary Statistic")
+	public double computeMaleSpawnerForFirstTimeSummaryStatistic() {
+		double sum = 0;
+		//TODO move TARGET to the right place
+		double TARGET = 5.0;
+		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
+			if (riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).getMeanWithoutZero() > 0.) {
+				double val = riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).getMeanWithoutZero()  - TARGET;
+				sum += val * val;
+			}
+		}
+		return sum;
+	}
 
 	@Observable(description = "Likelihood Summary stat")
 	public double computeLikelihood() throws IOException {
