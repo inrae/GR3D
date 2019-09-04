@@ -61,9 +61,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 	private double maxNumberOfSuperIndividualPerReproduction = 50.;
 	private boolean withDiagnose = true;
 	private double proportionOfFemaleAtBirth =0.5;
-
 	private boolean displayFluxesOnConsole = true;
-
 
 	private transient NormalGen genNormal;
 	private transient MortalityFunction mortalityFunction;
@@ -312,7 +310,19 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						System.out.println("\tStrap="+stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality())+
 								"\tStotal="+numberOfFemaleSpawners+"\tSautochthonous="+
 								spawnerOriginsDuringReproduction.get(riverBasin.getName()));
-
+						
+					/*	// display effective from each catchment
+						System.out.print(riverBasin.getName());
+						for (String natalBasinName : group.getEnvironment().getRiverBasinNames()){
+							System.out.print("\t"+natalBasinName);
+						}
+						System.out.println();
+						System.out.print(riverBasin.getName());
+						for (String natalBasinName : group.getEnvironment().getRiverBasinNames()){
+							System.out.print("\t"+spawnerOriginsDuringReproduction.get(natalBasinName));
+						}
+						System.out.println();*/
+						
 						// System.out.println("\t"+ riverBasin.getPopulationStatus());
 					}
 
