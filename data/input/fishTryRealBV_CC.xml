@@ -300,6 +300,12 @@
 					<fileNameOutput>lengthAgeDistribution</fileNameOutput>
 				</species.ExportLenghtAgeDistribution>
 
+				<species.ExportFluxes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>effectiveFluxes</fileNameOutput>
+				</species.ExportFluxes>
+
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
