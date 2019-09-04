@@ -65,6 +65,7 @@ public class RiverBasin extends Basin {
 		return nbJuv;
 	}
 
+	//TODO getSpawnerNumber(group)
 	@Observable(description = "nb of spawners")
 	public double getSpawnerNumber() {
 		long nbSpawn = 0;
