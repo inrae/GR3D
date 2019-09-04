@@ -13,6 +13,10 @@ public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 	public static enum Gender {UNDIFFERENCIED, FEMALE, MALE}; 
 
 	private long amount;
+	/**
+	 *  age of the fish
+	 * @unit (decimal) year
+	 */
 	private double age;
 	private double length;
 	private Basin birthBasin;
