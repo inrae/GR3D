@@ -38,6 +38,14 @@
 					<variableName>getRangeDistributionWithLat</variableName>
 				</miscellaneous.TemporalRangeSerieChart>
 
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Mean age of female spawners</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>age (year)</yAxisLabel>
+					<variableName>computeFemaleSpawnerForFirstTimeSummaryStatistic</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
 			</observers>
 		</fr.cemagref.observation.kernel.ObservablesHandler>
 	</entry>
@@ -60,7 +68,7 @@
 					<yAxisLabel>% Autochtone</yAxisLabel>
 					<variableName>getLastPercentageOfAutochtone</variableName>
 				</miscellaneous.TemporalSerieChartForBasin>
-                
+
 			</observers>
 		</fr.cemagref.observation.kernel.ObservablesHandler>
 	</entry>
