@@ -87,7 +87,7 @@ public class ExportLenghtAgeDistribution extends AquaNismsGroupProcess<Diadromou
 						for (DiadromousFish fish : basin.getFishs(group)) {
 							if (fish.getStage() == Stage.MATURE) {
 								
-								System.out.println(fish.getAge() + " -> "+ fish.getLength() +" - "+fish.getNumberOfReproduction());
+								//System.out.println(fish.getAge() + " -> "+ fish.getLength() +" - "+fish.getNumberOfReproduction());
 								
 								bW.write(pilot.getCurrentTime() + sep);
 								bW.write(Time.getYear(pilot) + sep);
