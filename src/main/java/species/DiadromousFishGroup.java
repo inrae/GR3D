@@ -626,7 +626,7 @@ public  NutrientRoutine getNutrientRoutine() {
 	public double computeFemaleSpawnerForFirstTimeSummaryStatistic() {
 		double sum = 0;
 		//TODO move TARGET to the right place
-		double TARGET = 4.5;
+		double TARGET = 5.5.;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
 			if (riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero() > 0.) {
 				double val = riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero()  - TARGET;
@@ -636,6 +636,21 @@ public  NutrientRoutine getNutrientRoutine() {
 		return sum;
 	}
 
+	@Observable(description="Female spawners For First Time Summary Statistic")
+	public double computeFemaleSpawnerForFirstTimeSummary() {
+		double sum = 0;
+		//TODO move TARGET to the right place
+		double TARGET = 0.;
+		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
+			if (riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero() > 0.) {
+				double val = riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero()  - TARGET;
+				sum += val * val;
+			}
+		}
+		return sum;
+	}
+	
+	
 	@Observable(description="Male spawners For First Time Summary Statistic")
 	public double computeMaleSpawnerForFirstTimeSummaryStatistic() {
 		double sum = 0;
