@@ -3,6 +3,7 @@ package species;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -169,7 +170,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// age of autochnonous spawnser
 					Map<Integer, Long> ageOfNativeSpawners = new TreeMap<Integer, Long>(); 
 
-					
+
 					// compute the number of spawners and keep the origines of the spawners
 					for (DiadromousFish fish : fishInBasin){
 
@@ -410,9 +411,9 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						try {
 							for (fluxOrigin origin : totalInputFluxes.keySet()) {
 								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
-								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + ";IMPORT;"+origin);
+								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + "IMPORT"+ ";" + origin);
 								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
-						
+
 								for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 									bW.write(";" + totalInputFluxes.get(origin).get(nutrient));
 								}
@@ -434,8 +435,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
-			
-			
+
+
 			// --------------------------------------------------------------------------------------------------
 			// update the observers
 			// --------------------------------------------------------------------------------------------------

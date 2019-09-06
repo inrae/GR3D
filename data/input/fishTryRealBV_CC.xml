@@ -279,6 +279,7 @@
 					<standardDeviationOfSpawnersLengthAtRepro>2.0</standardDeviationOfSpawnersLengthAtRepro>
 					<weightOfDeathBasin>0.4</weightOfDeathBasin>
 				</species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
+				
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<tempMinMortGenInRiv>10.0</tempMinMortGenInRiv>
@@ -289,6 +290,13 @@
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
+				
+				<species.ExportFluxes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>EffectiveFluxes</fileNameOutput>
+				</species.ExportFluxes>
+
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
