@@ -43,7 +43,7 @@
 					<title>Mean age of female spawners</title>
 					<xAxisLabel>Time (season)</xAxisLabel>
 					<yAxisLabel>age (year)</yAxisLabel>
-					<variableName>computeFemaleSpawnerForFirstTimeSummaryStatistic</variableName>
+					<variableName>getMeanLengthOfFemaleSpawnerForFirstTime</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 
 			</observers>
