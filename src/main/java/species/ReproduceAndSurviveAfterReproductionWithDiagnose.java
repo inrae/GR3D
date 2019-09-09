@@ -88,6 +88,14 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 		mortalityFunction=new MortalityFunction();
 		stockRecruitmentRelationship=  new StockRecruitmentRelationship();
 	}
+	
+
+	/**
+	 * @return the tempMinRep
+	 */
+	public double getTempMinRep() {
+		return tempMinRep;
+	}
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {

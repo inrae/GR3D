@@ -19,16 +19,274 @@
  */
 package species;
 
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Map;
+
+import fr.cemagref.simaqualife.extensions.pilot.BatchRunner;
+import fr.cemagref.simaqualife.pilot.Pilot;
+import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
+import fr.inria.optimization.cmaes.fitness.IObjectiveFunction;
+import miscellaneous.Duo;
+import miscellaneous.ReflectUtils;
+
 /**
  *
  */
-public class Calibrate {
+public class Calibrate  {
 
-	/**
-	 * 
-	 */
+
+
 	public Calibrate() {
-		// TODO Auto-generated constructor stub
+
 	}
 
+
+
+	public static void main(String[] args) {
+		GR3DObjeciveFunction fitfun = new GR3DObjeciveFunction(10.,10.);
+		double par[] = {9., 0.5, 0.6};
+		double x[] = fitfun.par2x(par);
+		System.out.println(Arrays.toString(par));
+		System.out.println(Arrays.toString(x));
+		
+		//calibrate.valueOf(x);
+		System.out.println(fitfun.valueOf(x));
+
+		// new a CMA-ES and set some initial values
+		CMAEvolutionStrategy cma = new CMAEvolutionStrategy();
+
+		cma.setDimension(fitfun.getParameterRanges().size());
+		cma.setInitialX(5.);
+		cma.setInitialStandardDeviation(0.2);
+		
+		cma.options.stopTolFun=1e-4;    // function value range within iteration and of past values
+
+		// from CMAEvolutionStrategy.properties, to avoid to load the file
+		cma.options.stopTolFunHist = 1e-13 ; // function value range of 10+30*N/lambda past values
+		cma.options.stopTolX = 0.0 ;                 // absolute x-changes
+		cma.options.stopTolXFactor = 1e-11;           // relative to initial stddev
+		cma.options.stopTolUpXFactor = 1000;          // relative to initial stddev	
+		
+		
+		// initialize cma and get fitness array to fill in later
+		double[] fitness = cma.init();  // new double[cma.parameters.getPopulationSize()];
+		
+		double[][] pop;
+		// iteration loop
+		while(cma.stopConditions.getNumber() == 0) {
+
+			// --- core iteration step ---
+			pop = cma.samplePopulation(); // get a new population of solutions
+
+			for(int i = 0; i < 	pop.length; ++i) {    // for each candidate solution i
+				// a simple way to handle constraints that define a convex feasible domain  
+				// (like box constraints, i.e. variable boundaries) via "blind re-sampling" 
+				// assumes that the feasible domain is convex, the optimum is  
+				while (!fitfun.isFeasible(pop[i]))     //   not located on (or very close to) the domain boundary,  
+					pop[i] = cma.resampleSingle(i);    //   initialX is feasible and initialStandardDeviations are  
+				//   sufficiently small to prevent quasi-infinite looping here
+				// compute fitness/objective value	
+				fitness[i] = fitfun.valueOf(pop[i]); // fitfun.valueOf() is to be minimized
+			}
+			cma.updateDistribution(fitness);         // pass fitness array to update search distribution
+			// --- end core iteration step ---
+
+			// output to files and console 
+			cma.writeToDefaultFiles(0);
+			int outmod = 100;
+			if (cma.getCountIter() % (100*outmod) == 1)
+				cma.printlnAnnotation(); // might write file as well
+			if (cma.getCountIter() % outmod == 1)
+				cma.println(); 
+			//
+			// evaluate mean value as it is the best estimator for the optimum
+			cma.setFitnessOfMeanX(fitfun.valueOf(cma.getMeanX())); // updates the best ever solution 
+		}
+
+		// final output
+		//cma.writeToDefaultFiles(1);
+		cma.println();
+		cma.println("Terminated due to");
+		for (String s : cma.stopConditions.getMessages())
+			cma.println("  " + s);
+
+		cma.println("Best function value " + cma.getBestFunctionValue() + " at evaluation " + cma.getBestEvaluationNumber());
+
+	}
 }
+
+
+/**
+ * objective function based on GR3D 
+ */
+class GR3DObjeciveFunction  implements   IObjectiveFunction {
+
+	private double a_femaleLengthPenalty=100.;
+	private double a_maleLengthPenalty=100.;
+	private  Map<String, Duo<Double, Double>> parameterRanges;
+
+	private transient Pilot pilot;
+
+	public GR3DObjeciveFunction(double a_femaleLengthPenalty, double a_maleLengthPenalty) {
+		loadSimulation();
+		this.a_femaleLengthPenalty = a_femaleLengthPenalty;
+		this.a_maleLengthPenalty = a_maleLengthPenalty;
+
+		parameterRanges = new Hashtable<String, Duo<Double,Double>>();
+		parameterRanges.put("tempMinRep", new Duo<Double, Double>(2., 15.));
+		parameterRanges.put("KOptFemale", new Duo<Double, Double>(0.2, .9));
+		parameterRanges.put("KOptMale", new Duo<Double, Double>(0.2, .9));
+	}
+	
+	
+
+	/**
+	 * @return the parameterRanges
+	 */
+	public Map<String, Duo<Double, Double>> getParameterRanges() {
+		return parameterRanges;
+	}
+
+
+
+	@Override
+	public double valueOf(double[] x) {
+		// x[0] tempMinRep
+		// x[1] kOptFemale
+		// x[2] kOptMale
+
+		double[] par = x2par(x); // in natural unit
+		
+		try {
+			pilot.load();
+
+			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.6.tempMinRep", par[0]);
+			//System.out.println("tempMinRep: " + (double)  ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.6.getTempMinRep"));
+
+			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.kOptForFemale", par[1]);
+			//System.out.println("KOptFemale: " + (double)  ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.getkOptForFemale"));
+
+			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.kOptForMale",par[2]);
+			//System.out.println("KOptMale: " + (double)  ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.getkOptForMale"));
+
+		} catch (Exception   e1) {
+			e1.printStackTrace();
+		}
+
+		pilot.run();
+
+		double likelihood =0;
+		double femaleLengthPenalty = 0.;
+		double maleLengthPenalty =0.;
+		try {
+
+			likelihood = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeLikelihood");
+			System.out.println("likelihood: "+ likelihood);
+			femaleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeFemaleSpawnerForFirstTimeSummaryStatistic");
+			System.out.println("femaleLengthPenalty: "+femaleLengthPenalty);
+			maleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeMaleSpawnerForFirstTimeSummaryStatistic");
+			System.out.println("maleLengthPenalty: "+maleLengthPenalty);
+
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return likelihood +a_femaleLengthPenalty * femaleLengthPenalty + a_maleLengthPenalty * maleLengthPenalty ;
+	}
+
+	@Override
+	public boolean isFeasible(double[] x) {
+		double[] par = x2par(x);
+		
+		boolean test = true;
+		double a, b;
+		a = parameterRanges.get("tempMinRep").getFirst();
+		b = parameterRanges.get("tempMinRep").getSecond();
+		if  (par[0] < a | par[0]>b)
+				test = false;
+		
+		a = parameterRanges.get("KOptFemale").getFirst();
+		b = parameterRanges.get("KOptFemale").getSecond();
+		if  (par[1] < a | par[1]>b)
+				test = false;
+		
+		a = parameterRanges.get("KOptMale").getFirst();
+		b = parameterRanges.get("KOptMale").getSecond();
+		if  (par[2] < a | par[2]>b)
+				test = false;
+
+		return test;
+	}
+
+	public void loadSimulation() {
+		String[] args= {"-simDuration", "100", "-simBegin", "1", "-RNGStatusIndex", "1", 
+				"-groups", "data/input/fishTryRealBV_calibration.xml", 
+				"-env", "data/input/BNtryRealBasins.xml",
+				"q", "true"
+		};
+		pilot = new Pilot();
+
+		try {
+			// iniatialize the simulation 
+			pilot.init();
+			// no display on the console ????
+			pilot.setQuiet();
+
+			new BatchRunner(pilot).parseArgs(args, true, true, false);
+		} catch (IOException | IllegalArgumentException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param x paremters in the range [0,10]
+	 * @return parameter in natural unit (based on parameters range)
+	 */
+	public double[] x2par(double[] x) {
+		double[] naturalPar = new double[x.length]; // par in natural unit
+		double a, b; 
+
+		a = parameterRanges.get("tempMinRep").getFirst();
+		b = parameterRanges.get("tempMinRep").getSecond();
+		naturalPar[0] = a + (b-a) * x[0] /10.;
+
+		a = parameterRanges.get("KOptFemale").getFirst();
+		b = parameterRanges.get("KOptFemale").getSecond();
+		naturalPar[1] = a + (b-a) * x[1] /10.;
+		
+		a = parameterRanges.get("KOptMale").getFirst();
+		b = parameterRanges.get("KOptMale").getSecond();
+		naturalPar[2] = a + (b-a) * x[2] /10.;
+		
+		return naturalPar;
+	}
+
+
+	public double[] par2x(double[] naturalPar) {
+		double[] x = new double[naturalPar.length];
+		double a, b;
+	
+		a = parameterRanges.get("tempMinRep").getFirst();
+		b = parameterRanges.get("tempMinRep").getSecond();
+		x[0] = 10.* (naturalPar[0] - a) / (b-a);
+		
+		a = parameterRanges.get("KOptFemale").getFirst();
+		b = parameterRanges.get("KOptFemale").getSecond();
+		x[1] = 10.* (naturalPar[1] - a) / (b-a);
+		
+		a = parameterRanges.get("KOptFemale").getFirst();
+		b = parameterRanges.get("KOptFemale").getSecond();
+		x[2] = 10.* (naturalPar[2] - a) / (b-a);
+		
+		return x;
+	}
+}
+
+
+

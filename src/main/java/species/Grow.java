@@ -51,6 +51,34 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 
 	
 	/**
+	 * @return the kOptForFemale
+	 */
+	public double getkOptForFemale() {
+		return kOptForFemale;
+	}
+
+	/**
+	 * @param kOptForFemale the kOptForFemale to set
+	 */
+	public void setkOptForFemale(double kOptForFemale) {
+		this.kOptForFemale = kOptForFemale;
+	}
+
+	/**
+	 * @return the kOptForMale
+	 */
+	public double getkOptForMale() {
+		return kOptForMale;
+	}
+
+	/**
+	 * @param kOptForMale the kOptForMale to set
+	 */
+	public void setkOptForMale(double kOptForMale) {
+		this.kOptForMale = kOptForMale;
+	}
+
+	/**
 	 * K, Brody growth rate at optimal temperature
 	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit year -1

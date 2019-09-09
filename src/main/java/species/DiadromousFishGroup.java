@@ -50,13 +50,13 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit km
 	 */
 	public double dMaxDisp = 300.;
-	
+
 	/**
 	 * Routine to compute nutrient fluxes operated by a single individual (TODO by a single super individual). 
 	 * 
 	 */
 	private  NutrientRoutine nutrientRoutine; 
-	
+
 	public String fileNameInputForInitialObservation = "data/input/reality/Obs1900.csv";
 
 	/**
@@ -93,9 +93,9 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
 	private String outputPath = "data/output/";
-	
+
 	private String fileNameFluxes = "fluxes";
-	
+
 	private transient BufferedWriter bWForFluxes;
 	private transient String sep;
 
@@ -115,22 +115,22 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit cm
 	 */
 	private double lengthAtHatching = 2.;
-	
+
 	/**
 	 * L infinity of the van Bertalanffy growth curve for  female
 	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit cm
 	 */
 	public double linfVonBertForFemale = 60.;
-	
+
 	/**
 	 * L infinity of the van Bertalanffy growth curve for  male
 	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit cm
 	 */
 	public double linfVonBertForMale = 60.;
-	
-	
+
+
 	/**
 	 * Brody growth coefficient of the von Bertalanffy growth curve for female (calculated from the parameterset file)
 	 *  	 * L = Linf *(1-exp(-K*(t-t0))
@@ -144,7 +144,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit year-1
 	 */
 	private transient double kOptForMale; 
-	
+
 	/**
 	 *  length at first maturity. At that length the female become Stage.MATURE
 	 * @unit cm
@@ -157,7 +157,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 * @unit cm
 	 */
 	public double lFirstMaturityForMale = 40.;
-	
+
 
 	/**
 	 * minimum temperature for the reproduction (from the parameterset file)
@@ -173,6 +173,11 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	private transient List<Duo<Double, Double>> parameterSets;
 
 
+	/**
+	 *  map of observedoccurence  in 1900
+	 * @unit
+	 */
+	private transient Map<String, Integer> obs1900 ;
 
 	public static void main(String[] args) {
 		DiadromousFishGroup diadromousFishGroup = new DiadromousFishGroup(new Pilot(), null, null);
@@ -441,11 +446,11 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			kOptForFemale= kOpt * lFirstMaturityForFemale / 40.;
 			tempMinRep = parameterSets.get(parameterSetLine-1).getSecond();
 		}
-		
+
 		// open an bufferad writer to export fluxes
 		if (fileNameFluxes != null){
 			sep = ";";
-		    new File(this.outputPath +fileNameFluxes).getParentFile().mkdirs();
+			new File(this.outputPath +fileNameFluxes).getParentFile().mkdirs();
 			try {
 				bWForFluxes = new BufferedWriter(new FileWriter(new File(this.outputPath+
 						fileNameFluxes +this.getSimulationId() + ".csv")));
@@ -461,10 +466,35 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 				e.printStackTrace();
 			}
 		}
+		// ------------------------------------------------------------------
+		// read occurence data file
+		// -----------------------------------------------------------
+		FileReader reader;
+		Scanner scanner;
+
+		obs1900 = new HashMap<String, Integer>();
+		try {
+			reader = new FileReader(fileNameInputForInitialObservation);
+			// Parsing the file
+			scanner = new Scanner(reader);
+			scanner.useLocale(Locale.ENGLISH); // to have a comma as decimal separator !!!
+			scanner.useDelimiter(Pattern.compile("[;\r]"));
+
+			scanner.nextLine(); // to skip the file first line of entete
+
+			while (scanner.hasNext()) {
+				obs1900.put(scanner.next().replaceAll("\n", ""), scanner.nextInt());
+			}
+			reader.close();
+			scanner.close();
+
+		} catch (IOException ex) {
+			Logger.getLogger(DiadromousFishGroup.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
-	
-	
+
+
 	/**
 	 * @param fish
 	 * @param group
@@ -482,7 +512,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 		return kOpt;
 	}
-public BufferedWriter getbWForFluxes() {
+	public BufferedWriter getbWForFluxes() {
 		return bWForFluxes;
 	}
 
@@ -491,7 +521,7 @@ public BufferedWriter getbWForFluxes() {
 		return tempMinRep;
 	}
 
-	
+
 	@Observable(description = "Nb of SI")
 	public int getNbSI() {
 		int nbSI = 0;
@@ -502,7 +532,7 @@ public BufferedWriter getbWForFluxes() {
 		return nbSI;
 	}
 
-	
+
 	@Observable(description = "Sizes mean of SI")
 	public double getSizesMeanOfSI() {
 		double totalEffective = 0;
@@ -520,7 +550,7 @@ public BufferedWriter getbWForFluxes() {
 		else
 			return Double.NaN;
 	}
-	
+
 
 	@Observable(description = "# of SI with ind < 10")
 	public double getNbLittleSI() {
@@ -536,7 +566,7 @@ public BufferedWriter getbWForFluxes() {
 		return nb;
 	}
 
-	
+
 	public double getMeanLengthOfMatureFish(){
 		double sumOfLength = 0.;
 		double numberOfMatureFish = 0.;
@@ -600,7 +630,7 @@ public BufferedWriter getbWForFluxes() {
 		else
 			return (lFirstMaturityForFemale+lFirstMaturityForFemale)/2.;
 	}
-	
+
 
 	/**
 	 * @return the lengthAtHatching
@@ -609,24 +639,21 @@ public BufferedWriter getbWForFluxes() {
 		return lengthAtHatching;
 	}
 
-	
+
 	public double getdMaxDisp() {
 		return dMaxDisp;
 	}
-	
-public  NutrientRoutine getNutrientRoutine() {
+
+	public  NutrientRoutine getNutrientRoutine() {
 		return nutrientRoutine; 
 	}
-	
-	
+
+
 	// ================================================================
 	// statictis for calibration
 	// ================================================================
-	@Observable(description="Female spawners For First Time Summary Statistic")
-	public double computeFemaleSpawnerForFirstTimeSummaryStatistic() {
+	public double computeFemaleSpawnerForFirstTimeSummaryStatisticWithTarget(double TARGET) {
 		double sum = 0;
-		//TODO move TARGET to the right place
-		double TARGET = 5.5;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
 			if (riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero() > 0.) {
 				double val = riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).getMeanWithoutZero()  - TARGET;
@@ -635,6 +662,12 @@ public  NutrientRoutine getNutrientRoutine() {
 		}
 		return sum;
 	}
+
+	@Observable(description="Female spawners For First Time Summary Statistic")
+	public double computeFemaleSpawnerForFirstTimeSummaryStatistic() {
+		return computeFemaleSpawnerForFirstTimeSummaryStatisticWithTarget(5.5);
+	}
+
 
 	@Observable(description="mean length for female spawners For First Time")
 	public double getMeanLengthOfFemaleSpawnerForFirstTime() {
@@ -648,13 +681,10 @@ public  NutrientRoutine getNutrientRoutine() {
 		}
 		return sum/nb;
 	}
-	
-	
-	@Observable(description="Male spawners For First Time Summary Statistic")
-	public double computeMaleSpawnerForFirstTimeSummaryStatistic() {
+
+
+	public double computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(double TARGET ) {
 		double sum = 0;
-		//TODO move TARGET to the right place
-		double TARGET = 5.5;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
 			if (riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).getMeanWithoutZero() > 0.) {
 				double val = riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).getMeanWithoutZero()  - TARGET;
@@ -664,32 +694,13 @@ public  NutrientRoutine getNutrientRoutine() {
 		return sum;
 	}
 
+	@Observable(description="Male spawners For First Time Summary Statistic")
+	public double computeMaleSpawnerForFirstTimeSummaryStatistic() {
+		return computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(4.5); 
+	}
+
 	@Observable(description = "Likelihood Summary stat")
-	public double computeLikelihood() throws IOException {
-		// 1 : read input file of observation
-		FileReader reader;
-		Scanner scanner;
-		//TODO move the obs1900 and the scanner
-		Map<String, Integer> obs1900 = new HashMap<String, Integer>();
-		try {
-			reader = new FileReader(fileNameInputForInitialObservation);
-			// Parsing the file
-			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a comma as decimal separator !!!
-			scanner.useDelimiter(Pattern.compile("[;\r]"));
-
-			scanner.nextLine(); // to skip the file first line of entete
-
-			while (scanner.hasNext()) {
-				obs1900.put(scanner.next().replaceAll("\n", ""), scanner.nextInt());
-			}
-			reader.close();
-			scanner.close();
-
-		} catch (IOException ex) {
-			Logger.getLogger(DiadromousFishGroup.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
+	public double computeLikelihood() {
 		int obsVal;
 		double sumLogWherePres = 0.;
 		double sumLogWhereAbs = 0.;
@@ -708,8 +719,8 @@ public  NutrientRoutine getNutrientRoutine() {
 
 		return sumLogWhereAbs + sumLogWherePres;
 	}
-	
-	
+
+
 	// ========================================================
 	// obeserver to explore the distribution
 	// ========================================================
@@ -726,8 +737,8 @@ public  NutrientRoutine getNutrientRoutine() {
 		}
 		return latitude;
 	}
-	
-	
+
+
 	@Observable(description="Number of colonized basins")
 	public double getNbColonizedBasins() {
 		int nb = 0;
@@ -740,7 +751,7 @@ public  NutrientRoutine getNutrientRoutine() {
 		}
 		return nb;
 	}
-	
+
 
 	@Observable(description="Northern colonized basins")
 	public double getNorthernBasins() {
@@ -755,7 +766,7 @@ public  NutrientRoutine getNutrientRoutine() {
 		return northernBasin;
 	}
 
-	
+
 	@Observable(description="Southern colonized basins")
 	public double getSouthernBasins() {
 		int southernBasin = Integer.MIN_VALUE;
@@ -800,7 +811,7 @@ public  NutrientRoutine getNutrientRoutine() {
 		return rangeDistribution;
 	}
 
-	
+
 	@Observable(description = "Range distribution")
 	public Double[] getRangeDistribution() {
 		double southernBasin = 0;
@@ -849,7 +860,7 @@ public  NutrientRoutine getNutrientRoutine() {
 		return eff;
 	}
 
-	
+
 	@Override
 	public void addAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -857,7 +868,7 @@ public  NutrientRoutine getNutrientRoutine() {
 		fish.getPosition().addFish(fish, this);
 	}
 
-	
+
 	@Override
 	public void removeAquaNism(DiadromousFish fish) {
 		// avoid utilisation of global fishes list
@@ -865,13 +876,13 @@ public  NutrientRoutine getNutrientRoutine() {
 		fish.getPosition().removeFish(fish, this);
 	}
 
-	
+
 	@Override
 	public int compareTo(DiadromousFishGroup t) {
 		return name.compareTo(t.name);
 	}
 
-	
+
 	/**
 	 * 
 	 * concat at RngSatusIndex, temperatureCatchmentFile
