@@ -185,7 +185,8 @@ public class NutrientRoutine {
 
 	/**
 	 * compute the nutrient fluxes for a single fish (in the super individual)
-	 * that dies after spawning (gametes expelling)
+	 * that dies after spawning (gametes expelling) 
+	 * Considering that a fish died after reproduction have the same nutrient contribution that a fish died before reproduction, we use the same coefficient for weight computation. 
 	 * @param fish
 	 * @return nutrientsInput
 	 */
@@ -371,25 +372,21 @@ public class NutrientRoutine {
 		 */
 		Map<String,Double> aFeature = new Hashtable<String,Double>();
 
-		aFeature.put("aLW", Math.exp(-4.9078)); //weight size relationship computed from BDalosesBruch 
-		aFeature.put("bLW", 3.147);
-		aFeature.put("aLW_Gonad", -5.2425); // issu de la relation taille - poids des gonades Bruch
+		aFeature.put("bLW", 3.3429); //From Taverny 
+		aFeature.put("aLW", 1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); //weight size relationship -- Conversion des g/mm en g.cm (from Taverny, 1991) 
 		aFeature.put("bLW_Gonad", 2.6729); // issu de la relation taille - poids des gonades Bruch
-		//aFeature.put("bLW",3.3429);// parametre "b" de la relation taille/poids - Coefficient d'allometrie
-		//aFeature.put("aLW",1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); // parametre "a" de la relation taille/poids en kg/cm- Traduit la condition
-		//aFeature.put("GSI",0.15); 
+		aFeature.put("aLW_Gonad", -5.2425); // issu de la relation taille - poids des gonades Bruch
+		
 		aFeaturePreSpawning.put(Gender.FEMALE, aFeature);
 
 		/*
 		 * For males 
 		 */
 		aFeature = new Hashtable<String,Double>();
-		aFeature.put("aLW", Math.exp(-1.304)); 
-		aFeature.put("bLW", 2.1774);
-		aFeature.put("aLW_Gonad", -8.8744); 
+		aFeature.put("bLW", 3.2252);
+		aFeature.put("aLW", 2.4386E-6 * Math.pow(10., aFeature.get("bLW"))); //weight size relationship from Taverny -- Conversion des g/mm en g.cm (from Taverny, 1991) 
 		aFeature.put("bLW_Gonad", 3.3838); 
-		//aFeature.put("aLW",2.4386E-6 * Math.pow(10, aFeature.get("bLW"))); // Conversion des g/mm en g.cm (from Taverny, 1991) 
-		//aFeature.put("GSI",.08);
+		aFeature.put("aLW_Gonad", -8.8744); 
 		aFeaturePreSpawning.put(Gender.MALE,aFeature);
 
 		System.out.println("aFeaturePreSpawning: " + aFeaturePreSpawning.toString()); //

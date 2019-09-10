@@ -40,11 +40,11 @@
 						</entry>
 						<entry>
 							<string>bLW</string>
-							<double>2.1774</double>
+							<double>3.2252</double>
 						</entry>
 						<entry>
 							<string>aLW</string>
-							<double>0.27144384321211973</double>
+							<double>0.004095817237891344</double>
 						</entry>
 					</hashtable>
 				</entry>
@@ -61,11 +61,11 @@
 						</entry>
 						<entry>
 							<string>bLW</string>
-							<double>3.147</double>
+							<double>3.3429</double>
 						</entry>
 						<entry>
 							<string>aLW</string>
-							<double>0.007388725660209693</double>
+							<double>0.002665367811305362</double>
 						</entry>
 					</hashtable>
 				</entry>
@@ -83,13 +83,13 @@
 							<double>-11.285</double>
 						</entry>
 						<entry>
-							<string>bLW</string>
-							<double>2.9973</double>
-						</entry>
-						<entry>
-							<string>aLW</string>
-							<double>0.010383887012522573</double>
-						</entry>
+-							<string>bLW</string>
+-							<double>2.9973</double>
+-						</entry>
+-						<entry>
+-							<string>aLW</string>
+-							<double>0.010383887012522573</double>
+-						</entry>
 					</hashtable>
 				</entry>
 				<entry>
@@ -104,13 +104,13 @@
 							<double>-6.6234</double>
 						</entry>
 						<entry>
-							<string>bLW</string>
-							<double>2.9418</double>
-						</entry>
-						<entry>
-							<string>aLW</string>
-							<double>0.013199187556948952</double>
-						</entry>
+-							<string>bLW</string>
+-							<double>2.9418</double>
+-						</entry>
+-						<entry>
+-							<string>aLW</string>
+-							<double>0.013199187556948952</double>
+-						</entry>
 					</hashtable>
 				</entry>
 			</fishFeaturesPostSpawning>
