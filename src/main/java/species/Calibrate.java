@@ -48,22 +48,17 @@ public class Calibrate  {
 
 	public static void main(String[] args) {
 		GR3DObjeciveFunction fitfun = new GR3DObjeciveFunction(10.,10.);
-		double par[] = {9., 0.5, 0.6};
-		double x[] = fitfun.par2x(par);
-		System.out.println(Arrays.toString(par));
-		System.out.println(Arrays.toString(x));
 		
-		//calibrate.valueOf(x);
-		System.out.println(fitfun.valueOf(x));
-
 		// new a CMA-ES and set some initial values
 		CMAEvolutionStrategy cma = new CMAEvolutionStrategy();
 
 		cma.setDimension(fitfun.getParameterRanges().size());
+
+		//cma. parameters.setPopulationSize(30);
 		cma.setInitialX(5.);
-		cma.setInitialStandardDeviation(0.2);
+		cma.setInitialStandardDeviation(2.5);
 		
-		cma.options.stopTolFun=1e-4;    // function value range within iteration and of past values
+		cma.options.stopTolFun=1e-6;    // function value range within iteration and of past values
 
 		// from CMAEvolutionStrategy.properties, to avoid to load the file
 		cma.options.stopTolFunHist = 1e-13 ; // function value range of 10+30*N/lambda past values
@@ -75,7 +70,7 @@ public class Calibrate  {
 		// initialize cma and get fitness array to fill in later
 		double[] fitness = cma.init();  // new double[cma.parameters.getPopulationSize()];
 		
-		double[][] pop;
+		double[][] pop= cma.samplePopulation();
 		// iteration loop
 		while(cma.stopConditions.getNumber() == 0) {
 
@@ -116,6 +111,12 @@ public class Calibrate  {
 
 		cma.println("Best function value " + cma.getBestFunctionValue() + " at evaluation " + cma.getBestEvaluationNumber());
 
+		cma.println("best par: "+ Arrays.toString(fitfun.x2par(cma.getBestX())));
+		cma.println("best sol: "+ Arrays.toString(fitfun.x2par(cma.getBestSolution().getX())));
+		System.out.println();
+		for (int i=0; i < pop.length; i++) {
+			System.out.println(Arrays.toString(fitfun.x2par((pop[i]))));
+		}
 	}
 }
 
@@ -137,9 +138,9 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 		this.a_maleLengthPenalty = a_maleLengthPenalty;
 
 		parameterRanges = new Hashtable<String, Duo<Double,Double>>();
-		parameterRanges.put("tempMinRep", new Duo<Double, Double>(2., 15.));
-		parameterRanges.put("KOptFemale", new Duo<Double, Double>(0.2, .9));
-		parameterRanges.put("KOptMale", new Duo<Double, Double>(0.2, .9));
+		parameterRanges.put("tempMinRep", new Duo<Double, Double>(9., 12.));
+		parameterRanges.put("KOptFemale", new Duo<Double, Double>(0.2, .5));
+		parameterRanges.put("KOptMale", new Duo<Double, Double>(0.2, .5));
 	}
 	
 	
@@ -185,18 +186,21 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 		try {
 
 			likelihood = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeLikelihood");
-			System.out.println("likelihood: "+ likelihood);
+			//System.out.println("likelihood: "+ likelihood);
 			femaleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeFemaleSpawnerForFirstTimeSummaryStatistic");
-			System.out.println("femaleLengthPenalty: "+femaleLengthPenalty);
+			//System.out.println("femaleLengthPenalty: "+femaleLengthPenalty);
 			maleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeMaleSpawnerForFirstTimeSummaryStatistic");
-			System.out.println("maleLengthPenalty: "+maleLengthPenalty);
+			//System.out.println("maleLengthPenalty: "+maleLengthPenalty);
 
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return likelihood +a_femaleLengthPenalty * femaleLengthPenalty + a_maleLengthPenalty * maleLengthPenalty ;
+		double result = likelihood +a_femaleLengthPenalty * femaleLengthPenalty + a_maleLengthPenalty * maleLengthPenalty ;
+
+		System.out.println(Arrays.toString(x2par(x)) + "->"+result);
+		return  result;
 	}
 
 	@Override
