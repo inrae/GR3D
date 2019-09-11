@@ -259,8 +259,8 @@
 					<tempMinGrow>3.0</tempMinGrow>
 					<tempMaxGrow>26.0</tempMaxGrow>
 					<tempOptGrow>17.0</tempOptGrow>
-					<kOptForFemale>0.5363472</kOptForFemale>
-					<kOptForMale>0.3900707</kOptForMale>
+					<kOptForFemale>0.20323011454056628</kOptForFemale>
+					<kOptForMale>0.3004992503785338</kOptForMale>
 					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
 				</species.Grow>
 
@@ -309,7 +309,7 @@
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>9.846984</tempMinRep>
+					<tempMinRep>10.443039492695249</tempMinRep>
 					<tempMaxRep>26.0</tempMaxRep>
 					<tempOptRep>20.0</tempOptRep>
 					<eta>2.4</eta>

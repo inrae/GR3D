@@ -112,7 +112,8 @@ public class Calibrate  {
 		cma.println("Best function value " + cma.getBestFunctionValue() + " at evaluation " + cma.getBestEvaluationNumber());
 
 		cma.println("best par: "+ Arrays.toString(fitfun.x2par(cma.getBestX())));
-		cma.println("best sol: "+ Arrays.toString(fitfun.x2par(cma.getBestSolution().getX())));
+
+		System.out.println("\n"+fitfun.valueOf(cma.getBestX()));
 		System.out.println();
 		for (int i=0; i < pop.length; i++) {
 			System.out.println(Arrays.toString(fitfun.x2par((pop[i]))));
@@ -153,7 +154,6 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 	}
 
 
-
 	@Override
 	public double valueOf(double[] x) {
 		// x[0] tempMinRep
@@ -161,7 +161,6 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 		// x[2] kOptMale
 
 		double[] par = x2par(x); // in natural unit
-		
 		try {
 			pilot.load();
 
@@ -192,6 +191,8 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 			maleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeMaleSpawnerForFirstTimeSummaryStatistic");
 			//System.out.println("maleLengthPenalty: "+maleLengthPenalty);
 
+			System.out.println("likelihood: "+ likelihood+ " femaleLengthPenalty: "+femaleLengthPenalty+ " maleLengthPenalty: "+maleLengthPenalty);
+			
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
