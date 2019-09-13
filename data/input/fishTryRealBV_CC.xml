@@ -83,13 +83,20 @@
 							<double>-11.285</double>
 						</entry>
 						<entry>
--							<string>bLW</string>
--							<double>2.9973</double>
--						</entry>
--						<entry>
--							<string>aLW</string>
--							<double>0.010383887012522573</double>
--						</entry>
+							-
+							<string>bLW</string>
+							-
+							<double>2.9973</double>
+							-
+						</entry>
+						-
+						<entry>
+							-
+							<string>aLW</string>
+							-
+							<double>0.010383887012522573</double>
+							-
+						</entry>
 					</hashtable>
 				</entry>
 				<entry>
@@ -104,13 +111,20 @@
 							<double>-6.6234</double>
 						</entry>
 						<entry>
--							<string>bLW</string>
--							<double>2.9418</double>
--						</entry>
--						<entry>
--							<string>aLW</string>
--							<double>0.013199187556948952</double>
--						</entry>
+							-
+							<string>bLW</string>
+							-
+							<double>2.9418</double>
+							-
+						</entry>
+						-
+						<entry>
+							-
+							<string>aLW</string>
+							-
+							<double>0.013199187556948952</double>
+							-
+						</entry>
 					</hashtable>
 				</entry>
 			</fishFeaturesPostSpawning>
@@ -279,7 +293,7 @@
 					<standardDeviationOfSpawnersLengthAtRepro>2.0</standardDeviationOfSpawnersLengthAtRepro>
 					<weightOfDeathBasin>0.4</weightOfDeathBasin>
 				</species.DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin>
-				
+
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<tempMinMortGenInRiv>10.0</tempMinMortGenInRiv>
@@ -290,12 +304,19 @@
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
-				
+
 				<species.ExportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>EffectiveFluxes</fileNameOutput>
 				</species.ExportFluxes>
+
+				<species.ExportBiomass>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>BiomassFluxes</fileNameOutput>
+				</species.ExportBiomass>
 
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>

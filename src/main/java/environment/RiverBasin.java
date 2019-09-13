@@ -66,12 +66,20 @@ public class RiverBasin extends Basin {
 	public double getSpawnerNumber() {
 		long nbSpawn = 0;
 		for (DiadromousFishGroup group : this.getGroups()) {
+			nbSpawn += getSpawnerNumberPerGroup(group);
+		}
+		return nbSpawn;
+	}
+	
+
+	public double getSpawnerNumberPerGroup(DiadromousFishGroup group) {
+		long nbSpawn = 0;
+	
 			for (DiadromousFish fish : this.getFishs(group)) {
 				if (fish.isMature()) {
 					nbSpawn += fish.getAmount();
 				}
 			}
-		}
 		return nbSpawn;
 	}
 

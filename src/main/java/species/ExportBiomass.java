@@ -37,7 +37,7 @@ public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, Diadrom
 
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver()))
-				.toXML(new ExportFluxes()));
+				.toXML(new ExportBiomass()));
 	}
 
 	/* (non-Javadoc)

@@ -60,6 +60,7 @@ public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 					for (String birthBasinName : group.getEnvironment().getRiverBasinNames()) {
 						bW.write(sep + birthBasinName); // write each basin name in the file 
 					}
+					bW.write("\n");
 
 				} catch (IOException e) {
 					e.printStackTrace();

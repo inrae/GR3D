@@ -98,6 +98,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
+				
+				// before the party !!!!
+				double fluxBefore =riverBasin.getSpawnerNumber();
+								
 				double b, c, alpha, beta, amountPerSuperIndividual ,  S95, S50 ;
 				double numberOfFemaleGenitors = 0.;
 				double numberOfAutochtones = 0.;
@@ -402,16 +406,20 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();
-
+				
+					// -------------------------------------------------------
+					// display information
+					// -----------------------------------------------------
 					if 	(displayFluxesOnConsole)
+						
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
-								+ riverBasin.getName() + ";" + riverBasin.getSpawnerNumber() +  "; " + totalInputFluxes); 
+								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); 
 					BufferedWriter bW = group.getbWForFluxes();
 					if ( bW != null) {
 						try {
 							for (fluxOrigin origin : totalInputFluxes.keySet()) {
 								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
-								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + "IMPORT"+ ";" + origin);
+								+";"+ riverBasin.getName() +  ";" + fluxBefore + ";" + "IMPORT"+ ";" + origin);
 								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
 
 								for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
