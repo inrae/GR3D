@@ -3,6 +3,7 @@ package species;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -104,6 +105,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
+				
+				// before the party !!!!
+				double fluxBefore =riverBasin.getSpawnerNumber();
+								
 				double b, c, alpha, beta, amountPerSuperIndividual ,  S95, S50 ;
 				double numberOfFemaleSpawners = 0.;
 				double numberOfMaleSpawners = 0.;
@@ -216,7 +221,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								else
 									ageOfNativeSpawners.put(age, fish.getAmount());
 							}
-							
+
 							// increment number of reproduction (for possible iteroparty)
 							fish.incNumberOfReproduction();	
 
@@ -332,6 +337,26 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						System.out.println();*/
 						
 						// System.out.println("\t"+ riverBasin.getPopulationStatus());
+						
+						String message;
+						if (Double.isNaN(riverBasin.getNativeSpawnerMortality()))
+							message="noSense";
+						else {
+							double stockTrap=stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality());
+							if (riverBasin.getNativeSpawnerMortality()>stockRecruitmentRelationship.getSigmaZcrash())
+								message="overZcrash";
+							else {
+								if (numberOfFemaleGenitors < stockTrap)
+									message = "inTrapWithStrayers";
+								else {
+									if (spawnerOriginsDuringReproduction.get(riverBasin.getName()) < stockTrap)
+										message = "inTrapWithOnlyNatives";
+									else
+										message = "sustain";
+								}
+							}
+						}
+						//System.out.println("\t"+message);
 					}
 
 					// --------------------------------------------------------------------------------------------------
@@ -368,7 +393,6 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						else
 							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).push(0.);
 
-						//TODO the same with male
 						
 						//System.out.println("nb spawners in basin " + riverBasin.getName() + " : " + numberOfGenitors);
 						//System.out.println("nb recruit in basin " + riverBasin.getName() + " : " + numberOfRecruit);
@@ -452,16 +476,20 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						group.removeAquaNism(fish);
 					}
 					deadFish.clear();
-
+				
+					// -------------------------------------------------------
+					// display information
+					// -----------------------------------------------------
 					if 	(displayFluxesOnConsole)
+						
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
-								+ riverBasin.getName() + ";" + riverBasin.getSpawnerNumber() +  "; " + totalInputFluxes); 
+								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); 
 					BufferedWriter bW = group.getbWForFluxes();
 					if ( bW != null) {
 						try {
 							for (fluxOrigin origin : totalInputFluxes.keySet()) {
 								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
-								+";"+ riverBasin.getName() +  ";" + riverBasin.getSpawnerNumber() + ";" + ";IMPORT;"+origin);
+								+";"+ riverBasin.getName() +  ";" + fluxBefore + ";" + "IMPORT"+ ";" + origin);
 								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
 
 								for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {

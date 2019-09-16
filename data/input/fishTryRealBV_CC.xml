@@ -7,12 +7,9 @@
 			<blue>0</blue>
 			<alpha>255</alpha>
 		</color>
+
 		<dMaxDisp>300.0</dMaxDisp>
-		<linfVonBertForFemale>70.0</linfVonBertForFemale>
-		<linfVonBertForMale>70.0</linfVonBertForMale>
-		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
-		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
-		<lengthAtHatching>2</lengthAtHatching>
+		<lFirstMaturity>40.0</lFirstMaturity>
 		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
@@ -43,11 +40,11 @@
 						</entry>
 						<entry>
 							<string>bLW</string>
-							<double>2.1774</double>
+							<double>3.2252</double>
 						</entry>
 						<entry>
 							<string>aLW</string>
-							<double>0.27144384321211973</double>
+							<double>0.004095817237891344</double>
 						</entry>
 					</hashtable>
 				</entry>
@@ -64,11 +61,11 @@
 						</entry>
 						<entry>
 							<string>bLW</string>
-							<double>3.147</double>
+							<double>3.3429</double>
 						</entry>
 						<entry>
 							<string>aLW</string>
-							<double>0.007388725660209693</double>
+							<double>0.002665367811305362</double>
 						</entry>
 					</hashtable>
 				</entry>
@@ -230,6 +227,7 @@
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
+		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<processes>
 			<processesAtBegin>
 				<species.PopulateBasinNetworkWithANorthLimit>
@@ -294,17 +292,18 @@
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
-				<species.ExportLenghtAgeDistribution>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>lengthAgeDistribution</fileNameOutput>
-				</species.ExportLenghtAgeDistribution>
-
 				<species.ExportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>effectiveFluxes</fileNameOutput>
+					<fileNameOutput>EffectiveFluxes</fileNameOutput>
 				</species.ExportFluxes>
+
+				<species.ExportBiomass>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>BiomassFluxes</fileNameOutput>
+				</species.ExportBiomass>
 
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
@@ -325,11 +324,13 @@
 					<maxNumberOfSuperIndividualPerReproduction>50.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
+					<displayFluxesOnConsole>true</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<displayFluxesOnConsole>true</displayFluxesOnConsole>
 				</species.MigrateToSea>
 
 				<environment.updateTemperatureInRealBasin>
@@ -347,7 +348,7 @@
 						<long>2000</long>
 						<long>2100</long>
 					</years>
-					<fileNameOutput>fluxes</fileNameOutput>
+					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
 				</species.IdentifyPopulation>
 				<species.TypeTrajectoryCV>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
