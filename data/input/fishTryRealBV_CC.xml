@@ -9,7 +9,7 @@
 		</color>
 
 		<dMaxDisp>300.0</dMaxDisp>
-		<lFirstMaturity>40.0</lFirstMaturity>
+
 		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
@@ -228,6 +228,11 @@
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
+		<lengthAtHatching>2.0</lengthAtHatching>
+		<linfVonBertForFemale>70.0</linfVonBertForFemale>
+		<linfVonBertForMale>70.0</linfVonBertForMale>
+		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
+		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
 			<processesAtBegin>
 				<species.PopulateBasinNetwork>
