@@ -230,13 +230,12 @@
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<processes>
 			<processesAtBegin>
-				<species.PopulateBasinNetworkWithANorthLimit>
+				<species.PopulateBasinNetwork>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<nbSIPerBasin>200</nbSIPerBasin>
 					<initialLength>20.0</initialLength>
 					<nbFishPerSI>2500</nbFishPerSI>
-					<northLimitLatitude>43.54</northLimitLatitude>
-				</species.PopulateBasinNetworkWithANorthLimit>
+				</species.PopulateBasinNetwork>
 			</processesAtBegin>
 
 			<processesEachStep>
