@@ -346,7 +346,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							if (riverBasin.getNativeSpawnerMortality()>stockRecruitmentRelationship.getSigmaZcrash())
 								message="overZcrash";
 							else {
-								if (numberOfFemaleGenitors < stockTrap)
+								if (numberOfFemaleSpawners < stockTrap)
 									message = "inTrapWithStrayers";
 								else {
 									if (spawnerOriginsDuringReproduction.get(riverBasin.getName()) < stockTrap)
