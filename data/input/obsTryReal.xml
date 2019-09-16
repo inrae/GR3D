@@ -53,8 +53,8 @@
 					<yAxisLabel>age (year)</yAxisLabel>
 					<variableName>getMeanAgeOfFirstReprodutionForMale</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-			
-				
+
+
 				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 					<graphType>LINE</graphType>
 					<title>Statistic for male spawners age</title>
@@ -69,6 +69,22 @@
 					<xAxisLabel>Time (season)</xAxisLabel>
 					<yAxisLabel>age (year)</yAxisLabel>
 					<variableName>computeFemaleSpawnerForFirstTimeSummaryStatistic</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Mean length at first reproduction for female</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>length (cm)</yAxisLabel>
+					<variableName>getMeanLengthOfFirstReprodutionForFemale</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Mean length at first reproduction for male</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>length (cm)</yAxisLabel>
+					<variableName>getMeanLengthOfFirstReprodutionForMale</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 
 			</observers>

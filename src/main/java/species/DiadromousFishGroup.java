@@ -684,6 +684,20 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	}
 
 
+	@Observable(description="mean length of first reprodution for female")
+	public double getMeanLengthOfFirstReprodutionForFemale() {
+		double sum = 0;
+		double nb =0;
+		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
+			if (riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.FEMALE).getMeanWithoutZero() > 0.) {
+				nb ++;
+				sum += riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.FEMALE).getMeanWithoutZero() ;
+			}
+		}
+		return sum/nb;
+	}
+	
+	
 	public double computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(double TARGET ) {
 		double sum = 0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
@@ -714,7 +728,20 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return sum/nb;
 	}
 
-
+	@Observable(description="mean length of first reprodution for male")
+	public double getMeanLengthOfFirstReprodutionForMale() {
+		double sum = 0;
+		double nb =0;
+		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
+			if (riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).getMeanWithoutZero() > 0.) {
+				nb ++;
+				sum += riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).getMeanWithoutZero() ;
+			}
+		}
+		return sum/nb;
+	}
+	
+	
 	@Observable(description = "Likelihood Summary stat")
 	public double computeLikelihood() {
 		int obsVal;

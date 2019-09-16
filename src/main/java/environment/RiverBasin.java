@@ -39,6 +39,10 @@ public class RiverBasin extends Basin {
 	private QueueMemory<Double> numberOfNonNulRecruitmentDuringLastYears; // Prob of non nul recruitment during the last "memorySize" years... if 10 non nul recruitment during the last 10 year, p=0.999... if 8 non nul recruitment during the last 10 years, p = 0.8... if 0 recruitment, p = 0.001
 	private QueueMemory<Double> femaleSpawnersForFirstTimeMeanAges;
 	private QueueMemory<Double> maleSpawnersForFirstTimeMeanAges;
+	private QueueMemory<Double> femaleSpawnersForFirstTimeMeanLengths;
+	private QueueMemory<Double> maleSpawnersForFirstTimeMeanLengths;
+	
+	
 	private QueueMemory<Double> numberOfNonNulRecruitmentForFinalProbOfPres;
 	
 	private double nativeSpawnerMortality; // mortality coefficient between recruitement and spawning for fish born in this basin
@@ -114,6 +118,9 @@ public class RiverBasin extends Basin {
 		
 		this.femaleSpawnersForFirstTimeMeanAges = new QueueMemory<Double>(memorySize) ;
 		this.maleSpawnersForFirstTimeMeanAges = new QueueMemory<Double>(memorySize);
+		
+		this.femaleSpawnersForFirstTimeMeanLengths = new QueueMemory<Double>(memorySize) ;
+		this.maleSpawnersForFirstTimeMeanLengths = new QueueMemory<Double>(memorySize) ;
 		
 		this.numberOfNonNulRecruitmentForFinalProbOfPres = new QueueMemory<Double>(memorySizeLongQueue);
 
@@ -208,6 +215,15 @@ public class RiverBasin extends Basin {
 	/*public QueueMemory<Double> getFemaleSpawnersForFirstTimeMeanAges() {
 		return spawnersForFirstTimeMeanAges.get(Gender.FEMALE);
 	}*/
+	
+	public QueueMemory<Double> getSpawnersForFirstTimeMeanLengths(DiadromousFish.Gender gender) {
+		if (gender == Gender.FEMALE)
+		return femaleSpawnersForFirstTimeMeanLengths;
+		else if 	(gender == Gender.MALE)
+			return maleSpawnersForFirstTimeMeanLengths;
+		else
+			return null;
+	}
 	
 	public QueueMemory<Double> getSpawnersForFirstTimeMeanAges(DiadromousFish.Gender gender) {
 		if (gender == Gender.FEMALE)
