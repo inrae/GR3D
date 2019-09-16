@@ -660,7 +660,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 				sum += val * val;
 			}
 		}
-		System.out.println("sum female: " + sum);
+		//System.out.println("sum female: " + sum);
 		return sum;
 	}
 
@@ -670,8 +670,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	}
 
 
-	@Observable(description="mean length for female spawners For First Time")
-	public double getMeanLengthOfFemaleSpawnerForFirstTime() {
+	@Observable(description="mean age at first reproduction for female")
+	public double getMeanAgeOfFirstReprodutionForFemale() {
 		double sum = 0;
 		double nb =0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
@@ -692,7 +692,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 				sum += val * val;
 			}
 		}
-		System.out.println("sum male: " + sum);
+		//System.out.println("sum male: " + sum);
 		return sum;
 	}
 
@@ -701,8 +701,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(4.5); 
 	}
 	
-	@Observable(description="mean length for male spawners For First Time")
-	public double getMeanLengthOfMaleSpawnerForFirstTime() {
+	@Observable(description="mean age of first reprodution for male")
+	public double getMeanAgeOfFirstReprodutionForMale() {
 		double sum = 0;
 		double nb =0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
