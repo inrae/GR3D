@@ -19,9 +19,9 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = AquaNismsGroupProcess.class)
 public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
-	public double tempMinMortGenInRiv = 10.;
-	public double tempMaxMortGenInRiv = 23.; // DEFINIR TROIS AUTRES POUR MORTALITE
-	public double tempOptMortGenInRiv = 20.;
+	public double tempMinSurvivalSpawnerInRiv = 10.;
+	public double tempMaxSurvivalSpawnerInRiv = 23.; // DEFINIR TROIS AUTRES POUR MORTALITE
+	public double tempOptSurvivalSpawnerInRiv = 20.;
 	public double survivalProbOptGenInRiv = 1.;
 
 	public double mortalityRateInRiver = 0.4;
@@ -43,7 +43,8 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 				survivalProbability = 1.;
 				//Survive
 				if(fish.getPosition().getType() == TypeBassin.RIVER && fish.isMature()){				
-					double tempEffectSurv = Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinMortGenInRiv, tempOptMortGenInRiv, tempMaxMortGenInRiv);
+					//double tempEffectSurv = Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinSurvivalSpawnerInRiv, tempOptSurvivalSpawnerInRiv, tempMaxSurvivalSpawnerInRiv);
+					double tempEffectSurv = Miscellaneous.rectangularTemperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinSurvivalSpawnerInRiv, tempMaxSurvivalSpawnerInRiv);
 					if (tempEffectSurv == 0.){
 						survivalProbability = 0.;
 						//System.out.println("le poisson situ� dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() +" a un coeff de mortalit� de " + fish.getMortalityRateInRiver() + " mais � cause de la temp�rature une prob de survie de " + survivalProbability);
