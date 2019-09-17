@@ -172,6 +172,12 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 */
 	private transient List<Duo<Double, Double>> parameterSets;
 
+	// =================================================
+	// calibration
+	// =================================================
+	
+	private Double targetedAgeForFemaleSpawnerForFirstTime = 5.5;	
+	private Double targetedAgeForMaleSpawnerForFirstTime = 4.5;
 
 	/**
 	 *  map of observedoccurence  in 1900
@@ -491,6 +497,12 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		} catch (IOException ex) {
 			Logger.getLogger(DiadromousFishGroup.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		
+		// defaut values
+		if (targetedAgeForFemaleSpawnerForFirstTime == null)
+			targetedAgeForFemaleSpawnerForFirstTime = 5.5;		
+		if (targetedAgeForMaleSpawnerForFirstTime == null)
+			targetedAgeForMaleSpawnerForFirstTime = 4.5;
 	}
 
 
@@ -666,7 +678,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	@Observable(description="Female spawners For First Time Summary Statistic")
 	public double computeFemaleSpawnerForFirstTimeSummaryStatistic() {
-		return computeFemaleSpawnerForFirstTimeSummaryStatisticWithTarget(5.5);
+		return computeFemaleSpawnerForFirstTimeSummaryStatisticWithTarget(targetedAgeForFemaleSpawnerForFirstTime);
 	}
 
 
@@ -712,7 +724,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	@Observable(description="Male spawners For First Time Summary Statistic")
 	public double computeMaleSpawnerForFirstTimeSummaryStatistic() {
-		return computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(4.5); 
+		return computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(targetedAgeForFemaleSpawnerForFirstTime); 
 	}
 	
 	@Observable(description="mean age of first reprodution for male")
