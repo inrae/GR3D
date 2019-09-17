@@ -152,6 +152,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 					// effective temperature for reproduction (priority to the ANG value) 
 					double tempEffectRep;
+					double currentTemp = riverBasin.getCurrentTemperature(group.getPilot());
 					if (Double.isNaN(group.getTempMinRep())){
 						tempEffectRep = Miscellaneous.temperatureEffect(riverBasin.getCurrentTemperature(group.getPilot()), tempMinRep, tempOptRep, tempMaxRep);
 					}
@@ -436,7 +437,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							}
 							// the last Super indivial could be larger to include remainging fish
 							remainingFish = numberOfMaleRecruit - numberOfsuperIndividual * effectiveAmount;
-							group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount + remainingFish, Gender.FEMALE));
+							group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount + remainingFish, Gender.MALE));
 
 							// ----------------------------------------------
 							// keep information when reproduction with success
