@@ -31,6 +31,14 @@
 					<variableName>getFishEffective</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Abundance of spawners</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of fishes</yAxisLabel>
+					<variableName>getSpawnerEffective</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
 				<miscellaneous.TemporalRangeSerieChart>
 					<title>Range distribution</title>
 					<xAxisLabel>Time (season)</xAxisLabel>

@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import miscellaneous.Duo;
 import miscellaneous.TreeMapForCentile;
 import species.DiadromousFish.Gender;
+import species.DiadromousFish.Stage;
 
 import org.openide.util.lookup.ServiceProvider;
 
@@ -915,6 +916,22 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return eff;
 	}
 
+	/**
+	 * @return sum of effectives in all the river basins
+	 */
+	@Observable(description = "Number of spawners in river basins")
+	public double getSpawnerEffective() {
+		long eff = 0;
+		for (RiverBasin basin : this.getEnvironment().getRiverBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.getStage() == Stage.MATURE)
+						eff += fish.getAmount();
+				}
+			}
+		}
+		return eff;
+	}
 
 	@Override
 	public void addAquaNism(DiadromousFish fish) {
