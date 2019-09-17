@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+output
+.settings
+.classpath
+.project
+
+/bin/
+/target/
+=======
 .settings
 .classpath
 .project
@@ -92,3 +101,4 @@ target
 .project
 org.*
 /src/main/java/miscellaneous/Essai.java
+>>>>>>> master

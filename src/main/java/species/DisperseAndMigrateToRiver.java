@@ -49,26 +49,26 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 		
 				if (fish.isMature())   {
 					// fish with homing
-					amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par défaut fixé à 50								
+					amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par dï¿½faut fixï¿½ ï¿½ 50								
 
 					// strayed fish 
 					strayedAmount = fish.getAmount() - amountWithHoming;					
 					
 					if (strayedAmount != 0) {
-						// On récupère les info du poids des bassin par rapport à la position du poisson
+						// On rï¿½cupï¿½re les info du poids des bassin par rapport ï¿½ la position du poisson
 						Map<Basin,Double> accBasOfFish= new TreeMap<Basin, Double>(accessibleBasinsPerBasin.get(fish.getPosition()));
 						//accBasOfFish = accessibleBasinsPerBasin.get(fish.getPosition());						
 
-						// On retire certains bassins si on considère une distance max de dispersion
+						// On retire certains bassins si on considï¿½re une distance max de dispersion
 						distBasOfFish = distanceBasinsPerBasin.get(fish.getPosition());
 						if (group.getdMaxDisp() != 0){
-							// TODO pourquoi distbasoffish peut être nul ?
+							// TODO pourquoi distbasoffish peut ï¿½tre nul ?
 							if (distBasOfFish != null){
-								dMaxDispFish = (group.getdMaxDisp()/group.getLinfVonBert())*fish.getLength();
+								dMaxDispFish = (group.getdMaxDisp()/group.getLinfVonBert(fish))*fish.getLength();
 								// load accessible basins
 								for (Basin surroundingBasin : distBasOfFish.keySet()){
 									Double distance = distBasOfFish.get(surroundingBasin);
-									//System.out.println("pour le poisson " + fish.hashCode() + " situé dans le bassin " + basin.getName() + " et né dans le bassin " + fish.getBirthBasin().getName());
+									//System.out.println("pour le poisson " + fish.hashCode() + " situï¿½ dans le bassin " + basin.getName() + " et nï¿½ dans le bassin " + fish.getBirthBasin().getName());
 									//System.out.println("la distance vaut " + distance + " pour le bassin " + surroundingBasin.getName());
 									if (distance >= dMaxDispFish) {
 										accBasOfFish.remove(surroundingBasin);
@@ -81,7 +81,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 						double totalWeight = 0.;
 						double probToGo = 0.;
 						long amountToGo = 0;
-						// TODO Qu'est ce qui se passe si AccBasOfFish est vide... ça beug pas mais c'est pas très clair... donc à vérifier
+						// TODO Qu'est ce qui se passe si AccBasOfFish est vide... ï¿½a beug pas mais c'est pas trï¿½s clair... donc ï¿½ vï¿½rifier
 						for (Basin accBasin : accBasOfFish.keySet()){
 							double accBasinWeightLogit = accBasOfFish.get(accBasin) + alpha2Rep * fish.getLength();
 							double accBasinWeight = 1 / (1 + Math.exp(- accBasinWeightLogit));
@@ -107,7 +107,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 					if (amountWithHoming > 0){
 						fish.setAmount(amountWithHoming);
 						// retour soit dans le bassin de naissance pour les semelpares 
-						// soit dans le dernier bassin de reproduction pour les itéropares
+						// soit dans le dernier bassin de reproduction pour les itï¿½ropares
 						fish.moveTo(group.getPilot(), bn.getAssociatedRiverBasin(fish.getPosition()), group);
 					} else {
 						deadFish.add(fish);

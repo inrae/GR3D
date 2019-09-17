@@ -18,17 +18,71 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import miscellaneous.Duo;
 
+/**
+ *
+ */
 @ServiceProvider(service = AquaNismsGroupProcess.class)
 public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends DisperseAndMigrateToRiverBasic {
 
-	private double pHomingForReachEquil = 1.0;
-	private double pHomingAfterEquil = 0.8;
-	private long NbYearForInstallPop = 50;
+	
+	/**
+	 * the season when fish migrate to the river to reproduce
+	 * @unit
+	 */
 	private Season riverMigrationSeason = Season.SPRING;
+	
+	/**
+	 *  the homing  probalilty during the installation of new populations ( to reach kind of equilibrium)
+	 * @unit
+	 */
+	private double pHomingForReachEquil = 1.0;
+	
+	/**
+	 *  the homing  probalilty after the installation of new populations ( after reaching an equilibrium)
+	 * @unit
+	 */
+	private double pHomingAfterEquil = 0.8;
+	
+	/**
+	 * Number of year for newly created populations to be installed ( to reach an equilibrium)
+	 * @unit
+	 */
+	private long NbYearForInstallPop = 50;
+
+	
+	/** the coefficient associated with  the fish size in the logistic function used to calculate the probability to disperse
+	 * @unit -
+	 */
 	private double alpha2Rep = 0.;
-	private double meanSpawnersLengthAtRepro = 45., standardDeviationOfSpawnersLengthAtRepro = 2.; // for standard core values...
+	
+	/** 
+	 * the mean length used to standardize the fish length in the logistic function that calculates the probability to disperse
+	 * @unit -
+	 */
+	private double meanSpawnersLengthAtRepro = 45.;
+	
+	/** 
+	 * the length standard deviation  used to standardize the fish length in the logistic function that calculates the probability to disperse
+	 * @unit -
+	 */
+	private double standardDeviationOfSpawnersLengthAtRepro = 2.; // for standard core values...
+	
+	/**
+	 * the weigth of the death bassin ( for strayers that do not find a catcment) used to calculate the probability to disperse
+	 * @unit
+	 */
 	private double weightOfDeathBasin = 0.2;
+	
+	/**
+	 *  a bollean to kill of the strayers (used to determine if a catchment is a souce or a sink) the year given by yearOfTheKilling
+	 * @unit
+	 */
 	private boolean killStrayers;
+	
+	/**
+	 * the year when the strayers are killed (used to determine if a catchment is a souce or a sink) if killStrayers is true
+	 * @unit
+	 */
 	private long yearOfTheKillings;
 
 	public static void main(String[] args) {
@@ -43,8 +97,9 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 			BasinNetwork bn = group.getEnvironment();
 
 			long amountWithHoming, strayedAmount;
-			double pHoming;
 
+			// probability of homing
+			double pHoming;
 			if (Time.getYear(group.getPilot()) < NbYearForInstallPop) {
 				pHoming = pHomingForReachEquil;
 			} else {
@@ -54,18 +109,23 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 			List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
 
+			// creation of the death basin (for the lost strayers)
+			//TODO move as a transient field
 			Basin deathBasin = new Basin(-1, "deathBasin", 0, 0, 0, 0);
+			
 			List<Duo<DiadromousFish, Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish, Basin>>();
 			for (Basin basin : group.getEnvironment().getSeaBasins()) {
 
 				List<DiadromousFish> fishes = basin.getFishs(group);
 				if (fishes != null) {
-					for (int j = 0; j < fishes.size(); j++) {
-						DiadromousFish fish = fishes.get(j);
+					for (DiadromousFish fish : fishes) {
+	
+						// verify that fish is in a sea basin
 						assert fish.getPosition().getType() == Basin.TypeBassin.SEA;
+						
 						if (fish.isMature()) {
 							// fish with homing
-							amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par défaut fixé à 50								
+							amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par dï¿½faut fixï¿½ ï¿½ 50								
 
 							// strayed fish 
 							if (killStrayers == true && Time.getYear(group.getPilot()) >= yearOfTheKillings) {
@@ -75,10 +135,12 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								strayedAmount = fish.getAmount() - amountWithHoming;
 							}
 
+							// influence of the fish length on the probability to disperse
 							if (strayedAmount != 0) {
-								double weightFishLength = Math.exp(-(alpha2Rep * ((fish.getLength() - meanSpawnersLengthAtRepro) / standardDeviationOfSpawnersLengthAtRepro)));
+								// calcula the weight associated with the fish length in the probabaility to disperse
+								double weightFishLength = -(alpha2Rep * ((fish.getLength() - meanSpawnersLengthAtRepro) / standardDeviationOfSpawnersLengthAtRepro));
 
-								// On récupère les info du poids des bassin par rapport à la position du poisson
+								// upload the weights associated with features of the catchment (accessibility and attractivity)
 								List<Duo<Basin, Double>> accBasOfFish = new ArrayList<Duo<Basin, Double>>();
 								for (Map.Entry<Basin, Double> entry : accessibleBasinsPerBasin.get(fish.getPosition()).entrySet()) {
 									Duo<Basin, Double> duo = new Duo<Basin, Double>(entry.getKey(), entry.getValue());
@@ -89,11 +151,13 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								double totalWeight = 0.;
 								double probToGo = 0.;
 								long amountToGo = 0;
-								// TODO Qu'est ce qui se passe si AccBasOfFish est vide... ça beug pas mais c'est pas très clair... donc à vérifier
+								// TODO manage the case when AccBasOfFish is empty
 								for (Duo<Basin, Double> accBasin : accBasOfFish) {
+									// total weight for the basin
 									Basin b = accBasin.getFirst();
 									Double weight = accBasin.getSecond();
-									double accBasinWeight = 1 / (1 + Math.exp(-weight) * weightFishLength);
+									double accBasinWeight = 1 / (1 + Math.exp(-(weight + weightFishLength)));
+									
 									// put weight to 0 for unused basins
 									if (group.isThereBasinToUpdate()){
 										if (Time.getYear(group.getPilot()) >= group.getYearOfTheUpdate()
@@ -104,9 +168,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 									}
 									accBasin.setSecond(accBasinWeight);
 									totalWeight += accBasinWeight;
-									//}
 								}
-
 
 								// add the deathBasin in the list
 								accBasOfFish.add(new Duo<Basin, Double>(deathBasin, weightOfDeathBasin));
@@ -141,7 +203,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 							if (amountWithHoming > 0) {
 								fish.setAmount(amountWithHoming);
 								// retour soit dans le bassin de naissance pour les semelpares 
-								// soit dans le dernier bassin de reproduction pour les itéropares
+								// soit dans le dernier bassin de reproduction pour les itï¿½ropares
 								fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, bn.getAssociatedRiverBasin(fish.getPosition())));
 							} else {
 								deadFish.add(fish);
