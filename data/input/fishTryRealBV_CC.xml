@@ -290,7 +290,7 @@
 					<tempMinSurvivalSpawnerInRiv>10.0</tempMinSurvivalSpawnerInRiv>
 					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
 					<!-- <tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv> -->
-					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
+					<survivalProbOptSpawnerInRiv>1.0</survivalProbOptSpawnerInRiv>
 					<mortalityRateInRiver>0.4</mortalityRateInRiver>
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
@@ -328,13 +328,13 @@
 					<maxNumberOfSuperIndividualPerReproduction>50.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
-					<displayFluxesOnConsole>true</displayFluxesOnConsole>
+					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<displayFluxesOnConsole>true</displayFluxesOnConsole>
+					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.MigrateToSea>
 
 				<environment.updateTemperatureInRealBasin>
