@@ -164,13 +164,13 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 		try {
 			pilot.load();
 
-			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.6.tempMinRep", par[0]);
+			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.7.tempMinRep", par[0]);
 			//System.out.println("tempMinRep: " + (double)  ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.6.getTempMinRep"));
 
-			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.kOptForFemale", par[1]);
+			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.4.kOptForFemale", par[1]);
 			//System.out.println("KOptFemale: " + (double)  ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.getkOptForFemale"));
 
-			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.kOptForMale",par[2]);
+			ReflectUtils.setFieldValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.4.kOptForMale",par[2]);
 			//System.out.println("KOptMale: " + (double)  ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.processes.processesEachStep.3.getkOptForMale"));
 
 		} catch (Exception   e1) {
