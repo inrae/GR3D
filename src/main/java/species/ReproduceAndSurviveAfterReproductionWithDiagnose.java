@@ -209,6 +209,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 									numberOfMaleSpawnerForFirstTime += fish.getAmount();
 									maleSpawnersForFirstTimeAgesSum += fish.getAge() * fish.getAmount();
 									maleSpawnersForFirstTimeLengthsSum += fish.getLength() * fish.getAmount();
+									
 								}
 							}
 
@@ -436,7 +437,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							}
 							// the last Super indivial could be larger to include remainging fish
 							remainingFish = numberOfMaleRecruit - numberOfsuperIndividual * effectiveAmount;
-							group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount + remainingFish, Gender.FEMALE));
+							group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, effectiveAmount + remainingFish, Gender.MALE));
 
 							// ----------------------------------------------
 							// keep information when reproduction with success
