@@ -287,9 +287,9 @@
 
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<tempMinMortGenInRiv>10.0</tempMinMortGenInRiv>
-					<tempMaxMortGenInRiv>23.0</tempMaxMortGenInRiv>
-					<tempOptMortGenInRiv>20.0</tempOptMortGenInRiv>
+					<tempMinSurvivalSpawnerInRiv>10.0</tempMinSurvivalSpawnerInRiv>
+					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
+					<!-- <tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv> -->
 					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
 					<mortalityRateInRiver>0.4</mortalityRateInRiver>
 					<mortalityRateInSea>0.4</mortalityRateInSea>
