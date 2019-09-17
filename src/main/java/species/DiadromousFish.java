@@ -9,9 +9,14 @@ import fr.cemagref.simaqualife.pilot.Pilot;
 public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 
 	public static enum Stage {IMMATURE, MATURE};
+	//TODO replace UNDIFFERENCIED by UNDETERMINED
 	public static enum Gender {UNDIFFERENCIED, FEMALE, MALE}; 
 
 	private long amount;
+	/**
+	 *  age of the fish
+	 * @unit (decimal) year
+	 */
 	private double age;
 	private double length;
 	private Basin birthBasin;
@@ -100,6 +105,7 @@ public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 	public Gender getGender() {
 		return gender;
 	}
+
 
 	@Override
 	public <ANG extends AquaNismsGroup<?, BasinNetwork>> void moveTo(

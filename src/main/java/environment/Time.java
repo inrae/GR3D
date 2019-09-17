@@ -24,6 +24,10 @@ public final class Time {
 		return (long) Math.floor(time / Season.values().length);		
 	}
 
+	/**
+	 * @return the duration of season (time step) 
+	 * @unit year
+	 */
 	public static double getSeasonDuration(){
 		return 1./ Season.values().length;
 	}

@@ -127,7 +127,7 @@
 						<long>2100</long>
 					</years>
 					<fluxesSeason>SPRING</fluxesSeason>
-					<fileNameOutput>fluxes</fileNameOutput>
+					<fileNameOutput>JeuParam100_20100RCP85_A_essai</fileNameOutput>
 				</species.IdentifyPopulation>
 				
 				<species.ExportRecruitment>
@@ -144,7 +144,7 @@
 				
 				<species.ExportPopulationStatus>
   					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-  					<fileNameMortality>mortalty</fileNameMortality>
+  					<fileNameMortality>mortality</fileNameMortality>
   					<fileNameMortalityCrash>mortalityCrash</fileNameMortalityCrash>
   					<fileNameStockTrap>stockTrap</fileNameStockTrap>
   					<fileNamePopulationStatus>populationStatus</fileNamePopulationStatus>

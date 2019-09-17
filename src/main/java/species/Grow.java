@@ -16,6 +16,7 @@ import miscellaneous.Miscellaneous;
 
 import org.openide.util.lookup.ServiceProvider;
 
+import species.DiadromousFish.Gender;
 import species.DiadromousFish.Stage;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 import umontreal.iro.lecuyer.randvar.NormalGen;
@@ -46,8 +47,44 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit year -1
 	 */
-	private double kOpt = 0.3;
+	private double kOptForFemale= 0.3;
 
+	
+	/**
+	 * @return the kOptForFemale
+	 */
+	public double getkOptForFemale() {
+		return kOptForFemale;
+	}
+
+	/**
+	 * @param kOptForFemale the kOptForFemale to set
+	 */
+	public void setkOptForFemale(double kOptForFemale) {
+		this.kOptForFemale = kOptForFemale;
+	}
+
+	/**
+	 * @return the kOptForMale
+	 */
+	public double getkOptForMale() {
+		return kOptForMale;
+	}
+
+	/**
+	 * @param kOptForMale the kOptForMale to set
+	 */
+	public void setkOptForMale(double kOptForMale) {
+		this.kOptForMale = kOptForMale;
+	}
+
+	/**
+	 * K, Brody growth rate at optimal temperature
+	 * L = Linf *(1-exp(-K*(t-t0))
+	 * @unit year -1
+	 */
+	private double kOptForMale= 0.3;
+	
 	/**
 	 * standart deviation for the lognormal random draw of growth increment
 	 * @unit cm
@@ -68,6 +105,7 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 	}
 
 	
+	
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		for(Basin basin : group.getEnvironment().getBasins()){
@@ -77,37 +115,52 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 					double kVonBert = 0.;
 					double growthIncrement = 0.;
 					
-					// 1) calculate the kVonBert (from the grow process or forn Diadromousgroup 
-					// when Brody coeff comes from calibration output
-					if (Double.isNaN(group.getKOpt())){
-						kVonBert = kOpt * 
+					// 1) calculate the kVonBert 
+					//System.out.println(this.getKOpt(fish, group) );
+						kVonBert = this.getKOpt(fish, group) *
 								Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinGrow, tempOptGrow, tempMaxGrow);
-					} else {
-						kVonBert = group.getKOpt() * 
-								Miscellaneous.temperatureEffect(fish.getPosition().getCurrentTemperature(group.getPilot()), tempMinGrow, tempOptGrow, tempMaxGrow);
-					}
 
 					// 2) Update the fish length with a lognormal normal draw  of increment
 					// limit the fish length to Linf
-					if (fish.getLength() < group.getLinfVonBert()){
-						muDeltaLVonBert = Math.log((group.getLinfVonBert() - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
+					if (fish.getLength() < group.getLinfVonBert(fish)){
+						muDeltaLVonBert = Math.log((group.getLinfVonBert(fish) - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
 						growthIncrement = Math.exp(genNormal.nextDouble()*sigmaDeltaLVonBert + muDeltaLVonBert);
 					
 						
-						fish.setLength(Math.min(group.getLinfVonBert(), fish.getLength() + growthIncrement));											
+						fish.setLength(Math.min(group.getLinfVonBert(fish), fish.getLength() + growthIncrement));											
 					}
 					else {
-						fish.setLength(group.getLinfVonBert());
+						fish.setLength(group.getLinfVonBert(fish));
 					}
 					//System.out.println(fish.getAge() + " -> "+ fish.getLength() + " ("+fish.getStage()+"): "+ growthIncrement);
 					// test if fish become mature
-					if (fish.getStage() == Stage.IMMATURE){
-						if (fish.getLength() > group.getlFirstMaturity()){
+					if (fish.getStage() == Stage.IMMATURE && fish.getLength() > group.getlFirstMaturity(fish)){
 							fish.setStage(Stage.MATURE); 
-						}
 					}
 					//System.out.println("la temp�rature du lieu de vie du poisson est :" + fish.getPosition().getCurrentTemperature() + ", la saison est :" + Time.getSeason() + " et sa nouvelle taille est :" + fish.getLength());
 				}
 		}
+	}
+	
+	/**
+	 * @param fish
+	 * @param group
+	 * @return the Brody coeff   from Diadromousgroup if exists or from this grow process
+	 * depends of the fish gender .In case of undifferentiaced fish, the mean for male and female is considered
+	 */
+	public  double getKOpt(DiadromousFish fish, DiadromousFishGroup group) {
+		 double kOpt = group.getKOpt(fish);
+		 if (Double.isNaN(kOpt)){ // no definition for the group
+				if (fish.getGender() == Gender.FEMALE)
+					kOpt = kOptForFemale;
+				else if (fish.getGender() == Gender.MALE)
+					kOpt = kOptForMale;
+				else
+					kOpt=  (kOptForFemale + kOptForMale) / 2.;
+		 }	 
+		 
+		 return kOpt;
+		
+		
 	}
 }

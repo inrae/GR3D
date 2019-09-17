@@ -116,7 +116,7 @@ public class TypeTrajectoryCV extends AquaNismsGroupProcess<DiadromousFish, Diad
                 
                 bW.write("likelihood;" + ((Double) group.computeLikelihood()).toString() + "\n");
                 
-                bW.write("spawnersMatureAgeSumStat;" + group.computeSpawnerForFirstTimeSummaryStatistic() + "\n");
+                bW.write("spawnersMatureAgeSumStat;" + group.computeFemaleSpawnerForFirstTimeSummaryStatistic() + "\n");
                 
                 bW.write("higherPopulatedLatitude;" + group.getHigherPopulatedLatitude() + "\n");
                 

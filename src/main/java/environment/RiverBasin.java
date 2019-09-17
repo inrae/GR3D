@@ -1,6 +1,7 @@
 package environment;
 
-import org.jfree.data.time.MovingAverage;
+import java.util.Hashtable;
+import java.util.Map;
 
 import miscellaneous.QueueMemory;
 import miscellaneous.QueueMemoryMap;
@@ -8,6 +9,7 @@ import fr.cemagref.observation.kernel.Observable;
 import fr.cemagref.observation.kernel.ObservablesHandler;
 import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFish;
+import species.DiadromousFish.Gender;
 import species.DiadromousFishGroup;
 
 /**
@@ -35,13 +37,18 @@ public class RiverBasin extends Basin {
 	private QueueMemory<Double> lastRecsOverProdCaps;
 	private QueueMemory<Double> lastPercentagesOfAutochtones;
 	private QueueMemory<Double> numberOfNonNulRecruitmentDuringLastYears; // Prob of non nul recruitment during the last "memorySize" years... if 10 non nul recruitment during the last 10 year, p=0.999... if 8 non nul recruitment during the last 10 years, p = 0.8... if 0 recruitment, p = 0.001
-	private QueueMemory<Double> spawnersForFirstTimeMeanAges;
+	private QueueMemory<Double> femaleSpawnersForFirstTimeMeanAges;
+	private QueueMemory<Double> maleSpawnersForFirstTimeMeanAges;
+	private QueueMemory<Double> femaleSpawnersForFirstTimeMeanLengths;
+	private QueueMemory<Double> maleSpawnersForFirstTimeMeanLengths;
+	
+	
 	private QueueMemory<Double> numberOfNonNulRecruitmentForFinalProbOfPres;
 	
 	private double nativeSpawnerMortality; // mortality coefficient between recruitement and spawning for fish born in this basin
 	private double mortalityCrash;
 	private double stockTrap; 
-	private double lastSpawnerNumber;
+	private double lastFemaleSpawnerNumber;
 	
 	protected static transient ObservablesHandler cobservable;
 
@@ -62,16 +69,25 @@ public class RiverBasin extends Basin {
 		return nbJuv;
 	}
 
+	//TODO getSpawnerNumber(group)
 	@Observable(description = "nb of spawners")
 	public double getSpawnerNumber() {
 		long nbSpawn = 0;
 		for (DiadromousFishGroup group : this.getGroups()) {
+			nbSpawn += getSpawnerNumberPerGroup(group);
+		}
+		return nbSpawn;
+	}
+	
+
+	public double getSpawnerNumberPerGroup(DiadromousFishGroup group) {
+		long nbSpawn = 0;
+	
 			for (DiadromousFish fish : this.getFishs(group)) {
 				if (fish.isMature()) {
 					nbSpawn += fish.getAmount();
 				}
 			}
-		}
 		return nbSpawn;
 	}
 
@@ -98,7 +114,14 @@ public class RiverBasin extends Basin {
 		this.lastRecsOverProdCaps = new QueueMemory<Double>(memorySize);
 		this.lastPercentagesOfAutochtones = new QueueMemory<Double>(memorySize);
 		this.numberOfNonNulRecruitmentDuringLastYears = new QueueMemory<Double>(memorySize);
-		this.spawnersForFirstTimeMeanAges = new QueueMemory<Double>(memorySize);
+		
+		
+		this.femaleSpawnersForFirstTimeMeanAges = new QueueMemory<Double>(memorySize) ;
+		this.maleSpawnersForFirstTimeMeanAges = new QueueMemory<Double>(memorySize);
+		
+		this.femaleSpawnersForFirstTimeMeanLengths = new QueueMemory<Double>(memorySize) ;
+		this.maleSpawnersForFirstTimeMeanLengths = new QueueMemory<Double>(memorySize) ;
+		
 		this.numberOfNonNulRecruitmentForFinalProbOfPres = new QueueMemory<Double>(memorySizeLongQueue);
 
 		if (cobservable == null) {
@@ -189,8 +212,26 @@ public class RiverBasin extends Basin {
 		return numberOfNonNulRecruitmentDuringLastYears;
 	}
 
-	public QueueMemory<Double> getSpawnersForFirstTimeMeanAges() {
-		return spawnersForFirstTimeMeanAges;
+	/*public QueueMemory<Double> getFemaleSpawnersForFirstTimeMeanAges() {
+		return spawnersForFirstTimeMeanAges.get(Gender.FEMALE);
+	}*/
+	
+	public QueueMemory<Double> getSpawnersForFirstTimeMeanLengths(DiadromousFish.Gender gender) {
+		if (gender == Gender.FEMALE)
+		return femaleSpawnersForFirstTimeMeanLengths;
+		else if 	(gender == Gender.MALE)
+			return maleSpawnersForFirstTimeMeanLengths;
+		else
+			return null;
+	}
+	
+	public QueueMemory<Double> getSpawnersForFirstTimeMeanAges(DiadromousFish.Gender gender) {
+		if (gender == Gender.FEMALE)
+		return femaleSpawnersForFirstTimeMeanAges;
+		else if 	(gender == Gender.MALE)
+			return maleSpawnersForFirstTimeMeanAges;
+		else
+			return null;
 	}
 
 	public QueueMemory<Double> getNumberOfNonNulRecruitmentForFinalProbOfPres(){
@@ -266,17 +307,17 @@ public class RiverBasin extends Basin {
 	}
 	
 	/**
-	 * @return the lastSpawnerNumber
+	 * @return the last number of female spawners
 	 */
-	public double getLastSpawnerNumber() {
-		return lastSpawnerNumber;
+	public double getLastFemaleSpawnerNumber() {
+		return lastFemaleSpawnerNumber;
 	}
 
 	/**
 	 * @param lastSpawner the lastSpawnerNumber to set
 	 */
-	public void setLastSpawnerNumber(double lastSpawner) {
-		this.lastSpawnerNumber = lastSpawner;
+	public void setLastFemaleSpawnerNumber(double lastSpawner) {
+		this.lastFemaleSpawnerNumber = lastSpawner;
 	}
 
 	public String getPopulationStatus() {
@@ -288,10 +329,10 @@ public class RiverBasin extends Basin {
 			if (nativeSpawnerMortality> mortalityCrash)
 				populationStatus="overZcrash";
 			else {
-				if (lastSpawnerNumber < stockTrap)
+				if (lastFemaleSpawnerNumber < stockTrap)
 					populationStatus = "inTrapWithStrayers";
 				else {
-					if (lastSpawnerNumber * lastPercentagesOfAutochtones.getLastItem() < stockTrap)
+					if (lastFemaleSpawnerNumber * lastPercentagesOfAutochtones.getLastItem() < stockTrap)
 						populationStatus = "inTrapWithOnlyNatives";
 					else
 						populationStatus = "sustain";
