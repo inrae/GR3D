@@ -75,9 +75,10 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 					duo.getFirst().moveTo(group.getPilot(), duo.getSecond(), group); //on d�place les poissons dans le fichier MoveTo et on d�note la destination du poisson.
 				}
 
-				if (displayFluxesOnConsole)
-					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";EXPORT;"
-							+ basin.getName() + "; " + totalOutputFluxes);
+				if (displayFluxesOnConsole) {
+					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
+					+ ";EXPORT;"
+					+ basin.getName() + "; " + totalOutputFluxes);}
 
 				BufferedWriter bW = group.getbWForFluxes();
 				if ( bW != null) {

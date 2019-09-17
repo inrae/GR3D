@@ -326,7 +326,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								"\tZcrash="+ stockRecruitmentRelationship.getSigmaZcrash() + 
 								"\tZ="+ riverBasin.getNativeSpawnerMortality());
 						System.out.println("\tStrap="+stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality())+
-								"\tStotal="+numberOfFemaleSpawners+"\tSautochthonous="+
+								"\tStotal="+numberOfFemaleSpawners+"\tStotalMale="+numberOfMaleSpawners+ "\tSautochthonous="+
 								spawnerOriginsDuringReproduction.get(riverBasin.getName()));
 
 						/*	// display effective from each catchment
@@ -493,10 +493,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// -------------------------------------------------------
 					// display information
 					// -----------------------------------------------------
-					if 	(displayFluxesOnConsole)
+				/*	if 	(displayFluxesOnConsole)
 
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
-								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); 
+								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); */
 					BufferedWriter bW = group.getbWForFluxes();
 					if ( bW != null) {
 						try {

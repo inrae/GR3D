@@ -22,7 +22,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 	public double tempMinSurvivalSpawnerInRiv = 10.;
 	public double tempMaxSurvivalSpawnerInRiv = 23.; // DEFINIR TROIS AUTRES POUR MORTALITE
 	public double tempOptSurvivalSpawnerInRiv = 20.;
-	public double survivalProbOptGenInRiv = 1.;
+	public double survivalProbOptSpawnerInRiv = 1.;
 
 	public double mortalityRateInRiver = 0.4;
 	public double mortalityRateInSea = 0.4;
@@ -49,7 +49,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 						survivalProbability = 0.;
 						//System.out.println("le poisson situ� dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() +" a un coeff de mortalit� de " + fish.getMortalityRateInRiver() + " mais � cause de la temp�rature une prob de survie de " + survivalProbability);
 					}else{
-						survivalProbability = survivalProbOptGenInRiv * tempEffectSurv;
+						survivalProbability = survivalProbOptSpawnerInRiv * tempEffectSurv;
 						//System.out.println("le poisson situ� dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalit� de " + fish.getMortalityRateInRiver() + " et donc une prob de survie de " + survivalProbability);
 					}				
 				}else if (fish.getPosition().getType() == TypeBassin.SEA){ 
