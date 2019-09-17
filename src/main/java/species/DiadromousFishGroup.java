@@ -917,7 +917,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	}
 
 	/**
-	 * @return sum of effectives in all the river basins
+	 * @return sum of spawner effectives in all the river basins
 	 */
 	@Observable(description = "Number of spawners in river basins")
 	public double getSpawnerEffective() {
@@ -926,6 +926,40 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			if (basin.getFishs(this) != null) {
 				for (DiadromousFish fish : basin.getFishs(this)) {
 					if (fish.getStage() == Stage.MATURE)
+						eff += fish.getAmount();
+				}
+			}
+		}
+		return eff;
+	}
+	
+	/**
+	 * @return sum of male spawner effectives in all the river basins
+	 */
+	@Observable(description = "Number of male spawners in all basins")
+	public double getMaleSpawnerEffective() {
+		long eff = 0;
+		for (Basin basin : this.getEnvironment().getBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.getStage() == Stage.MATURE && fish.getGender() == Gender. MALE)
+						eff += fish.getAmount();
+				}
+			}
+		}
+		return eff;
+	}
+
+	/**
+	 * @return sum of female spawner effectives in all the river basins
+	 */
+	@Observable(description = "Number of female spawners in all basins")
+	public double getFemaleSpawnerEffective() {
+		long eff = 0;
+		for (Basin basin : this.getEnvironment().getBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.getStage() == Stage.MATURE && fish.getGender() == Gender. FEMALE)
 						eff += fish.getAmount();
 				}
 			}
