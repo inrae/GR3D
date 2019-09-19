@@ -163,7 +163,6 @@ for (i in 1:100) {
 }
 lines(age, apply(res, 1, quantile, probs =0.5 ),  lty=2, lwd = 2, col = 'red')
 lines( age, rowMeans(res))
-lines(age, apply(res, 1, quantile, probs =0.5 ),  lty=2, lwd = 2, col = 'red')
 
 
 for (i in 1:100) {
