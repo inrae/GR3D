@@ -144,7 +144,7 @@ age=seq(0,8,.25)
 # comparaison male femelle
 # ###########################################################################
 Lfemale = 55
-(koptFemale = KvonBertalaffy(5.5, L = Lfemale, L0, Linf)/tempEffect)
+(koptFemale = KvonBertalaffy(5.5, L = Lfemale, L0=L0, Linf=Linf)/tempEffect)
 
 Lmale = 40
 (koptMale = KvonBertalaffy(4.5, L = Lmale, L0, Linf)/tempEffect)
@@ -155,6 +155,15 @@ for (i in 1:100) {
   lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptMale, timestep, sigma, withTempEffect = TRUE), col='blue')
 }
 lines(age, vonBertalaffyGrowth(age, L0, Linf, koptMale * tempEffect), lty=2, lwd = 2, col = 'black')
+
+res=matrix(nrow = max(age)/timestep + 1, ncol= 100 )
+# verification par rapport à la médiane et la moyenne
+for (i in 1:100) {
+  res[,i]=vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptMale, timestep, sigma, withTempEffect = TRUE)
+}
+lines(age, apply(res, 1, quantile, probs =0.5 ),  lty=2, lwd = 2, col = 'red')
+lines( age, rowMeans(res))
+lines(age, apply(res, 1, quantile, probs =0.5 ),  lty=2, lwd = 2, col = 'red')
 
 
 for (i in 1:100) {
