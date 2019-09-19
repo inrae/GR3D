@@ -1,7 +1,7 @@
 library(openxlsx)
 # ============================================================
 
-dataBruch = read.xlsx("BDalosesBruch.xlsx")
+dataBruch = read.xlsx("/home/patrick/Documents/AA/CC et migrateur/thèse Poulet/BDalosesBruch.xlsx")
 dataBruch$`M.gonades.(g)` = as.numeric(dataBruch$`M.gonades.(g)`)
 
 head(dataBruch)
@@ -64,17 +64,20 @@ temperature=seq(8,30,.1)
 # temperature effect on spawner survival 
 plot(temperature, temperatureEffect(temperature, 10, 20, 23), type='l')
 # temperature effect on recruit survival 
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26), , col='red')
+lines(temperature, temperatureEffect(temperature, 9.75, 20, 26), col='red')
 
 
 lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23), type='l', col='green')
 lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23) * exp(-.4*5), type='l', col='blue')
-tempData=read.csv("/home/patrick.lambert/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep=";")
+
+tempData=read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep=";")
 sel = tempData$NOM=="Garonne" & tempData$Year>=2008 & tempData$Year<=2018
-plot(tempData$Year[sel], tempData$Winter[sel], type='l')
+
 Tref=colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])
 points(Tref,  temperatureEffect(Tref, 9.75, 20, 26), col="red")
 text(Tref, temperatureEffect(Tref, 9.75, 20, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=1)
+
+plot(tempData$Year[sel], tempData$Winter[sel], type='l')
 
 mean( temperatureEffect(Tref, 9.75, 20, 26))
 # ----------------------------------------------
@@ -85,10 +88,27 @@ vonBertalaffyGrowth = function(age, L0, Linf, K){
   return(Linf*(1-exp(-K*(age-t0))))
 }
 
+vonBertalaffyInverse = function(L, L0, Linf, K){
+  t0=log(1-L0/Linf)/K
+  return (t0 - log(1-L/Linf)/K)
+}
+
+KvonBertalaffy = function(age, L, L0, Linf){
+  t0=log(1-L0/Linf)/K
+  return (-log(1-L/Linf)/(age-t0))
+}
+
+#vonBertalaffyInverse(L=40, L0, Linf, koptMale)
+
+Zfct=function(age, Ltarget,  L0, Linf, K, Tref ) {
+  return (sapply(age,function(a) (vonBertalaffyGrowth(a, L0, Linf, K) * mean(temperatureEffect(Tref, 3, 17, 26)) - Ltarget)^2))
+}
+
 Pauly= function(age, t0, Linf, K, D){
   return(Linf/10*((1-exp(-K*D*(age-t0)))^(1/D)))
 }
 
+# pas cohérent avec la temperature effet sur le coeff de croissance
 vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEffect=FALSE){
   tempEffect = temperatureEffect( c(7.753891, 14.979708, 19.782974, 11.108207) , 3, 17, 26)
   L=matrix(nrow=nStep+1)
@@ -104,24 +124,58 @@ vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEff
   return(L)
 }
 
-vonBertalaffyIncrement(6/.25, 0, 60, 0.3900707, .25, .2)
+# ---------------------------------------------------
+# parametres
+# ----------------------------------------------------
+L0 = 2
+Linf = 80
+#kopt = 0.3900707
+#koptMale = 0.2
+#koptFemale = 0.3
+timestep = 0.25
+sigma = 0.2
 
-age=seq(0,6,.25)
-plot(age,vonBertalaffyGrowth(age, 2, 60, 0.3900707), type="l")
+tempEffect = mean(temperatureEffect( c(7.753891, 14.979708, 19.782974, 11.108207) , 3, 17, 26))
+
+age=seq(0,8,.25)
+
+
+# ###########################################################################"
+# comparaison male femelle
+# ###########################################################################
+Lfemale = 55
+(koptFemale = KvonBertalaffy(5.5, L = Lfemale, L0, Linf)/tempEffect)
+
+Lmale = 40
+(koptMale = KvonBertalaffy(4.5, L = Lmale, L0, Linf)/tempEffect)
+
+
+plot(x=NaN, xlim=range(age), ylim=c(0, Linf), xlabel ='age (year)', ylabel ='length (cm)')
 for (i in 1:100) {
-  lines(age, vonBertalaffyIncrement(6/.25, 2, 60, 0.3900707, .25, .2), col='red')
+  lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptMale, timestep, sigma, withTempEffect = TRUE), col='blue')
 }
-lines(age, vonBertalaffyGrowth(age, 2, 60, 0.3900707), lwd=3, col='black')
-abline(h=40)
+lines(age, vonBertalaffyGrowth(age, L0, Linf, koptMale * tempEffect), lty=2, lwd = 2, col = 'black')
+
+
 for (i in 1:100) {
-  lines(age, vonBertalaffyIncrement(6/.25, 2, 60, 0.3900707, .25, .2, withTempEffect = TRUE), col='green')
+  lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptFemale, timestep, sigma, withTempEffect = TRUE), col='pink')
 }
- lines(age, vonBertalaffyGrowth(age, 2, 60, 0.3900707*mean(temperatureEffect(Tref, 3, 17, 26))), lty=2, lwd = 2)
+lines(age, vonBertalaffyGrowth(age, L0, Linf, koptFemale * tempEffect), lty=2, lwd = 2)
+abline(h = Lmale)
+abline(h = Lfemale)
 
-abline(h=40)
+ageMale=vonBertalaffyInverse(L=Lmale, L0, Linf, koptMale*tempEffect)
+points(ageMale, vonBertalaffyGrowth(ageMale, L0, Linf, koptMale * tempEffect), col = 'red')
+segments(x0 = ageMale, y0=0, y1=vonBertalaffyGrowth(ageMale, L0, Linf, koptMale * tempEffect))
+
+ageFemale=vonBertalaffyInverse(L=55, L0, Linf, koptFemale*tempEffect)
+points(ageFemale, vonBertalaffyGrowth(ageFemale, L0, Linf, koptFemale * tempEffect), col = 'red')
+segments(x0 = ageFemale, y0=0, y1=vonBertalaffyGrowth(ageFemale, L0, Linf, koptFemale * tempEffect))
+cat(koptFemale, koptMale, sep =" ")
+cat(ageFemale, ageMale, sep =" ")
 
 
-
+######################################################################################
 nbRep=1000
 res=matrix(nrow=nbRep)
 for (i in 1:nbRep) {
@@ -170,7 +224,7 @@ taverny[age == 5]
 # ===================================================================
 # GR3D outputs
 # =====================================================================
-simData=read.csv("/home/patrick.lambert/Documents/workspace/GR3D/data/output/lengthAgeDistribution_1-RCP85.csv", sep=";", row.names = NULL)
+simData=read.csv("/home/patrick/Documents/workspace/GR3D/data/output/lengthAgeDistribution_1-RCP85.csv", sep=";", row.names = NULL)
 
 simGaronne= simData[simData$basin =="Garonne",]
 sel=simGaronne$nbSpawn == 0
