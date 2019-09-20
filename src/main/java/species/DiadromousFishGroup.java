@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import miscellaneous.Duo;
 import miscellaneous.TreeMapForCentile;
 import species.DiadromousFish.Gender;
+import species.DiadromousFish.Stage;
 
 import org.openide.util.lookup.ServiceProvider;
 
@@ -915,6 +916,56 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return eff;
 	}
 
+	/**
+	 * @return sum of spawner effectives in all the river basins
+	 */
+	@Observable(description = "Number of spawners in river basins")
+	public double getSpawnerEffective() {
+		long eff = 0;
+		for (RiverBasin basin : this.getEnvironment().getRiverBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.getStage() == Stage.MATURE)
+						eff += fish.getAmount();
+				}
+			}
+		}
+		return eff;
+	}
+	
+	/**
+	 * @return sum of male spawner effectives in all the river basins
+	 */
+	@Observable(description = "Number of male spawners in all basins")
+	public double getMaleSpawnerEffective() {
+		long eff = 0;
+		for (Basin basin : this.getEnvironment().getBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.getStage() == Stage.MATURE && fish.getGender() == Gender. MALE)
+						eff += fish.getAmount();
+				}
+			}
+		}
+		return eff;
+	}
+
+	/**
+	 * @return sum of female spawner effectives in all the river basins
+	 */
+	@Observable(description = "Number of female spawners in all basins")
+	public double getFemaleSpawnerEffective() {
+		long eff = 0;
+		for (Basin basin : this.getEnvironment().getBasins()){
+			if (basin.getFishs(this) != null) {
+				for (DiadromousFish fish : basin.getFishs(this)) {
+					if (fish.getStage() == Stage.MATURE && fish.getGender() == Gender. FEMALE)
+						eff += fish.getAmount();
+				}
+			}
+		}
+		return eff;
+	}
 
 	@Override
 	public void addAquaNism(DiadromousFish fish) {

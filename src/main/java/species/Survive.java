@@ -24,7 +24,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 	public double tempOptSurvivalSpawnerInRiv = 20.;
 	public double survivalProbOptSpawnerInRiv = 1.;
 
-	public double mortalityRateInRiver = 0.4;
+	//public double mortalityRateInRiver = 0.4;
 	public double mortalityRateInSea = 0.4;
 	public double mortalityRateInOffshore = 0.4;
 

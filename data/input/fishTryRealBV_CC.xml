@@ -229,18 +229,13 @@
 		<outputPath>data/output/</outputPath>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<lengthAtHatching>2.0</lengthAtHatching>
-		<linfVonBertForFemale>70.0</linfVonBertForFemale>
-		<linfVonBertForMale>70.0</linfVonBertForMale>
+		<linfVonBertForFemale>80.0</linfVonBertForFemale>
+		<linfVonBertForMale>80.0</linfVonBertForMale>
 		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
 			<processesAtBegin>
-				<species.PopulateBasinNetwork>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<nbSIPerBasin>200</nbSIPerBasin>
-					<initialLength>20.0</initialLength>
-					<nbFishPerSI>2500</nbFishPerSI>
-				</species.PopulateBasinNetwork>
+		
 			</processesAtBegin>
 
 			<processesEachStep>
@@ -252,6 +247,15 @@
 					<temporisation>0</temporisation>
 				</species.PlopProcess>
 
+				<species.PopulateBasinNetworkSeveralTimes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<nbSIPerBasin>200</nbSIPerBasin>
+					<nbFishPerSI>2500</nbFishPerSI>
+					<initialLength>20.0</initialLength>
+					<timesOfPopulate>5</timesOfPopulate>
+					<populateSeason>SPRING</populateSeason>
+				</species.PopulateBasinNetworkSeveralTimes>
+				
 				<species.Age>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 				</species.Age>
@@ -261,8 +265,8 @@
 					<tempMinGrow>3.0</tempMinGrow>
 					<tempMaxGrow>26.0</tempMaxGrow>
 					<tempOptGrow>17.0</tempOptGrow>
-					<kOptForFemale>0.20323011454056628</kOptForFemale>
-					<kOptForMale>0.3004992503785338</kOptForMale>
+					<kOptForFemale>0.29</kOptForFemale>
+					<kOptForMale>0.21</kOptForMale>
 					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
 				</species.Grow>
 
@@ -287,7 +291,7 @@
 
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<tempMinSurvivalSpawnerInRiv>10.0</tempMinSurvivalSpawnerInRiv>
+					<tempMinSurvivalSpawnerInRiv>9.0</tempMinSurvivalSpawnerInRiv>
 					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
 					<!-- <tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv> -->
 					<survivalProbOptSpawnerInRiv>1.0</survivalProbOptSpawnerInRiv>
@@ -312,7 +316,7 @@
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>10.443039492695249</tempMinRep>
+					<tempMinRep>9.8</tempMinRep>
 					<tempMaxRep>26.0</tempMaxRep>
 					<tempOptRep>20.0</tempOptRep>
 					<eta>2.4</eta>

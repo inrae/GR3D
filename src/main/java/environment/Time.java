@@ -20,9 +20,15 @@ public final class Time {
 				((BasinNetwork) pilot.getAquaticWorld().getEnvironment()).getYearOfTheBegin();		
 	}
 	
+	public static long getNbYearFromBegin(Pilot pilot){
+		return getNbYearFromBegin(pilot.getCurrentTime());
+
+	}
+	
 	public static long getNbYearFromBegin(long time){
 		return (long) Math.floor(time / Season.values().length);		
 	}
+	
 
 	/**
 	 * @return the duration of season (time step) 

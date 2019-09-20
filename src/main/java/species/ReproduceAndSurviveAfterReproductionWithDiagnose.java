@@ -152,6 +152,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 					// effective temperature for reproduction (priority to the ANG value) 
 					double tempEffectRep;
+					double currentTemp = riverBasin.getCurrentTemperature(group.getPilot());
 					if (Double.isNaN(group.getTempMinRep())){
 						tempEffectRep = Miscellaneous.temperatureEffect(riverBasin.getCurrentTemperature(group.getPilot()), tempMinRep, tempOptRep, tempMaxRep);
 					}

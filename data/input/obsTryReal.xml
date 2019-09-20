@@ -31,6 +31,30 @@
 					<variableName>getFishEffective</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Abundance of spawners</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of fishes</yAxisLabel>
+					<variableName>getSpawnerEffective</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Abundance of male spawners</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of fishes</yAxisLabel>
+					<variableName>getMaleSpawnerEffective</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+
+				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+					<graphType>LINE</graphType>
+					<title>Abundance of female spawners</title>
+					<xAxisLabel>Time (season)</xAxisLabel>
+					<yAxisLabel>number of fishes</yAxisLabel>
+					<variableName>getFemaleSpawnerEffective</variableName>
+				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
+				
 				<miscellaneous.TemporalRangeSerieChart>
 					<title>Range distribution</title>
 					<xAxisLabel>Time (season)</xAxisLabel>
@@ -59,7 +83,7 @@
 					<graphType>LINE</graphType>
 					<title>Statistic for male spawners age</title>
 					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>age (year)</yAxisLabel>
+					<yAxisLabel></yAxisLabel>
 					<variableName>computeMaleSpawnerForFirstTimeSummaryStatistic</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 
@@ -67,7 +91,7 @@
 					<graphType>LINE</graphType>
 					<title>Statistic for female spawners age</title>
 					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>age (year)</yAxisLabel>
+					<yAxisLabel></yAxisLabel>
 					<variableName>computeFemaleSpawnerForFirstTimeSummaryStatistic</variableName>
 				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 
