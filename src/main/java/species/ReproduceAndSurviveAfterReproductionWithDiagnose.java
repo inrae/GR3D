@@ -176,6 +176,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					amountPerSuperIndividual = alpha / maxNumberOfSuperIndividualPerReproduction;
 
 					// Compute the Allee effect parameters  S95 and S50
+					
 					S95 = eta * riverBasin.getAccessibleSurface(); // corresponds to S* in the rougier publication
 					S50 = S95 / ratioS95_S50;
 
@@ -395,7 +396,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.FEMALE).push(femaleSpawnersForFirstTimeLengthsSum / numberOfFemaleSpawnerForFirstTime);
 						}
 						else {
-							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).push(0.);
+							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).push(0.);
 							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).push(0.);
 						}
 						if (numberOfMaleSpawnerForFirstTime>0) {
