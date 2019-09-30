@@ -32,17 +32,20 @@ public class PopulateBasinNetworkSeveralTimesAccordingToBasinSize extends AquaNi
 		if (Time.getNbYearFromBegin(group.getPilot()) <= timesOfPopulate && Time.getSeason(group.getPilot()) == populateSeason){
 
 			for (RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
-			
+				// the stock recruitment relationship targets only females
 				int numberOfFemaleToPopulate = (int) Math.round(etaPopulate* riverBasin.getAccessibleSurface()) ;
-				int nbFemaleSI= numberOfFemaleToPopulate/nbFishPerSI ;
-				int nbMaleSI = nbFemaleSI;
+				int nbSI= numberOfFemaleToPopulate / nbFishPerSI ;
+				int remainingIndividuals =  numberOfFemaleToPopulate - nbFishPerSI * nbSI ;
 				
-				for (int i=0; i < nbFemaleSI; i++){
+				for (int i=0; i < (nbSI-1); i++){
 					group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, nbFishPerSI, Gender.FEMALE));
 				}
-				for (int i=0; i < nbMaleSI; i++){
+				group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, nbFishPerSI + remainingIndividuals , Gender.FEMALE));
+				
+				for (int i=0; i < (nbSI-1); i++){
 					group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, nbFishPerSI, Gender.MALE));
 				}
+				group.addAquaNism(new DiadromousFish(group.getPilot(), riverBasin, initialLength, nbFishPerSI + remainingIndividuals, Gender.MALE));
 			}
 		}
 		
