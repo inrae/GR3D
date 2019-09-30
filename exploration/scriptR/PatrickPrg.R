@@ -1,8 +1,28 @@
 # see BruchPrg for upload of data
 
+# ======================================================================
+#  temp en fonction de la latitude
+# ====================================================================
+library(dplyr)
+
+extractTemp<-as.data.frame(tempData %>%
+                             filter(Year>1901 & Year <= 1910) %>%
+                             group_by(NOM,Lat)%>%
+                             summarize(meanSpring=mean(Spring)) 
+                           %>% arrange (Lat)
+)
+
+plot(extractTemp$Lat, extractTemp$meanSpring, pch=20)
+abline(v=49.25) # vire
+abline(v=53.75) # elbe
+
+
+abline(h=11)
+abline(h=12.5)
+
 
 # ========================================================================
-# effect tempertaure sur la reproduction
+# effect temperature sur la reproduction
 # ========================================================================
 
 thermalBevertonHolt = function (stock, temperature, juvenileTolerance) {
