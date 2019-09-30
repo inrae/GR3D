@@ -1,7 +1,8 @@
 library(openxlsx)
 # ============================================================
 
-dataBruch = read.xlsx("/home/patrick/Documents/AA/CC et migrateur/thèse Poulet/BDalosesBruch.xlsx")
+dataBruch = read.xlsx("BDalosesBruch.xlsx")
+#dataBruch = read.xlsx("/home/patrick/Documents/AA/CC et migrateur/thèse Poulet/BDalosesBruch.xlsx")
 dataBruch$`M.gonades.(g)` = as.numeric(dataBruch$`M.gonades.(g)`)
 
 head(dataBruch)
@@ -162,7 +163,6 @@ for (i in 1:100) {
 lines(age, apply(res, 1, quantile, probs =0.5 ),  lty=2, lwd = 2, col = 'red')
 lines( age, rowMeans(res))
 
-
 for (i in 1:100) {
   lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptFemale, timestep, sigma, withTempEffect = TRUE), col='pink')
 }
@@ -260,5 +260,158 @@ sel = (! (dataBruch$LOT =='Tuilières' | dataBruch$LOT =='Golfech')) & dataBruch
 Wpost= mean(dataBruch$`M.tot.(g)`[sel])
 WgonadSpent =mean(dataBruch$`M.gonades.(g)`[sel], na.rm = TRUE)
 (Wloss=(Wpre - Wpost)/Wpre)
+
+# ===================================================================
+# Exploration of Stock recruitement-relationship for GR3D calibration
+# =====================================================================
+
+#Use to improve the likelihood between observations and GR3D outputs in terms of abudances and North limit colonization. 
+
+#a = fécondité de l'espèce, a = 135000
+#S = quantité de géniteurs: ici on veut la quantité R0 produite par 1000 géniteurs en fonction de la T° 
+#Ratio = 0.2 
+#n= paramètre simulant l'effet Allee 
+
+
+#-----------On cherche a reproduire la relation SR telle que modélisée dans GR3D-------------- 
+
+temperatureEffect= function(tempWater, TminRep, ToptRep, TmaxRep){
+  #  if (tempWater<=TminRep | tempWater >= TmaxRep)
+  #    return(0)
+  #  else
+  response=(tempWater-TminRep)*(tempWater-TmaxRep)/((tempWater-TminRep)*(tempWater-TmaxRep)-(tempWater-ToptRep)^2)
+  
+  response[tempWater<=TminRep | tempWater >= TmaxRep] = 0
+  return(response)
+  
+}
+
+#Relation SR telle qu'elle est modélisée dans GR3D
+
+numberOfSpawner<- seq(0:400000)
+
+StockRecruitementRelationship <-function (temp, surfaceWatershed, S) {
+  
+  lambda = 4.1E-4
+  deltaTrecruitement = 0.33
+  survOptRep =  0.0017
+  n= 2.4
+  ratioTeta = 1.9
+  a = 135000
+  
+  #parametre c de la RS de BH intégrant un effet du BV considéré 
+  cj = lambda/surfaceWatershed
+  
+  #parametre b représentant la mortalité densité dépendante de la RS de BH intégrant un effet de la temperature
+  # bj = (-(1/deltaTrecruitement))*
+  #   log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0))
+   
+  bj = - log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0)) / deltaTrecruitement
+  
+  #parametre a (fécondité de l'espèce) de la RS de BH intégrant un effet de la temperature
+  alphaj = (bj * exp(-bj * deltaTrecruitement)) / (cj * (1-exp(-bj * deltaTrecruitement)))
+  
+  #Bj = paramètre de la relation SR intégrant l'effet de la température 
+  betaj = bj/(a*cj*(1-exp(-bj*deltaTrecruitement)))
+  
+  #p = proportion de géniteurs participant à la reproduction en focntion de la quantité de géniteur total
+  #p = 1/(1+exp(-log(19)*(S-n)/(Ratio*surfaceWatershed)))
+  
+  S95 = n * surfaceWatershed
+  S50 = S95/ratioTeta
+  
+  p= 1/(1+exp(-log(19)*(S-S50)/(S95-S50)))
+  
+  #relation Stock Recrutement ie calcul le nombre de recrues en fonction du nombre de géniteurs et de la T en intégrant l'effet Allee 
+  
+  #R0 = aj * S * p 
+  
+  AlleeEffect = 1/ (1+exp(-log(19)*(S -n/ratioTeta*surfaceWatershed)/(n*surfaceWatershed -n/ratioTeta*surfaceWatershed)))
+  
+  Rj = (alphaj * S * AlleeEffect)/(betaj +S * AlleeEffect)
+  
+  #Rj = ((aj * S) * p)/(Bj +S * p)
+  
+  StockRecruitement = as.data.frame(Rj)
+  
+  return (Rj) 
+  
+}
+
+  StockRecruitement<-StockRecruitementRelationship (18, 84810, numberOfSpawner) 
+
+  plot(numberOfSpawner, StockRecruitement,type = 'l', xlab= "Number of spawners", ylab = "Number of recruits")
+  
+#-----------On cherche à déterminer le numbre de juvéniles générés par S = 100000 géniteurs en fonction de la T° -------------- 
+
+temperature <- seq (8,30,.1)
+numberOfSpawner=100000
+  
+  StockRecruitementRelationship <-function (temp, surfaceWatershed, S) {
+    
+    lambda = 4.1E-4
+    deltaTrecruitement = 0.33
+    survOptRep =  0.0017
+    n= 2.4
+    ratioTeta = 1.9
+    a = 135000
+    
+    #parametre c de la RS de BH intégrant un effet du BV considéré 
+    cj = lambda/surfaceWatershed
+    
+    #parametre b représentant la mortalité densité dépendante de la RS de BH intégrant un effet de la temperature
+    # bj = (-(1/deltaTrecruitement))*
+    #   log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0))
+    
+    bj = - log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0)) / deltaTrecruitement
+    
+    #parametre a (fécondité de l'espèce) de la RS de BH intégrant un effet de la temperature
+    alphaj = (bj * exp(-bj * deltaTrecruitement)) / (cj * (1-exp(-bj * deltaTrecruitement)))
+    
+    #Bj = paramètre de la relation SR intégrant l'effet de la température 
+    betaj = bj/(a*cj*(1-exp(-bj*deltaTrecruitement)))
+    
+    #p = proportion de géniteurs participant à la reproduction en focntion de la quantité de géniteur total
+    #p = 1/(1+exp(-log(19)*(S-n)/(Ratio*surfaceWatershed)))
+    
+    S95 = n * surfaceWatershed
+    S50 = S95/ratioTeta
+    
+    p= 1/(1+exp(-log(19)*(S-S50)/(S95-S50)))
+    
+    #relation Stock Recrutement ie calcul le nombre de recrues en fonction du nombre de géniteurs et de la T en intégrant l'effet Allee 
+    
+    #R0 = aj * S * p 
+    
+    AlleeEffect = 1/ (1+exp(-log(19)*(S -n/ratioTeta*surfaceWatershed)/(n*surfaceWatershed -n/ratioTeta*surfaceWatershed)))
+    
+    Rj = (alphaj * S * AlleeEffect)/(betaj +S * AlleeEffect)
+    
+    #Rj = ((aj * S) * p)/(Bj +S * p)
+    
+    StockRecruitement = as.data.frame(Rj)
+    
+    return (Rj) 
+    
+  }
+  
+  plot(temperature, StockRecruitementRelationship (temperature, 84810, numberOfSpawner),
+       type="l", 
+       xlab =" Temperature (°C)",
+       ylab = "Number Of Recruits")
+  
+
+#-----------On cherche à déterminer le numbre de géniteurs survivants en fonction de la T° -------------- 
+
+  #Prend en compte Zsea 
+  
+  plot(temperature, StockRecruitementRelationship (temperature, 84810, numberOfSpawner),
+       type="l", 
+       xlab =" Temperature (°C)",
+       ylab = "Number Of Recruits")
+
+
+
+
 
 

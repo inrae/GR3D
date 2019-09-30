@@ -176,6 +176,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					amountPerSuperIndividual = alpha / maxNumberOfSuperIndividualPerReproduction;
 
 					// Compute the Allee effect parameters  S95 and S50
+					
 					S95 = eta * riverBasin.getAccessibleSurface(); // corresponds to S* in the rougier publication
 					S50 = S95 / ratioS95_S50;
 
@@ -210,6 +211,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 									numberOfMaleSpawnerForFirstTime += fish.getAmount();
 									maleSpawnersForFirstTimeAgesSum += fish.getAge() * fish.getAmount();
 									maleSpawnersForFirstTimeLengthsSum += fish.getLength() * fish.getAmount();
+									
 								}
 							}
 
@@ -326,7 +328,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								"\tZcrash="+ stockRecruitmentRelationship.getSigmaZcrash() + 
 								"\tZ="+ riverBasin.getNativeSpawnerMortality());
 						System.out.println("\tStrap="+stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality())+
-								"\tStotal="+numberOfFemaleSpawners+"\tSautochthonous="+
+								"\tStotal="+numberOfFemaleSpawners+"\tStotalMale="+numberOfMaleSpawners+ "\tSautochthonous="+
 								spawnerOriginsDuringReproduction.get(riverBasin.getName()));
 
 						/*	// display effective from each catchment
@@ -394,7 +396,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.FEMALE).push(femaleSpawnersForFirstTimeLengthsSum / numberOfFemaleSpawnerForFirstTime);
 						}
 						else {
-							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).push(0.);
+							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).push(0.);
 							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).push(0.);
 						}
 						if (numberOfMaleSpawnerForFirstTime>0) {
@@ -493,10 +495,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// -------------------------------------------------------
 					// display information
 					// -----------------------------------------------------
-					if 	(displayFluxesOnConsole)
+				/*	if 	(displayFluxesOnConsole)
 
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
-								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); 
+								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); */
 					BufferedWriter bW = group.getbWForFluxes();
 					if ( bW != null) {
 						try {

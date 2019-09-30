@@ -235,7 +235,7 @@
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
 			<processesAtBegin>
-		
+
 			</processesAtBegin>
 
 			<processesEachStep>
@@ -247,15 +247,15 @@
 					<temporisation>0</temporisation>
 				</species.PlopProcess>
 
-				<species.PopulateBasinNetworkSeveralTimes>
+				<species.PopulateBasinNetworkSeveralTimesAccordingToBasinSize>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<nbSIPerBasin>200</nbSIPerBasin>
 					<nbFishPerSI>2500</nbFishPerSI>
-					<initialLength>20.0</initialLength>
+					<initialLength>2.0</initialLength>
+					<etaPopulate>40.0</etaPopulate>
 					<timesOfPopulate>5</timesOfPopulate>
 					<populateSeason>SPRING</populateSeason>
-				</species.PopulateBasinNetworkSeveralTimes>
-				
+				</species.PopulateBasinNetworkSeveralTimesAccordingToBasinSize>
+
 				<species.Age>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 				</species.Age>
@@ -291,11 +291,11 @@
 
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<tempMinSurvivalSpawnerInRiv>9.0</tempMinSurvivalSpawnerInRiv>
+					<tempMinSurvivalSpawnerInRiv>9.4</tempMinSurvivalSpawnerInRiv>
 					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
-					<!-- <tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv> -->
-					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
-					<!-- <mortalityRateInRiver>0.4</mortalityRateInRiver> -->
+					<tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv>
+					<survivalProbOptSpawnerInRiv>1.0</survivalProbOptSpawnerInRiv>
+					<!--<mortalityRateInRiver>0.4</mortalityRateInRiver> -->
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
