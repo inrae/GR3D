@@ -229,8 +229,8 @@
 		<outputPath>data/output/</outputPath>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<lengthAtHatching>2.0</lengthAtHatching>
-		<linfVonBertForFemale>80.0</linfVonBertForFemale>
-		<linfVonBertForMale>80.0</linfVonBertForMale>
+		<linfVonBertForFemale>70.0</linfVonBertForFemale>
+		<linfVonBertForMale>70.0</linfVonBertForMale>
 		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
@@ -295,7 +295,7 @@
 					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
 					<!-- <tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv> -->
 					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
-					<mortalityRateInRiver>0.4</mortalityRateInRiver>
+					<!-- <mortalityRateInRiver>0.4</mortalityRateInRiver> -->
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>

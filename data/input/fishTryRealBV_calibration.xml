@@ -7,12 +7,9 @@
 			<blue>0</blue>
 			<alpha>255</alpha>
 		</color>
+
 		<dMaxDisp>300.0</dMaxDisp>
-		<linfVonBertForFemale>70.0</linfVonBertForFemale>
-		<linfVonBertForMale>70.0</linfVonBertForMale>
-		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
-		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
-		<lengthAtHatching>2</lengthAtHatching>
+
 		<nutrientRoutine>
 			<nutrientsOfInterest>
 				<string>N</string>
@@ -43,11 +40,11 @@
 						</entry>
 						<entry>
 							<string>bLW</string>
-							<double>2.1774</double>
+							<double>3.2252</double>
 						</entry>
 						<entry>
 							<string>aLW</string>
-							<double>0.27144384321211973</double>
+							<double>0.004095817237891344</double>
 						</entry>
 					</hashtable>
 				</entry>
@@ -64,11 +61,11 @@
 						</entry>
 						<entry>
 							<string>bLW</string>
-							<double>3.147</double>
+							<double>3.3429</double>
 						</entry>
 						<entry>
 							<string>aLW</string>
-							<double>0.007388725660209693</double>
+							<double>0.002665367811305362</double>
 						</entry>
 					</hashtable>
 				</entry>
@@ -230,39 +227,46 @@
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
+		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
+		<lengthAtHatching>2.0</lengthAtHatching>
+		<linfVonBertForFemale>80.0</linfVonBertForFemale>
+		<linfVonBertForMale>80.0</linfVonBertForMale>
+		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
+		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
 			<processesAtBegin>
-				<species.PopulateBasinNetworkWithANorthLimit>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<nbSIPerBasin>200</nbSIPerBasin>
-					<initialLength>20.0</initialLength>
-					<nbFishPerSI>2500</nbFishPerSI>
-					<northLimitLatitude>43.54</northLimitLatitude>
-				</species.PopulateBasinNetworkWithANorthLimit>
+		
 			</processesAtBegin>
 
 			<processesEachStep>
 				<environment.InformTime>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 				</environment.InformTime>
-				
 				<species.PlopProcess>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<temporisation>0</temporisation>
 				</species.PlopProcess>
 
+				<species.PopulateBasinNetworkSeveralTimes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<nbSIPerBasin>200</nbSIPerBasin>
+					<nbFishPerSI>2500</nbFishPerSI>
+					<initialLength>20.0</initialLength>
+					<timesOfPopulate>5</timesOfPopulate>
+					<populateSeason>SPRING</populateSeason>
+				</species.PopulateBasinNetworkSeveralTimes>
+				
 				<species.Age>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 				</species.Age>
 
-				<!-- 3 -->
 				<species.Grow>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<tempMinGrow>3.0</tempMinGrow>
 					<tempMaxGrow>26.0</tempMaxGrow>
 					<tempOptGrow>17.0</tempOptGrow>
-					<kOptForFemale>0.5363472</kOptForFemale>
-					<kOptForMale>0.3900707</kOptForMale>
+					<kOptForFemale>0.2599284</kOptForFemale>
+					<kOptForMale>0.1883768</kOptForMale>
 					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
 				</species.Grow>
 
@@ -287,20 +291,19 @@
 
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<tempMinMortGenInRiv>10.0</tempMinMortGenInRiv>
-					<tempMaxMortGenInRiv>23.0</tempMaxMortGenInRiv>
-					<tempOptMortGenInRiv>20.0</tempOptMortGenInRiv>
+					<tempMinSurvivalSpawnerInRiv>9.0</tempMinSurvivalSpawnerInRiv>
+					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
+					<!-- <tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv> -->
 					<survivalProbOptGenInRiv>1.0</survivalProbOptGenInRiv>
-					<mortalityRateInRiver>0.4</mortalityRateInRiver>
+					<!-- <mortalityRateInRiver>0.4</mortalityRateInRiver> -->
 					<mortalityRateInSea>0.4</mortalityRateInSea>
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
-				<!-- 6 -->
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>9.846984</tempMinRep>
+					<tempMinRep>9.8</tempMinRep>
 					<tempMaxRep>26.0</tempMaxRep>
 					<tempOptRep>20.0</tempOptRep>
 					<eta>2.4</eta>
@@ -316,11 +319,13 @@
 					<maxNumberOfSuperIndividualPerReproduction>50.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
+					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.MigrateToSea>
 
 				<environment.updateTemperatureInRealBasin>
@@ -330,20 +335,6 @@
 			</processesEachStep>
 
 			<processesAtEnd>
-				<species.IdentifyPopulation>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<consoleDisplay>false</consoleDisplay>
-					<fluxesSeason>SPRING</fluxesSeason>
-					<years>
-						<long>2000</long>
-						<long>2100</long>
-					</years>
-					<fileNameOutput>fluxes</fileNameOutput>
-				</species.IdentifyPopulation>
-				<species.TypeTrajectoryCV>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
-				</species.TypeTrajectoryCV>
 
 			</processesAtEnd>
 		</processes>
