@@ -229,8 +229,8 @@
 		<outputPath>data/output/</outputPath>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<lengthAtHatching>2.0</lengthAtHatching>
-		<linfVonBertForFemale>80.0</linfVonBertForFemale>
-		<linfVonBertForMale>80.0</linfVonBertForMale>
+		<linfVonBertForFemale>70.0</linfVonBertForFemale>
+		<linfVonBertForMale>70.0</linfVonBertForMale>
 		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
@@ -316,9 +316,9 @@
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>9.4</tempMinRep>
-					<tempMaxRep>23.0</tempMaxRep>
-					<tempOptRep>16.5</tempOptRep>
+					<tempMinRep>9.8</tempMinRep>
+					<tempMaxRep>26.0</tempMaxRep>
+					<tempOptRep>20.0</tempOptRep>
 					<eta>2.4</eta>
 					<ratioS95__S50>1.9</ratioS95__S50>
 					<a>135000.0</a>
