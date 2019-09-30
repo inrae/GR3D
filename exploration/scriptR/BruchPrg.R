@@ -46,40 +46,37 @@ cj= 4.1e-4 / (84810*.5356)
 # ================================================
 # growth in GR3D
 # ================================================
+temperatureEffect= function(temp, Tmin, Topt, Tmax){
+  #  if (temp<=Tmin | temp >= Tmax)
+  #    return(0)
+  #  else
+  response=(temp-Tmin)*(temp-Tmax)/((temp-Tmin)*(temp-Tmax)-(temp-Topt)^2)
+  
+  response[temp<=Tmin | temp >= Tmax] = 0
+  return(response)
+}
 
 # ------------------------------------------------
 # temperature effect on growth
 # ------------------------------------------------
-temperatureEffect= function(temp, Tmin, Topt, Tmax){
-#  if (temp<=Tmin | temp >= Tmax)
-#    return(0)
-#  else
-    response=(temp-Tmin)*(temp-Tmax)/((temp-Tmin)*(temp-Tmax)-(temp-Topt)^2)
-    
-    response[temp<=Tmin | temp >= Tmax] = 0
-      return(response)
-
-  }
-temperature=seq(8,30,.1)
-# temperature effect on spawner survival 
-plot(temperature, temperatureEffect(temperature, 10, 20, 23), type='l')
-# temperature effect on recruit survival 
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26), col='red')
-
-
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23), type='l', col='green')
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23) * exp(-.4*5), type='l', col='blue')
-
 tempData=read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep=";")
 sel = tempData$NOM=="Garonne" & tempData$Year>=2008 & tempData$Year<=2018
-
 Tref=colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])
-points(Tref,  temperatureEffect(Tref, 9.75, 20, 26), col="red")
-text(Tref, temperatureEffect(Tref, 9.75, 20, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=1)
+TrefAtSea = (12 + Tref) / 2
+
+temperature=seq(0,30,.1)
+# temperature effect on growth
+tempEffects = temperatureEffect(temperature,  3, 17, 26)
+plot(temperature,tempEffects, type='l')
+
+points(TrefAtSea,  temperatureEffect(TrefAtSea, 3, 17, 26), col="red", pch =20)
+text(TrefAtSea, temperatureEffect(TrefAtSea, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=4)
+
+points(Tref,  temperatureEffect(Tref, 3, 17, 26), col="red")
+text(Tref, temperatureEffect(Tref, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=2, cex=.5)
 
 plot(tempData$Year[sel], tempData$Winter[sel], type='l')
 
-mean( temperatureEffect(Tref, 9.75, 20, 26))
 # ----------------------------------------------
 # growth simulation
 # ----------------------------------------------
@@ -108,9 +105,9 @@ Pauly= function(age, t0, Linf, K, D){
   return(Linf/10*((1-exp(-K*D*(age-t0)))^(1/D)))
 }
 
-# pas cohérent avec la temperature effet sur le coeff de croissance
-vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEffect=FALSE){
-  tempEffect = temperatureEffect( c(7.753891, 14.979708, 19.782974, 11.108207) , 3, 17, 26)
+# pas cohérent avec la temperature effet sur le coeff de croissance mais ca marche
+vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEffect=FALSE, TrefAtSea = c(9.876946, 13.489854, 15.891487, 11.554104) ){
+  tempEffect = temperatureEffect( TrefAtSea , 3, 17, 26)
   L=matrix(nrow=nStep+1)
   L[1]=L0
   for (i in 1:nStep) {
@@ -135,8 +132,9 @@ Linf = 80
 timestep = 0.25
 sigma = 0.2
 
-tempEffect = mean(temperatureEffect( c(7.753891, 14.979708, 19.782974, 11.108207) , 3, 17, 26))
+tempEffect = mean(temperatureEffect( TrefAtSea, 3, 17, 26))
 
+#c(mean(temperatureEffect( Tref, 3, 17, 26)), mean(temperatureEffect( TrefAtSea, 3, 17, 26)))
 age=seq(0,8,.25)
 
 
@@ -150,7 +148,7 @@ Lmale = 40
 (koptMale = KvonBertalaffy(4.5, L = Lmale, L0, Linf)/tempEffect)
 
 
-plot(x=NaN, xlim=range(age), ylim=c(0, Linf), xlabel ='age (year)', ylabel ='length (cm)')
+plot(x=NaN, xlim=range(age), ylim=c(0, Linf), xlab ='age (year)', ylab ='length (cm)')
 for (i in 1:100) {
   lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptMale, timestep, sigma, withTempEffect = TRUE), col='blue')
 }
@@ -176,33 +174,41 @@ ageMale=vonBertalaffyInverse(L=Lmale, L0, Linf, koptMale*tempEffect)
 points(ageMale, vonBertalaffyGrowth(ageMale, L0, Linf, koptMale * tempEffect), col = 'red')
 segments(x0 = ageMale, y0=0, y1=vonBertalaffyGrowth(ageMale, L0, Linf, koptMale * tempEffect))
 
-ageFemale=vonBertalaffyInverse(L=55, L0, Linf, koptFemale*tempEffect)
+ageFemale=vonBertalaffyInverse(L=Lfemale, L0, Linf, koptFemale*tempEffect)
 points(ageFemale, vonBertalaffyGrowth(ageFemale, L0, Linf, koptFemale * tempEffect), col = 'red')
 segments(x0 = ageFemale, y0=0, y1=vonBertalaffyGrowth(ageFemale, L0, Linf, koptFemale * tempEffect))
 cat(koptFemale, koptMale, sep =" ")
 cat(ageFemale, ageMale, sep =" ")
 
+# --------------------------------------------------------------
+# croissance sur le Rhin
+# --------------------------------------------------------------
+sel = tempData$NOM=="Rhine" & tempData$Year>=2008 & tempData$Year<=2018
+TrefRhine = (12 + colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])) / 2
+rbind(TrefAtSea, TrefRhine)
+tempEffectRhine = mean(temperatureEffect( TrefRhine, 3, 17, 26))
+c(vonBertalaffyInverse(L=Lfemale, L0, Linf, koptFemale*tempEffectRhine), 
+  vonBertalaffyInverse(L=Lmale, L0, Linf, koptMale*tempEffectRhine))
 
-######################################################################################
-nbRep=1000
-res=matrix(nrow=nbRep)
-for (i in 1:nbRep) {
- prov = vonBertalaffyIncrement(24, 2, 60, 0.3900707, .25, .2)
- res[i] = prov[max(which(prov < 40))+4]
-}
-mean(res)
-hist(res,20)
-abline(v=mean(res), col='red')
+# ======================================================================
+#  temp en fonction de la latitude
+# ====================================================================
+library(dplyr)
 
-res2=matrix(nrow=nbRep)
-for (i in 1:nbRep) {
-  res2[i] = vonBertalaffyIncrement(4, 40, 60, 0.3900707, .25, .2)[5]
-}
-mean(res2)
-hist(res2,20)
-abline(v=mean(res2), col='red')
+extractTemp<-as.data.frame(tempData %>%
+                             filter(Year>1901 & Year <= 1910) %>%
+                             group_by(NOM,Lat)%>%
+                             summarize(meanSpring=mean(Spring)) 
+                           %>% arrange (Lat)
+)
+
+plot(extractTemp$Lat, extractTemp$meanSpring, pch=20)
+abline(v=49.25) # vire
+abline(v=53.75) # elbe
 
 
+abline(h=11)
+abline(h=12.5)
 # ======================================================================
 # exploration of growth for male and female
 # ======================================================================
@@ -254,3 +260,131 @@ sel = (! (dataBruch$LOT =='Tuilières' | dataBruch$LOT =='Golfech')) & dataBruch
 Wpost= mean(dataBruch$`M.tot.(g)`[sel])
 WgonadSpent =mean(dataBruch$`M.gonades.(g)`[sel], na.rm = TRUE)
 (Wloss=(Wpre - Wpost)/Wpre)
+
+
+
+# ========================================================================
+# effect tempertaure sur la reproduction
+# ========================================================================
+
+thermalBevertonHolt = function (stock, temperature, juvenileTolerance) {
+  survOptRep = 0.0017
+  surface =84810
+  delta_t = 0.33
+  lambda = 4.1E-4
+  a=135000 # ~fecondité
+  tempEffect = temperatureEffect(temperature, juvenileTolerance[1], juvenileTolerance[2], juvenileTolerance[3] )
+  b =  -log(survOptRep * tempEffect)/delta_t
+  c = lambda/surface
+  
+  eta = 2.4
+  theta =1.9
+  #theta = 1.15
+  S95 = eta * surface
+  S50 = S95 / theta
+  
+  AlleeEffect = 1 / (1+ exp(-log(19) * (S - S50) / (S95 - S50))) 
+  
+  alpha = (b * exp(-b * delta_t)) / (c * (1 - exp(-b * delta_t)))
+  alpha[tempEffect == 0] = 0
+  beta = b /(a * c * (1-exp(-b * delta_t)))
+  
+  recruit = alpha * stock * AlleeEffect / (beta + stock * AlleeEffect)
+  return (recruit)
+}
+
+thermalBevertonHoltWithoutAllee = function (stock, temperature, juvenileTolerance) {
+  survOptRep = 0.0017
+  surface =84810
+  delta_t = 0.33
+  lambda = 4.1E-4
+  a=135000 # ~fecondité
+  tempEffect = temperatureEffect(temperature, juvenileTolerance[1], juvenileTolerance[2], juvenileTolerance[3] )
+  b =  -log(survOptRep * tempEffect)/delta_t
+  c = lambda/surface
+  
+  
+  alpha = (b * exp(-b * delta_t)) / (c * (1 - exp(-b * delta_t)))
+  alpha[tempEffect == 0] = 0
+  beta = b /(a * c * (1-exp(-b * delta_t)))
+  
+  recruit = alpha * stock  / (beta + stock )
+  return (recruit)
+}
+
+
+modifiedBevertonHolt = function(stock){
+  alpha = 6.4e6
+  beta = .172e6
+  d=19.2
+  
+  return  (alpha * (S^d) / ((beta^d) + (S^d)))
+}
+
+temperature =18
+
+juvenileTolerance = c(9.8, 20, 26)
+spawnerTolerance = c(10, 20, 23)
+Z=0.4
+
+S=seq(0, 1e6, 100)
+plot(S, thermalBevertonHolt(S, Tref[2], juvenileTolerance), type ='l', ylab ='R', ylim = c(0, 8e6) )
+lines(S, thermalBevertonHolt(S, Tref[2]+2, juvenileTolerance), col='red')
+lines(S, thermalBevertonHolt(S, Tref[2]-2, juvenileTolerance), col='blue')
+
+
+Stot=seq(0, 0.3e6, 100)*2
+plot(Stot, thermalBevertonHolt(Stot/2, juvenileTolerance[2], juvenileTolerance), type ='l', ylab ='R', ylim = c(0, 8e6) )
+lines(Stot, thermalBevertonHoltWithoutAllee(Stot/2, juvenileTolerance[2], juvenileTolerance), col ='blue')
+## lines(Stot, thermalBevertonHolt(Stot, juvenileTolerance[2], juvenileTolerance), lty=2 )
+lines(Stot, modifiedBevertonHolt(Stot), col = 'green')
+
+
+
+thermBH_without = sapply(temperature, function(temp) (thermalBevertonHolt(stock = 4e5, temp)))
+plot(temperature, thermBH_without, type='line,', ylab ='recruit')
+
+thermBH_with = sapply(temperature, function(temp) (thermalBevertonHolt(stock = 4e5 *  
+                                                                         temperatureEffect(temp, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3]), temp, juvenileTolerance)))
+lines(temperature, thermBH_with, col='red')
+
+
+recruitProduction = function(temperature, juvenileTolerance, spawnerTolerance, Z, stock) {
+  survivingStock = stock * temperatureEffect(temperature, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3])
+  recruit = sapply(1:length(temperature), function(i) (thermalBevertonHolt(survivingStock[i], temperature[i], juvenileTolerance)))
+  survivingRecruit =  recruit * exp(-Z*5)
+  return(survivingRecruit)
+}
+
+
+fct = function(temperature, juvenileTolerance, spawnerTolerance, Z, stock){
+  return( (recruitProduction(temperature, juvenileTolerance, spawnerTolerance, Z, stock) -stock)^2)
+}
+
+
+stock =4e5
+temperature =seq(0,30,.1)
+plot(temperature, recruitProduction(temperature, juvenileTolerance, spawnerTolerance, Z, stock), type='l')
+plot(temperature, fct(temperature, juvenileTolerance, spawnerTolerance, Z, stock), type='l')
+
+
+optimise(fct, interval = c(5, 20),  stock=stock, Z=Z, juvenileTolerance = c(9, 18, 26), spawnerTolerance = c(9, 18, 26) )$minimum
+
+plot(temperature, thermBH_with * exp(-Z*5), ylab = 'surviving spawner' , type = 'line')
+
+
+abline(h=4e5)
+#lines(temperature, thermBH_with * exp(-(Z/2)*5), col='green')
+cbind(temperature, thermBH_with *exp(-Z*5) -4e5)
+
+
+# temperature effect on spawner survival 
+plot(temperature, temperatureEffect(temperature, 10, 20, 23), type='l', type = 'line')
+
+
+# temperature effect on recruit survival 
+lines(temperature, temperatureEffect(temperature, 9.75, 20, 26), col='red')
+
+
+lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23), type='l', col='green')
+lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23) * exp(-.4*5), type='l', col='blue')
