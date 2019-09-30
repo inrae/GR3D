@@ -165,6 +165,7 @@ public class RiverBasin extends Basin {
 	}
 	
 	public double getAccessibleSurface(){
+		// System.out.println(this.getName() + " : "+ surface+ " "+pAccessible);
 		return (surface * pAccessible);
 	}
 
