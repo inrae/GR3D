@@ -126,11 +126,11 @@ vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEff
 # parametres
 # ----------------------------------------------------
 L0 = 2
-Linf = 80
+Linf = 70
 #kopt = 0.3900707
 #koptMale = 0.2
 #koptFemale = 0.3
-timestep = 0.25
+timestep = 0.25 # time step of the simumation
 sigma = 0.2
 
 tempEffect = mean(temperatureEffect( TrefAtSea, 3, 17, 26))
@@ -203,8 +203,9 @@ extractTemp<-as.data.frame(tempData %>%
 )
 
 plot(extractTemp$Lat, extractTemp$meanSpring, pch=20)
+abline(v=45.25) # Garonne
 abline(v=49.25) # vire
-abline(v=53.75) # elbe
+abline(v=52.25) # Rhine
 
 
 abline(h=11)
@@ -212,7 +213,7 @@ abline(h=12.5)
 # ======================================================================
 # exploration of growth for male and female
 # ======================================================================
-correction=mean(temperatureEffect(Tref, 3, 17, 26))
+correction=mean(temperatureEffect(TrefAtSea, 3, 17, 26))
 
 age=seq(0,10,.25)
 present = vonBertalaffyGrowth(age, 2, 60, 0.3900707 * correction)
