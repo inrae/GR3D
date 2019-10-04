@@ -249,7 +249,7 @@
 
 				<species.PopulateBasinNetworkSeveralTimesAccordingToBasinSize>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<nbFishPerSI>2500</nbFishPerSI>
+					<nbFishPerSI>100000</nbFishPerSI>
 					<initialLength>2.0</initialLength>
 					<etaPopulate>40.0</etaPopulate>
 					<timesOfPopulate>5</timesOfPopulate>
@@ -265,8 +265,8 @@
 					<tempMinGrow>3.0</tempMinGrow>
 					<tempMaxGrow>26.0</tempMaxGrow>
 					<tempOptGrow>17.0</tempOptGrow>
-					<kOptForFemale>0.29</kOptForFemale>
-					<kOptForMale>0.21</kOptForMale>
+					<kOptForFemale>0.3236</kOptForFemale>
+					<kOptForMale>0.2141</kOptForMale>
 					<sigmaDeltaLVonBert>0.2</sigmaDeltaLVonBert>
 				</species.Grow>
 

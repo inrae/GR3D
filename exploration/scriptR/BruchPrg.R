@@ -60,64 +60,63 @@ temperatureEffect= function(temp, Tmin, Topt, Tmax){
 # ------------------------------------------------
 # temperature effect on growth
 # ------------------------------------------------
-tempData=read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep=";")
-sel = tempData$NOM=="Garonne" & tempData$Year>=2008 & tempData$Year<=2018
-Tref=colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])
+tempData = read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep =";")
+sel = tempData$NOM == "Garonne" & tempData$Yea >= 2008 & tempData$Year <= 2018
+Tref = colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])
 TrefAtSea = (12 + Tref) / 2
 
-temperature=seq(0,30,.1)
+temperature = seq(0,30,.1)
 # temperature effect on growth
 tempEffects = temperatureEffect(temperature,  3, 17, 26)
-plot(temperature,tempEffects, type='l')
+plot(temperature,tempEffects, type = 'l')
 
-points(TrefAtSea,  temperatureEffect(TrefAtSea, 3, 17, 26), col="red", pch =20)
-text(TrefAtSea, temperatureEffect(TrefAtSea, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=4)
+points(TrefAtSea,  temperatureEffect(TrefAtSea, 3, 17, 26), col = "red", pch = 20)
+text(TrefAtSea, temperatureEffect(TrefAtSea, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos = 4)
 
-points(Tref,  temperatureEffect(Tref, 3, 17, 26), col="red")
-text(Tref, temperatureEffect(Tref, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=2, cex=.5)
+points(Tref,  temperatureEffect(Tref, 3, 17, 26), col = "red")
+text(Tref, temperatureEffect(Tref, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos = 2, cex = .5)
 
-plot(tempData$Year[sel], tempData$Winter[sel], type='l')
+plot(tempData$Year[sel], tempData$Winter[sel], type = 'l')
 
 # ----------------------------------------------
 # growth simulation
 # ----------------------------------------------
 vonBertalaffyGrowth = function(age, L0, Linf, K){
-  t0=log(1-L0/Linf)/K
-  return(Linf*(1-exp(-K*(age-t0))))
+  t0 = log(1 - L0 / Linf) / K
+  return(Linf * (1 - exp(-K * (age - t0))))
 }
 
 vonBertalaffyInverse = function(L, L0, Linf, K){
-  t0=log(1-L0/Linf)/K
-  return (t0 - log(1-L/Linf)/K)
+  t0 = log(1 - L0/Linf)/K
+  return(t0 - log(1 - L/Linf)/K)
 }
 
-KvonBertalaffy = function(age, L, L0, Linf){
-  t0=log(1-L0/Linf)/K
-  return (-log(1-L/Linf)/(age-t0))
+KvonBertalaffy = function(age, L, L0, Linf) {
+  return(-log((Linf - L ) / (Linf - L0)) / age)
 }
 
 #vonBertalaffyInverse(L=40, L0, Linf, koptMale)
 
-Zfct=function(age, Ltarget,  L0, Linf, K, Tref ) {
-  return (sapply(age,function(a) (vonBertalaffyGrowth(a, L0, Linf, K) * mean(temperatureEffect(Tref, 3, 17, 26)) - Ltarget)^2))
+Zfct = function(age, Ltarget,  L0, Linf, K, Tref ) {
+  return(sapply(age,function(a) (vonBertalaffyGrowth(a, L0, Linf, K) * mean(temperatureEffect(Tref, 3, 17, 26)) - Ltarget)^2))
 }
 
-Pauly= function(age, t0, Linf, K, D){
-  return(Linf/10*((1-exp(-K*D*(age-t0)))^(1/D)))
+Pauly = function(age, t0, Linf, K, D){
+  return(Linf / 10 * ((1 - exp(-K * D * (age - t0)))^(1 / D)))
 }
 
 # pas cohérent avec la temperature effet sur le coeff de croissance mais ca marche
 vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEffect=FALSE, TrefAtSea = c(9.876946, 13.489854, 15.891487, 11.554104) ){
   tempEffect = temperatureEffect( TrefAtSea , 3, 17, 26)
-  L=matrix(nrow=nStep+1)
-  L[1]=L0
+  L = matrix(nrow = nStep + 1)
+  L[1] = L0
   for (i in 1:nStep) {
-    mu = log((Linf-L[i])*(1-exp(-K*deltaT))) - sigma*sigma/2
+    mu = log((Linf - L[i]) * (1 - exp(-K * deltaT))) - sigma * sigma / 2
     increment = exp(rnorm(1, mu, sigma))
-    if (withTempEffect){
-      increment = increment * tempEffect[((i-1) %% 4)+1]
+    if (withTempEffect) {
+      increment = increment * tempEffect[((i - 1) %% 4) + 1]
     }
-    L[i+1]=L[i]+increment
+    L[i + 1] = L[i] + increment
   }
   return(L)
 }
@@ -126,17 +125,17 @@ vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEff
 # parametres
 # ----------------------------------------------------
 L0 = 2
-Linf = 80
+Linf = 70
 #kopt = 0.3900707
 #koptMale = 0.2
 #koptFemale = 0.3
-timestep = 0.25
+timestep = 0.25 # time step of the simumation
 sigma = 0.2
 
 tempEffect = mean(temperatureEffect( TrefAtSea, 3, 17, 26))
 
 #c(mean(temperatureEffect( Tref, 3, 17, 26)), mean(temperatureEffect( TrefAtSea, 3, 17, 26)))
-age=seq(0,8,.25)
+age = seq(0,8,.25)
 
 
 # ###########################################################################"
@@ -203,8 +202,9 @@ extractTemp<-as.data.frame(tempData %>%
 )
 
 plot(extractTemp$Lat, extractTemp$meanSpring, pch=20)
+abline(v=45.25) # Garonne
 abline(v=49.25) # vire
-abline(v=53.75) # elbe
+abline(v=52.25) # Rhine
 
 
 abline(h=11)
@@ -212,7 +212,7 @@ abline(h=12.5)
 # ======================================================================
 # exploration of growth for male and female
 # ======================================================================
-correction=mean(temperatureEffect(Tref, 3, 17, 26))
+correction=mean(temperatureEffect(TrefAtSea, 3, 17, 26))
 
 age=seq(0,10,.25)
 present = vonBertalaffyGrowth(age, 2, 60, 0.3900707 * correction)
