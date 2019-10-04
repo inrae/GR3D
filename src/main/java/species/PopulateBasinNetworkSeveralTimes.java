@@ -42,6 +42,6 @@ public class PopulateBasinNetworkSeveralTimes extends AquaNismsGroupProcess<Diad
 			}
 		}
 		
-		System.out.println("fem: "+ group. getFemaleSpawnerEffective()+ " \tmal"+group.getMaleSpawnerEffective());
+		//System.out.println("fem: "+ group. getFemaleSpawnerEffective()+ " \tmal"+group.getMaleSpawnerEffective());
 	}
 }

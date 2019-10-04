@@ -2,6 +2,7 @@ library(openxlsx)
 # ============================================================
 
 dataBruch = read.xlsx("BDalosesBruch.xlsx")
+#dataBruch = read.xlsx("/home/patrick/Documents/AA/CC et migrateur/thèse Poulet/BDalosesBruch.xlsx")
 dataBruch$`M.gonades.(g)` = as.numeric(dataBruch$`M.gonades.(g)`)
 
 head(dataBruch)
@@ -46,105 +47,172 @@ cj= 4.1e-4 / (84810*.5356)
 # ================================================
 # growth in GR3D
 # ================================================
+temperatureEffect= function(temp, Tmin, Topt, Tmax){
+  #  if (temp<=Tmin | temp >= Tmax)
+  #    return(0)
+  #  else
+  response=(temp-Tmin)*(temp-Tmax)/((temp-Tmin)*(temp-Tmax)-(temp-Topt)^2)
+  
+  response[temp<=Tmin | temp >= Tmax] = 0
+  return(response)
+}
 
 # ------------------------------------------------
 # temperature effect on growth
 # ------------------------------------------------
-temperatureEffect= function(temp, Tmin, Topt, Tmax){
-#  if (temp<=Tmin | temp >= Tmax)
-#    return(0)
-#  else
-    response=(temp-Tmin)*(temp-Tmax)/((temp-Tmin)*(temp-Tmax)-(temp-Topt)^2)
-    
-    response[temp<=Tmin | temp >= Tmax] = 0
-      return(response)
+tempData = read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep =";")
+sel = tempData$NOM == "Garonne" & tempData$Yea >= 2008 & tempData$Year <= 2018
+Tref = colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])
+TrefAtSea = (12 + Tref) / 2
 
-  }
-temperature=seq(8,30,.1)
-# temperature effect on spawner survival 
-plot(temperature, temperatureEffect(temperature, 10, 20, 23), type='l')
-# temperature effect on recruit survival 
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26), , col='red')
+temperature = seq(0,30,.1)
+# temperature effect on growth
+tempEffects = temperatureEffect(temperature,  3, 17, 26)
+plot(temperature,tempEffects, type = 'l')
 
+points(TrefAtSea,  temperatureEffect(TrefAtSea, 3, 17, 26), col = "red", pch = 20)
+text(TrefAtSea, temperatureEffect(TrefAtSea, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos = 4)
 
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23), type='l', col='green')
-lines(temperature, temperatureEffect(temperature, 9.75, 20, 26) * temperatureEffect(temperature, 10, 20, 23) * exp(-.4*5), type='l', col='blue')
-tempData=read.csv("/home/patrick.lambert/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep=";")
-sel = tempData$NOM=="Garonne" & tempData$Year>=2008 & tempData$Year<=2018
-plot(tempData$Year[sel], tempData$Winter[sel], type='l')
-Tref=colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])
-points(Tref,  temperatureEffect(Tref, 9.75, 20, 26), col="red")
-text(Tref, temperatureEffect(Tref, 9.75, 20, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos=1)
+points(Tref,  temperatureEffect(Tref, 3, 17, 26), col = "red")
+text(Tref, temperatureEffect(Tref, 3, 17, 26),  c("Winter", "Spring", "Summer", "Autumn"), pos = 2, cex = .5)
 
-mean( temperatureEffect(Tref, 9.75, 20, 26))
+plot(tempData$Year[sel], tempData$Winter[sel], type = 'l')
+
 # ----------------------------------------------
 # growth simulation
 # ----------------------------------------------
 vonBertalaffyGrowth = function(age, L0, Linf, K){
-  t0=log(1-L0/Linf)/K
-  return(Linf*(1-exp(-K*(age-t0))))
+  t0 = log(1 - L0 / Linf) / K
+  return(Linf * (1 - exp(-K * (age - t0))))
 }
 
-Pauly= function(age, t0, Linf, K, D){
-  return(Linf/10*((1-exp(-K*D*(age-t0)))^(1/D)))
+vonBertalaffyInverse = function(L, L0, Linf, K){
+  t0 = log(1 - L0/Linf)/K
+  return(t0 - log(1 - L/Linf)/K)
 }
 
-vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEffect=FALSE){
-  tempEffect = temperatureEffect( c(7.753891, 14.979708, 19.782974, 11.108207) , 3, 17, 26)
-  L=matrix(nrow=nStep+1)
-  L[1]=L0
+KvonBertalaffy = function(age, L, L0, Linf) {
+  return(-log((Linf - L ) / (Linf - L0)) / age)
+}
+
+#vonBertalaffyInverse(L=40, L0, Linf, koptMale)
+
+Zfct = function(age, Ltarget,  L0, Linf, K, Tref ) {
+  return(sapply(age,function(a) (vonBertalaffyGrowth(a, L0, Linf, K) * mean(temperatureEffect(Tref, 3, 17, 26)) - Ltarget)^2))
+}
+
+Pauly = function(age, t0, Linf, K, D){
+  return(Linf / 10 * ((1 - exp(-K * D * (age - t0)))^(1 / D)))
+}
+
+# pas cohérent avec la temperature effet sur le coeff de croissance mais ca marche
+vonBertalaffyIncrement = function(nStep, L0, Linf, K, deltaT, sigma, withTempEffect=FALSE, TrefAtSea = c(9.876946, 13.489854, 15.891487, 11.554104) ){
+  tempEffect = temperatureEffect( TrefAtSea , 3, 17, 26)
+  L = matrix(nrow = nStep + 1)
+  L[1] = L0
   for (i in 1:nStep) {
-    mu = log((Linf-L[i])*(1-exp(-K*deltaT))) - sigma*sigma/2
+    mu = log((Linf - L[i]) * (1 - exp(-K * deltaT))) - sigma * sigma / 2
     increment = exp(rnorm(1, mu, sigma))
-    if (withTempEffect){
-      increment = increment * tempEffect[((i-1) %% 4)+1]
+    if (withTempEffect) {
+      increment = increment * tempEffect[((i - 1) %% 4) + 1]
     }
-    L[i+1]=L[i]+increment
+    L[i + 1] = L[i] + increment
   }
   return(L)
 }
 
-vonBertalaffyIncrement(6/.25, 0, 60, 0.3900707, .25, .2)
+# ---------------------------------------------------
+# parametres
+# ----------------------------------------------------
+L0 = 2
+Linf = 70
+#kopt = 0.3900707
+#koptMale = 0.2
+#koptFemale = 0.3
+timestep = 0.25 # time step of the simumation
+sigma = 0.2
 
-age=seq(0,6,.25)
-plot(age,vonBertalaffyGrowth(age, 2, 60, 0.3900707), type="l")
+tempEffect = mean(temperatureEffect( TrefAtSea, 3, 17, 26))
+
+#c(mean(temperatureEffect( Tref, 3, 17, 26)), mean(temperatureEffect( TrefAtSea, 3, 17, 26)))
+age = seq(0,8,.25)
+
+
+# ###########################################################################"
+# comparaison male femelle
+# ###########################################################################
+Lfemale = 55
+(koptFemale = KvonBertalaffy(5.5, L = Lfemale, L0=L0, Linf=Linf)/tempEffect)
+
+Lmale = 40
+(koptMale = KvonBertalaffy(4.5, L = Lmale, L0, Linf)/tempEffect)
+
+
+plot(x=NaN, xlim=range(age), ylim=c(0, Linf), xlab ='age (year)', ylab ='length (cm)')
 for (i in 1:100) {
-  lines(age, vonBertalaffyIncrement(6/.25, 2, 60, 0.3900707, .25, .2), col='red')
+  lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptMale, timestep, sigma, withTempEffect = TRUE), col='blue')
 }
-lines(age, vonBertalaffyGrowth(age, 2, 60, 0.3900707), lwd=3, col='black')
-abline(h=40)
+lines(age, vonBertalaffyGrowth(age, L0, Linf, koptMale * tempEffect), lty=2, lwd = 2, col = 'black')
+
+res=matrix(nrow = max(age)/timestep + 1, ncol= 100 )
+# verification par rapport à la médiane et la moyenne
 for (i in 1:100) {
-  lines(age, vonBertalaffyIncrement(6/.25, 2, 60, 0.3900707, .25, .2, withTempEffect = TRUE), col='green')
+  res[,i]=vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptMale, timestep, sigma, withTempEffect = TRUE)
 }
- lines(age, vonBertalaffyGrowth(age, 2, 60, 0.3900707*mean(temperatureEffect(Tref, 3, 17, 26))), lty=2, lwd = 2)
+lines(age, apply(res, 1, quantile, probs =0.5 ),  lty=2, lwd = 2, col = 'red')
+lines( age, rowMeans(res))
 
-abline(h=40)
-
-
-
-nbRep=1000
-res=matrix(nrow=nbRep)
-for (i in 1:nbRep) {
- prov = vonBertalaffyIncrement(24, 2, 60, 0.3900707, .25, .2)
- res[i] = prov[max(which(prov < 40))+4]
+for (i in 1:100) {
+  lines(age, vonBertalaffyIncrement(max(age)/timestep, L0, Linf, koptFemale, timestep, sigma, withTempEffect = TRUE), col='pink')
 }
-mean(res)
-hist(res,20)
-abline(v=mean(res), col='red')
+lines(age, vonBertalaffyGrowth(age, L0, Linf, koptFemale * tempEffect), lty=2, lwd = 2)
+abline(h = Lmale)
+abline(h = Lfemale)
 
-res2=matrix(nrow=nbRep)
-for (i in 1:nbRep) {
-  res2[i] = vonBertalaffyIncrement(4, 40, 60, 0.3900707, .25, .2)[5]
-}
-mean(res2)
-hist(res2,20)
-abline(v=mean(res2), col='red')
+ageMale=vonBertalaffyInverse(L=Lmale, L0, Linf, koptMale*tempEffect)
+points(ageMale, vonBertalaffyGrowth(ageMale, L0, Linf, koptMale * tempEffect), col = 'red')
+segments(x0 = ageMale, y0=0, y1=vonBertalaffyGrowth(ageMale, L0, Linf, koptMale * tempEffect))
+
+ageFemale=vonBertalaffyInverse(L=Lfemale, L0, Linf, koptFemale*tempEffect)
+points(ageFemale, vonBertalaffyGrowth(ageFemale, L0, Linf, koptFemale * tempEffect), col = 'red')
+segments(x0 = ageFemale, y0=0, y1=vonBertalaffyGrowth(ageFemale, L0, Linf, koptFemale * tempEffect))
+cat(koptFemale, koptMale, sep =" ")
+cat(ageFemale, ageMale, sep =" ")
+
+# --------------------------------------------------------------
+# croissance sur le Rhin
+# --------------------------------------------------------------
+sel = tempData$NOM=="Rhine" & tempData$Year>=2008 & tempData$Year<=2018
+TrefRhine = (12 + colMeans(tempData[sel, c("Winter", "Spring", "summer", "Autumn")])) / 2
+rbind(TrefAtSea, TrefRhine)
+tempEffectRhine = mean(temperatureEffect( TrefRhine, 3, 17, 26))
+c(vonBertalaffyInverse(L=Lfemale, L0, Linf, koptFemale*tempEffectRhine), 
+  vonBertalaffyInverse(L=Lmale, L0, Linf, koptMale*tempEffectRhine))
+
+# ======================================================================
+#  temp en fonction de la latitude
+# ====================================================================
+library(dplyr)
+
+extractTemp<-as.data.frame(tempData %>%
+                             filter(Year>1901 & Year <= 1910) %>%
+                             group_by(NOM,Lat)%>%
+                             summarize(meanSpring=mean(Spring)) 
+                           %>% arrange (Lat)
+)
+
+plot(extractTemp$Lat, extractTemp$meanSpring, pch=20)
+abline(v=45.25) # Garonne
+abline(v=49.25) # vire
+abline(v=52.25) # Rhine
 
 
+abline(h=11)
+abline(h=12.5)
 # ======================================================================
 # exploration of growth for male and female
 # ======================================================================
-correction=mean(temperatureEffect(Tref, 3, 17, 26))
+correction=mean(temperatureEffect(TrefAtSea, 3, 17, 26))
 
 age=seq(0,10,.25)
 present = vonBertalaffyGrowth(age, 2, 60, 0.3900707 * correction)
@@ -170,7 +238,7 @@ taverny[age == 5]
 # ===================================================================
 # GR3D outputs
 # =====================================================================
-simData=read.csv("/home/patrick.lambert/Documents/workspace/GR3D/data/output/lengthAgeDistribution_1-RCP85.csv", sep=";", row.names = NULL)
+simData=read.csv("/home/patrick/Documents/workspace/GR3D/data/output/lengthAgeDistribution_1-RCP85.csv", sep=";", row.names = NULL)
 
 simGaronne= simData[simData$basin =="Garonne",]
 sel=simGaronne$nbSpawn == 0
@@ -192,3 +260,158 @@ sel = (! (dataBruch$LOT =='Tuilières' | dataBruch$LOT =='Golfech')) & dataBruch
 Wpost= mean(dataBruch$`M.tot.(g)`[sel])
 WgonadSpent =mean(dataBruch$`M.gonades.(g)`[sel], na.rm = TRUE)
 (Wloss=(Wpre - Wpost)/Wpre)
+
+# ===================================================================
+# Exploration of Stock recruitement-relationship for GR3D calibration
+# =====================================================================
+
+#Use to improve the likelihood between observations and GR3D outputs in terms of abudances and North limit colonization. 
+
+#a = fécondité de l'espèce, a = 135000
+#S = quantité de géniteurs: ici on veut la quantité R0 produite par 1000 géniteurs en fonction de la T° 
+#Ratio = 0.2 
+#n= paramètre simulant l'effet Allee 
+
+
+#-----------On cherche a reproduire la relation SR telle que modélisée dans GR3D-------------- 
+
+temperatureEffect= function(tempWater, TminRep, ToptRep, TmaxRep){
+  #  if (tempWater<=TminRep | tempWater >= TmaxRep)
+  #    return(0)
+  #  else
+  response=(tempWater-TminRep)*(tempWater-TmaxRep)/((tempWater-TminRep)*(tempWater-TmaxRep)-(tempWater-ToptRep)^2)
+  
+  response[tempWater<=TminRep | tempWater >= TmaxRep] = 0
+  return(response)
+  
+}
+
+#Relation SR telle qu'elle est modélisée dans GR3D
+
+numberOfSpawner<- seq(0:400000)
+
+StockRecruitementRelationship <-function (temp, surfaceWatershed, S) {
+  
+  lambda = 4.1E-4
+  deltaTrecruitement = 0.33
+  survOptRep =  0.0017
+  n= 2.4
+  ratioTeta = 1.9
+  a = 135000
+  
+  #parametre c de la RS de BH intégrant un effet du BV considéré 
+  cj = lambda/surfaceWatershed
+  
+  #parametre b représentant la mortalité densité dépendante de la RS de BH intégrant un effet de la temperature
+  # bj = (-(1/deltaTrecruitement))*
+  #   log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0))
+   
+  bj = - log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0)) / deltaTrecruitement
+  
+  #parametre a (fécondité de l'espèce) de la RS de BH intégrant un effet de la temperature
+  alphaj = (bj * exp(-bj * deltaTrecruitement)) / (cj * (1-exp(-bj * deltaTrecruitement)))
+  
+  #Bj = paramètre de la relation SR intégrant l'effet de la température 
+  betaj = bj/(a*cj*(1-exp(-bj*deltaTrecruitement)))
+  
+  #p = proportion de géniteurs participant à la reproduction en focntion de la quantité de géniteur total
+  #p = 1/(1+exp(-log(19)*(S-n)/(Ratio*surfaceWatershed)))
+  
+  S95 = n * surfaceWatershed
+  S50 = S95/ratioTeta
+  
+  p= 1/(1+exp(-log(19)*(S-S50)/(S95-S50)))
+  
+  #relation Stock Recrutement ie calcul le nombre de recrues en fonction du nombre de géniteurs et de la T en intégrant l'effet Allee 
+  
+  #R0 = aj * S * p 
+  
+  AlleeEffect = 1/ (1+exp(-log(19)*(S -n/ratioTeta*surfaceWatershed)/(n*surfaceWatershed -n/ratioTeta*surfaceWatershed)))
+  
+  Rj = (alphaj * S * AlleeEffect)/(betaj +S * AlleeEffect)
+  
+  #Rj = ((aj * S) * p)/(Bj +S * p)
+  
+  StockRecruitement = as.data.frame(Rj)
+  
+  return (Rj) 
+  
+}
+
+  StockRecruitement<-StockRecruitementRelationship (18, 84810, numberOfSpawner) 
+
+  plot(numberOfSpawner, StockRecruitement,type = 'l', xlab= "Number of spawners", ylab = "Number of recruits")
+  
+#-----------On cherche à déterminer le numbre de juvéniles générés par S = 100000 géniteurs en fonction de la T° -------------- 
+
+temperature <- seq (8,30,.1)
+numberOfSpawner=100000
+  
+  StockRecruitementRelationship <-function (temp, surfaceWatershed, S) {
+    
+    lambda = 4.1E-4
+    deltaTrecruitement = 0.33
+    survOptRep =  0.0017
+    n= 2.4
+    ratioTeta = 1.9
+    a = 135000
+    
+    #parametre c de la RS de BH intégrant un effet du BV considéré 
+    cj = lambda/surfaceWatershed
+    
+    #parametre b représentant la mortalité densité dépendante de la RS de BH intégrant un effet de la temperature
+    # bj = (-(1/deltaTrecruitement))*
+    #   log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0))
+    
+    bj = - log(survOptRep * temperatureEffect(temp, 9.8, 20.0, 26.0)) / deltaTrecruitement
+    
+    #parametre a (fécondité de l'espèce) de la RS de BH intégrant un effet de la temperature
+    alphaj = (bj * exp(-bj * deltaTrecruitement)) / (cj * (1-exp(-bj * deltaTrecruitement)))
+    
+    #Bj = paramètre de la relation SR intégrant l'effet de la température 
+    betaj = bj/(a*cj*(1-exp(-bj*deltaTrecruitement)))
+    
+    #p = proportion de géniteurs participant à la reproduction en focntion de la quantité de géniteur total
+    #p = 1/(1+exp(-log(19)*(S-n)/(Ratio*surfaceWatershed)))
+    
+    S95 = n * surfaceWatershed
+    S50 = S95/ratioTeta
+    
+    p= 1/(1+exp(-log(19)*(S-S50)/(S95-S50)))
+    
+    #relation Stock Recrutement ie calcul le nombre de recrues en fonction du nombre de géniteurs et de la T en intégrant l'effet Allee 
+    
+    #R0 = aj * S * p 
+    
+    AlleeEffect = 1/ (1+exp(-log(19)*(S -n/ratioTeta*surfaceWatershed)/(n*surfaceWatershed -n/ratioTeta*surfaceWatershed)))
+    
+    Rj = (alphaj * S * AlleeEffect)/(betaj +S * AlleeEffect)
+    
+    #Rj = ((aj * S) * p)/(Bj +S * p)
+    
+    StockRecruitement = as.data.frame(Rj)
+    
+    return (Rj) 
+    
+  }
+  
+  plot(temperature, StockRecruitementRelationship (temperature, 84810, numberOfSpawner),
+       type="l", 
+       xlab =" Temperature (°C)",
+       ylab = "Number Of Recruits")
+  
+
+#-----------On cherche à déterminer le numbre de géniteurs survivants en fonction de la T° -------------- 
+
+  #Prend en compte Zsea 
+  
+  plot(temperature, StockRecruitementRelationship (temperature, 84810, numberOfSpawner),
+       type="l", 
+       xlab =" Temperature (°C)",
+       ylab = "Number Of Recruits")
+
+
+
+
+
+

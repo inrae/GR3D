@@ -108,10 +108,10 @@ public class BasinNetworkReal extends BasinNetwork {
 		SimpleFeatureIterator  iterator = null;
 		try {
 			File aFile = new File(basinShpFile);
-			 basinStore = new ShapefileDataStore(aFile.toURI().toURL());
+			basinStore = new ShapefileDataStore(aFile.toURI().toURL());
 
 			ContentFeatureSource  featureBasin = basinStore.getFeatureSource();
-			 iterator = featureBasin.getFeatures().features();
+			iterator = featureBasin.getFeatures().features();
 			while (iterator.hasNext()) {
 				SimpleFeature feature = iterator.next();
 				MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry();
@@ -130,7 +130,7 @@ public class BasinNetworkReal extends BasinNetwork {
 			iterator.close();
 			basinStore.dispose();
 		}
-		
+
 		return mapBasin;
 	}
 
@@ -184,7 +184,9 @@ public class BasinNetworkReal extends BasinNetwork {
 				if (useRealPDam == true){
 					pDam=scanner.nextDouble();
 				}               	
-				else {scanner.next();} // skip pDam reel
+				else {
+					scanner.next();
+					pDam=1.;} // skip pDam reel
 				scanner.nextLine();
 				//System.out.println(order);
 				records.add(new Record(order, name, longitude, latitude, surface, pDam));

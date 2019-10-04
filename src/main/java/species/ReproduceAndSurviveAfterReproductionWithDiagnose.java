@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -103,7 +104,13 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 		if (Time.getSeason(group.getPilot()) == reproductionSeason){
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
-
+			// a virer
+			List<String> basinList = new ArrayList<String>() ;
+			basinList.add("Garonne");
+			basinList.add("Meuse");
+			basinList. add("Rhine");
+			System.out.print(group.getPilot().getCurrentTime() + " - ");
+			
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 
 				// before the party !!!!
@@ -176,6 +183,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					amountPerSuperIndividual = alpha / maxNumberOfSuperIndividualPerReproduction;
 
 					// Compute the Allee effect parameters  S95 and S50
+
 					S95 = eta * riverBasin.getAccessibleSurface(); // corresponds to S* in the rougier publication
 					S50 = S95 / ratioS95_S50;
 
@@ -210,6 +218,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 									numberOfMaleSpawnerForFirstTime += fish.getAmount();
 									maleSpawnersForFirstTimeAgesSum += fish.getAge() * fish.getAmount();
 									maleSpawnersForFirstTimeLengthsSum += fish.getLength() * fish.getAmount();
+
 								}
 							}
 
@@ -326,7 +335,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								"\tZcrash="+ stockRecruitmentRelationship.getSigmaZcrash() + 
 								"\tZ="+ riverBasin.getNativeSpawnerMortality());
 						System.out.println("\tStrap="+stockRecruitmentRelationship.getStockTrap(riverBasin.getNativeSpawnerMortality())+
-								"\tStotal="+numberOfFemaleSpawners+"\tSautochthonous="+
+								"\tStotal="+numberOfFemaleSpawners+"\tStotalMale="+numberOfMaleSpawners+ "\tSautochthonous="+
 								spawnerOriginsDuringReproduction.get(riverBasin.getName()));
 
 						/*	// display effective from each catchment
@@ -395,7 +404,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						}
 						else {
 							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.FEMALE).push(0.);
-							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).push(0.);
+							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.FEMALE).push(0.);
 						}
 						if (numberOfMaleSpawnerForFirstTime>0) {
 							riverBasin.getSpawnersForFirstTimeMeanAges(Gender.MALE).push(maleSpawnersForFirstTimeAgesSum/numberOfMaleSpawnerForFirstTime);
@@ -406,13 +415,15 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).push(0.);
 						}
 
+						// display info from a catchment list
+						if (basinList.contains(riverBasin.getName()) ) {
+							System.out.print(riverBasin.getName() + ": " + numberOfFemaleSpawners + " + "+ numberOfMaleSpawners +
+									" -> "+ numberOfRecruit + "\t")  ;
+						}
 
-						//System.out.println("nb spawners in basin " + riverBasin.getName() + " : " + numberOfGenitors);
-						//System.out.println("nb recruit in basin " + riverBasin.getName() + " : " + numberOfRecruit);
 
 						// Creation of new superFish
 						if (numberOfRecruit > 0){
-
 							long numberOfsuperIndividual, effectiveAmount, remainingFish;
 
 							// features of the super individuals
@@ -493,10 +504,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// -------------------------------------------------------
 					// display information
 					// -----------------------------------------------------
-					if 	(displayFluxesOnConsole)
+					/*	if 	(displayFluxesOnConsole)
 
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
-								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); 
+								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); */
 					BufferedWriter bW = group.getbWForFluxes();
 					if ( bW != null) {
 						try {
@@ -526,7 +537,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
-
+ System.out.println();
 
 			// --------------------------------------------------------------------------------------------------
 			// update the observers

@@ -183,24 +183,21 @@ class GR3DObjeciveFunction  implements   IObjectiveFunction {
 		double femaleLengthPenalty = 0.;
 		double maleLengthPenalty =0.;
 		try {
-
 			likelihood = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeLikelihood");
 			//System.out.println("likelihood: "+ likelihood);
 			femaleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeFemaleSpawnerForFirstTimeSummaryStatistic");
 			//System.out.println("femaleLengthPenalty: "+femaleLengthPenalty);
 			maleLengthPenalty = (double) 	ReflectUtils.getValueFromPath(pilot, "aquaticWorld.aquaNismsGroupsList.0.computeMaleSpawnerForFirstTimeSummaryStatistic");
 			//System.out.println("maleLengthPenalty: "+maleLengthPenalty);
-
-			System.out.println("likelihood: "+ likelihood+ " femaleLengthPenalty: "+femaleLengthPenalty+ " maleLengthPenalty: "+maleLengthPenalty);
-			
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		double result = likelihood +a_femaleLengthPenalty * femaleLengthPenalty + a_maleLengthPenalty * maleLengthPenalty ;
-
-		System.out.println(Arrays.toString(x2par(x)) + "->"+result);
+		
+		System.out.println("likelihood: "+ likelihood+ " femaleLengthPenalty: "+femaleLengthPenalty+ " maleLengthPenalty: "+maleLengthPenalty);
+		System.out.println(Arrays.toString(x2par(x)) + " -> "+result);
+		
 		return  result;
 	}
 
