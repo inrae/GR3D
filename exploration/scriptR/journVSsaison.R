@@ -64,7 +64,7 @@ plot(temperature, embryoSurvival * larvalSurvival, type = 'l')
 
 temperature = seq(5, 30,.1)
 duration = (parDurationIncubation[1] * temperature ^ parDurationIncubation[2]) 
-plot(temperature, duration, type ='l')
+plot(temperature, duration, type = 'l')
 
 # ==== observed data ========================================================================
 envGGD = read.csv("envCondition.csv", sep = ";")
@@ -77,11 +77,21 @@ repro = repro %>% mutate(dateC = as.character(date), date = as.Date(date)) %>% m
 elabData =   envGGD %>% left_join(select(repro, one_of(c("lien", "dateC", "Bulls", "BullsRelative"))), by = c("lien", "dateC")) %>% 
   filter(month %in% c('04', '05', '06'))
 
-myData = elabData %>% group_by(lien) %>% summarise(meanWaterTemp = mean(Temp1), meanSurvival = mean(juvenileSurvival, na.rm = TRUE))
+waterData = elabData %>% group_by(lien) %>% summarise(meanWaterTemp = mean(Temp1), meanSurvival = mean(juvenileSurvival, na.rm = TRUE))
 
 
 plot(elabData$Temp1, elabData$juvenileSurvival, pch = 20, col = "grey", xlim = c(10,30), ylim = c(0,1),
      xlab = 'water temperature', ylab = 'juvenile survival')
-points(myData$meanWaterTemp, myData$meanSurvival)
+points(waterData$meanWaterTemp, myData$meanSurvival)
 lines(temperature, embryoSurvival * larvalSurvival)
-       
+
+
+# ==== water temperature versus air temeprature
+load("dataSimulation3.rdata")
+
+airData = dataSimulation3 %>%  filter(model == "bcc-csm1-1-m") %>% filter(format(date, '%m') %in% c('04', '05', '06')) %>% group_by(lien) %>% summarize(meanAirTemp = mean(tempAir))
+
+ myData = waterData %>% left_join(airData, by = "lien")
+
+ plot(myData$meanWaterTemp, myData$meanAirTemp)
+summary(lm(meanAirTemp ~ meanWaterTemp, data = myData)) 
