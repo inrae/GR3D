@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -103,7 +104,13 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 		if (Time.getSeason(group.getPilot()) == reproductionSeason){
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
-
+			// a virer
+			List<String> basinList = new ArrayList<String>() ;
+			basinList.add("Garonne");
+			basinList.add("Meuse");
+			basinList. add("Rhine");
+			System.out.print(group.getPilot().getCurrentTime() + " - ");
+			
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 
 				// before the party !!!!
@@ -408,11 +415,10 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							riverBasin.getSpawnersForFirstTimeMeanLengths(Gender.MALE).push(0.);
 						}
 
-
-						if (riverBasin.getName().equalsIgnoreCase("Rhine" )) {
-							System.out.println(group.getPilot().getCurrentTime() + " - "+
-									riverBasin.getName() + ": " + numberOfFemaleSpawners + " + "+ numberOfMaleSpawners +
-									" -> "+ numberOfRecruit)  ;
+						// display info from a catchment list
+						if (basinList.contains(riverBasin.getName()) ) {
+							System.out.print(riverBasin.getName() + ": " + numberOfFemaleSpawners + " + "+ numberOfMaleSpawners +
+									" -> "+ numberOfRecruit + "\t")  ;
 						}
 
 
@@ -531,7 +537,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
-
+ System.out.println();
 
 			// --------------------------------------------------------------------------------------------------
 			// update the observers
