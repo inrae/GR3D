@@ -291,9 +291,9 @@
 
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<tempMinSurvivalSpawnerInRiv>9.4</tempMinSurvivalSpawnerInRiv>
-					<tempMaxSurvivalSpawnerInRiv>23.0</tempMaxSurvivalSpawnerInRiv>
-					<tempOptSurvivalSpawnerInRiv>20.0</tempOptSurvivalSpawnerInRiv>
+					<tempMinSurvivalSpawnerInRiv>10.7</tempMinSurvivalSpawnerInRiv>
+					<tempOptSurvivalSpawnerInRiv>17</tempOptSurvivalSpawnerInRiv>
+					<tempMaxSurvivalSpawnerInRiv>25.7</tempMaxSurvivalSpawnerInRiv>
 					<survivalProbOptSpawnerInRiv>1.0</survivalProbOptSpawnerInRiv>
 					<!--<mortalityRateInRiver>0.4</mortalityRateInRiver> -->
 					<mortalityRateInSea>0.4</mortalityRateInSea>
@@ -316,12 +316,12 @@
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>9.8</tempMinRep>
-					<tempMaxRep>26.0</tempMaxRep>
-					<tempOptRep>20.0</tempOptRep>
+					<tempMinRep>10.8</tempMinRep>
+					<tempOptRep>20.8</tempOptRep>
+					<tempMaxRep>29.8</tempMaxRep>
 					<eta>2.4</eta>
 					<ratioS95__S50>1.9</ratioS95__S50>
-					<a>135000.0</a>
+					<a>270000</a>
 					<delta__t>0.33</delta__t>
 					<survOptRep>0.0017</survOptRep>
 					<lambda>4.1E-4</lambda>

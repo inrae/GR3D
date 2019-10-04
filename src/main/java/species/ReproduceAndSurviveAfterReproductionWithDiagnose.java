@@ -48,9 +48,9 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 	//	alphaGirRougierEtAl = 6400000; betaGirRougierEtAl = 172000; dGirRougierEtAl = 19.2; tempGirMeanSpringSum = 20.24
 
 	private Season reproductionSeason = Season.SPRING;
-	private double tempMinRep = 14.;
-	private double tempMaxRep = 26.; 
-	private double tempOptRep = 20.;
+	private double tempMinRep = 14. ;
+	private double tempMaxRep = 26. ; 
+	private double tempOptRep = 20. ;
 	private double eta = 2.4; // parameter linking surface of a basin and S_etoile
 	private double ratioS95_S50 = 2.;	
 	private double a=135000.; // Parameter of fecndity (number of eggs per individual)
@@ -104,11 +104,14 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 		if (Time.getSeason(group.getPilot()) == reproductionSeason){
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
-			// a virer
+			// a River
 			List<String> basinList = new ArrayList<String>() ;
 			basinList.add("Garonne");
+			basinList.add("Vire");
+			basinList.add("Somme");
 			basinList.add("Meuse");
 			basinList. add("Rhine");
+			
 			System.out.print(group.getPilot().getCurrentTime() + " - ");
 			
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){

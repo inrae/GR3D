@@ -19,8 +19,8 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = AquaNismsGroupProcess.class)
 public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
-	public double tempMinSurvivalSpawnerInRiv = 10.;
-	public double tempMaxSurvivalSpawnerInRiv = 23.; // DEFINIR TROIS AUTRES POUR MORTALITE
+	public double tempMinSurvivalSpawnerInRiv = 10. ;
+	public double tempMaxSurvivalSpawnerInRiv = 23. ; // DEFINIR TROIS AUTRES POUR MORTALITE
 	public double tempOptSurvivalSpawnerInRiv = 20.;
 	public double survivalProbOptSpawnerInRiv = 1.;
 
