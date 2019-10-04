@@ -49,7 +49,7 @@ public class PopulateBasinNetworkSeveralTimesAccordingToBasinSize extends AquaNi
 			}
 		}
 		
-		System.out.println("fem: "+ group. getFemaleSpawnerEffective()+ " \tmal"+group.getMaleSpawnerEffective());
+		// System.out.println("fem: "+ group. getFemaleSpawnerEffective()+ " \tmal"+group.getMaleSpawnerEffective());
 	}
 }
 

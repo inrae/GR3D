@@ -176,7 +176,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					amountPerSuperIndividual = alpha / maxNumberOfSuperIndividualPerReproduction;
 
 					// Compute the Allee effect parameters  S95 and S50
-					
+
 					S95 = eta * riverBasin.getAccessibleSurface(); // corresponds to S* in the rougier publication
 					S50 = S95 / ratioS95_S50;
 
@@ -211,7 +211,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 									numberOfMaleSpawnerForFirstTime += fish.getAmount();
 									maleSpawnersForFirstTimeAgesSum += fish.getAge() * fish.getAmount();
 									maleSpawnersForFirstTimeLengthsSum += fish.getLength() * fish.getAmount();
-									
+
 								}
 							}
 
@@ -409,12 +409,15 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						}
 
 
-						//System.out.println("nb spawners in basin " + riverBasin.getName() + " : " + numberOfGenitors);
-						//System.out.println("nb recruit in basin " + riverBasin.getName() + " : " + numberOfRecruit);
+						if (riverBasin.getName().equalsIgnoreCase("Rhine" )) {
+							System.out.println(group.getPilot().getCurrentTime() + " - "+
+									riverBasin.getName() + ": " + numberOfFemaleSpawners + " + "+ numberOfMaleSpawners +
+									" -> "+ numberOfRecruit)  ;
+						}
+
 
 						// Creation of new superFish
 						if (numberOfRecruit > 0){
-
 							long numberOfsuperIndividual, effectiveAmount, remainingFish;
 
 							// features of the super individuals
@@ -495,7 +498,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					// -------------------------------------------------------
 					// display information
 					// -----------------------------------------------------
-				/*	if 	(displayFluxesOnConsole)
+					/*	if 	(displayFluxesOnConsole)
 
 						System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) + ";IMPORT;"
 								+ riverBasin.getName() + ";" +  fluxBefore + ";" + riverBasin.getSpawnerNumberPerGroup(group)+  "; " + totalInputFluxes); */
