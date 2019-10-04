@@ -111,3 +111,5 @@ org.*
 /outcmaesxmean.dat
 /outcmaesxrecentbest.dat
 /exploration/scriptR/BruchPrg.R.orig
+.Rproj.user
+/exploration/scriptR/.RData
