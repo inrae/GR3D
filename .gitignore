@@ -113,3 +113,5 @@ org.*
 /exploration/scriptR/BruchPrg.R.orig
 .Rproj.user
 /exploration/scriptR/.RData
+/exploration/scriptR/*.Rproj
+/exploration/scriptR/.Rhistory
