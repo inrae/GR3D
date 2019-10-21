@@ -4,8 +4,8 @@ basins = read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/bas
 tempData = read.csv("/home/patrick/Documents/workspace/GR3D/data/input/reality/SeasonTempBVFacAtlant1801_2100_newCRU_RCP85.csv", sep = ";")
 
 riverName = "Garonne"
-riverName = "Rhine"
-riverName = "Meuse"
+# riverName = "Rhine"
+# riverName = "Meuse"
 
 surfaceBasin = basins[basins$nomBV == riverName, 'surface']
 
@@ -50,11 +50,11 @@ temperatureEffect = function(tempWater, TminRep, ToptRep, TmaxRep){
   
 }
 
-thermalBevertonHolt = function(stock, temperature, juvenileTolerance, surface = 84810) {
+thermalBevertonHolt = function(stock, temperature, juvenileTolerance, surface = 84810, aFecundity = 135000) {
   survOptRep = 0.0017
   delta_t = 0.33
   lambda = 4.1E-4
-  a = 135000 # ~fecondité
+  #  a ~ fecondité
   tempEffect = temperatureEffect(temperature, juvenileTolerance[1], juvenileTolerance[2], juvenileTolerance[3] )
   b =  -log(survOptRep * tempEffect)/delta_t
   c = lambda/surface
@@ -69,17 +69,17 @@ thermalBevertonHolt = function(stock, temperature, juvenileTolerance, surface = 
   
   alpha = (b * exp(-b * delta_t)) / (c * (1 - exp(-b * delta_t)))
   alpha[tempEffect == 0] = 0
-  beta = b / (a * c * (1 - exp(-b * delta_t)))
+  beta = b / (aFecundity * c * (1 - exp(-b * delta_t)))
   
   recruit = alpha * stock * AlleeEffect / (beta + stock * AlleeEffect)
   return(recruit)
 }
 
-stockAtCrash = function(temperature, juvenileTolerance, surface = 84810) {
+stockAtCrash = function(temperature, juvenileTolerance, surface = 84810, aFecundity = 135000) {
   survOptRep = 0.0017
   delta_t = 0.33
   lambda = 4.1E-4
-  a = 135000 # ~fecondité
+
   tempEffect = temperatureEffect(temperature, juvenileTolerance[1], juvenileTolerance[2], juvenileTolerance[3])
   b =  -log(survOptRep * tempEffect) / delta_t
   b[b == Inf] = 0
@@ -91,7 +91,7 @@ stockAtCrash = function(temperature, juvenileTolerance, surface = 84810) {
   S95 = eta * surface
   S50 = S95 / theta
   
-  beta = b / (a * c * (1 - exp(-b * delta_t)))
+  beta = b / (aFecundity * c * (1 - exp(-b * delta_t)))
   
   res = S50 + (S95 - S50) * log(beta * log(19) / (S95 - S50)) / log(19)
   res[is.nan(res)] = 0
@@ -99,18 +99,18 @@ stockAtCrash = function(temperature, juvenileTolerance, surface = 84810) {
 }
 
 
-thermalBevertonHoltWithoutAllee = function(stock, temperature, juvenileTolerance, surface = 84810)  {
+thermalBevertonHoltWithoutAllee = function(stock, temperature, juvenileTolerance, surface = 84810, aFecundity = 135000)   {
   survOptRep = 0.0017
   delta_t = 0.33
   lambda = 4.1E-4
-  a = 135000 # ~fecondité
+
   tempEffect = temperatureEffect(temperature, juvenileTolerance[1], juvenileTolerance[2], juvenileTolerance[3] )
   b =  -log(survOptRep * tempEffect)/delta_t
   c = lambda/surface
   
   alpha = (b * exp(-b * delta_t)) / (c * (1 - exp(-b * delta_t)))
   alpha[tempEffect == 0] = 0
-  beta = b / (a * c * (1 - exp(-b * delta_t)))
+  beta = b / (aFecundity * c * (1 - exp(-b * delta_t)))
   
   recruit = alpha * stock  / (beta + stock )
   return(recruit)
@@ -125,50 +125,53 @@ modifiedBevertonHolt = function(stock){
   return(alpha * (stock^d) / ((beta^d) + (stock^d)))
 }
 
-survivingRecruit = function(stock, temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface){
+survivingRecruit = function(stock, temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface, aFecundity){
   survStock = stock * temperatureEffect(temperature, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3])
-  recruit = thermalBevertonHolt(survStock, temperature, juvenileTolerance, surface)
+  recruit = thermalBevertonHolt(survStock, temperature, juvenileTolerance, surface, aFecundity)
   survRecruit =  recruit * exp(-sigmaZ)
   return(survRecruit)
 }
 
 
+spawnerTolerance = c(10, 20, 23) # Rougier 2014
+juvenileTolerance = c(9.8, 20, 26) # Rougier et al 2015
 
-spawnerTolerance = c(10, 20, 23)
-juvenileTolerance = c(9.8, 20, 26)
 
+# spawnerTolerance = c(10.7, 17, 25.7) #  spawning temperature range Paumier et al 2019
+# juvenileTolerance = c(10.8, 20.8, 29.8) #tolerance temperature range Jatteau 2017
+# 
 
-spawnerTolerance = c(10.7, 17, 25.7) #  spawning temperature range Paumier et al 2019
+spawnerTolerance = c(10.7, 17, 25.7)   #  spawning temperature range Paumier et al 2019
 juvenileTolerance = c(10.8, 20.8, 29.8) #tolerance temperature range Jatteau 2017
 
-Tmin = 8
-spawnerTolerance = c(Tmin, 20, 23) 
-juvenileTolerance = c(Tmin, 16, 23) 
+# Tmin = 8
+# spawnerTolerance = c(Tmin, 20, 23) 
+# juvenileTolerance = c(Tmin, 16, 23) 
 
 sigmaZ = 0.4 * 5 # Z * lifespan of female
 propFemale = 0.5
-
+aFecundity = 185000
 # ================================ stock-recruitment relationship at 1900-1910 SPRING temperature ====
 
-ymax = 1e7
+ymax = 5e6
 S = seq(0, 1e6, 100)
 # with spawner mortality according to temperature
 survS = S * temperatureEffect(TrefInRiver$Spring, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3])
-plot(S, thermalBevertonHolt(survS, TrefInRiver$Spring, juvenileTolerance, surface = surfaceBasin), type = 'l',
-     xlab = 'Stock (female)', ylab = 'R (female and male)', ylim = c(0, ymax) )
-lines(S, thermalBevertonHolt(survS, TrefInRiver$Spring + 2, juvenileTolerance, surface = surfaceBasin), col = 'red')
-lines(S, thermalBevertonHolt(survS, TrefInRiver$Spring - 2, juvenileTolerance, surface = surfaceBasin), col = 'blue')
+plot(S, thermalBevertonHolt(survS, TrefInRiver$Spring, juvenileTolerance, surface = surfaceBasin, aFecundity) * propFemale, type = 'l',
+     xlab = 'Stock (female)', ylab = 'R (female)', ylim = c(0, ymax), main = riverName )
+lines(S, thermalBevertonHolt(survS, TrefInRiver$Spring + 1, juvenileTolerance, surface = surfaceBasin,  aFecundity) * propFemale, col = 'red')
+lines(S, thermalBevertonHolt(survS, TrefInRiver$Spring - 1, juvenileTolerance, surface = surfaceBasin,  aFecundity) * propFemale, col = 'blue')
 # replacement line with prop of female in recruit
-lines(c(0, ymax * exp(-sigmaZ) * propFemale), c(0, ymax), col = 'green', lty = 2)
+lines(c(0, ymax * exp(-sigmaZ)), c(0, ymax), col = 'green', lty = 2)
 
 
 # =============================== comparison with Rougier et al stock-recruitment relationship for the Garonne River ======
 
-tempe = TrefInRiver$Spring
-tempe = as.numeric(tempData %>%
-  filter(Year > 1991 & Year <= 2009 & NOM == riverName) %>%
-  summarize(meanSpring = mean(Spring), meanSummer = mean(summer)) )
-tempe = juvenileTolerance[2]
+#tempe = TrefInRiver$Spring
+#tempe = as.numeric(tempData %>%
+#  filter(Year > 1991 & Year <= 2009 & NOM == riverName) %>%
+#  summarize(meanSpring = mean(Spring), meanSummer = mean(summer)) )[1]
+#tempe = juvenileTolerance[2]
 tempe = 20.2 # Rougier 2014
 
 Stot = seq(0, 2e6, 1e4)
@@ -176,22 +179,24 @@ ymax = 1e7
 
 survS = Stot * temperatureEffect(tempe, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3])
 plot(Stot, thermalBevertonHolt(stock = survS * propFemale, temperature = tempe, juvenileTolerance = juvenileTolerance, 
-                               surface = surfaceBasin),
+                               surface = surfaceBasin, aFecundity = 135000),
      type = 'l', xlab = 'Total stock (2 x female)', ylab = 'R (female and male)', ylim = c(0, ymax) )
 # lines(Stot, thermalBevertonHolt(stock = survS, temperature = tempe, juvenileTolerance = juvenileTolerance, surface = surfaceBasin), lty = 3)
-lines(Stot, thermalBevertonHoltWithoutAllee(Stot * propFemale, tempe, juvenileTolerance,  surface = surfaceBasin), col = 'blue')
+lines(Stot, thermalBevertonHoltWithoutAllee(Stot * propFemale, tempe, juvenileTolerance,  surface = surfaceBasin, aFecundity = 135000), col = 'blue')
 ## lines(Stot, thermalBevertonHolt(Stot, tempe, juvenileTolerance), lty=2 )
 lines(Stot, modifiedBevertonHolt(Stot), col = 'green') # for the Garonne River
 # replacement line
 lines(c(0, ymax * exp(-sigmaZ)), c(0, ymax), col = 'green', lty = 2)
 
 # ===================================== stock at equilibrium =============================================================
-stocksAtEquilibrium = function(temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface, propFemale = 0.5) {
+# as coded in GR3D v3
+stocksAtEquilibrium = function(temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface, propFemale, aFecundity, pHoming) {
 
    # !!!!! stock and recruit consider only females !!!!!!
-  objFct = function(stock, temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface){
-    survRecruit = survivingRecruit(stock, temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface) * propFemale 
-    return((survRecruit - stock)^2)
+  objFct = function(femaleStock, temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface, aFecundity, pHoming){
+    survFemaleRecruit = survivingRecruit(femaleStock, temperature, juvenileTolerance, spawnerTolerance, sigmaZ, surface, aFecundity) * propFemale 
+    survFemaleRecruit = survFemaleRecruit * pHoming
+    return((survFemaleRecruit - femaleStock)^2)
   }
   
   stockatequilibrium = 0
@@ -199,29 +204,37 @@ stocksAtEquilibrium = function(temperature, juvenileTolerance, spawnerTolerance,
   
   # stock at crash before the spawner mortality
   tempEffSpawner =  temperatureEffect(temperature, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3])
-  stockatcrash = ifelse(tempEffSpawner > 0, stockAtCrash(temperature, juvenileTolerance, surface) / tempEffSpawner, 0)
+  stockatcrash = ifelse(tempEffSpawner > 0, stockAtCrash(temperature, juvenileTolerance, surface, aFecundity) / tempEffSpawner, 0)
   
   
   if (stockatcrash > 0) {
     recruitatcrash = thermalBevertonHolt(stockatcrash * tempEffSpawner,
-                                         temperature, juvenileTolerance, surface) * propFemale 
+                                         temperature, juvenileTolerance, surface, aFecundity) * propFemale 
     sigmaZatcrash = -log(stockatcrash / recruitatcrash)
+    Zhoming = -log(pHoming)
     
-    if (sigmaZ < sigmaZatcrash) {
+    # pHoming is added after the mortatly at sea
+    if ((sigmaZ + Zhoming) < sigmaZatcrash) {
       stockattrap =  optimise(objFct, c(0,  stockatcrash), temperature = temperature, juvenileTolerance = juvenileTolerance, spawnerTolerance = spawnerTolerance, 
-                              sigmaZ = sigmaZ, surface = surface)$minimum
+                              sigmaZ = sigmaZ, surface = surface, aFecundity = aFecundity, pHoming = pHoming)$minimum
       
       stockatequilibrium = optimise(objFct, (c(1, 100) * stockatcrash), temperature = temperature, juvenileTolerance = juvenileTolerance, spawnerTolerance = spawnerTolerance, 
-                                      sigmaZ = sigmaZ, surface = surface)$minimum
+                                      sigmaZ = sigmaZ, surface = surface, aFecundity = aFecundity,  pHoming = pHoming)$minimum
     }
   }
   
   return(c(stockatequilibrium, stockattrap, stockatcrash))
 }
 
+# ===== Parameters =================================================
 temperature = seq(5,30,.1)
+aFecundity = 135000 * 2
+propFemale = .5
+pHoming = .75
 
-stocks = as.data.frame(t(sapply(temperature, function(temp) (stocksAtEquilibrium(temp, juvenileTolerance, spawnerTolerance, sigmaZ, surface = surfaceBasin)))))
+# == simulation of spawner mortality, reprpoduction, mortality at sea, homing ==========================================
+stocks = as.data.frame(t(sapply(temperature, function(temp) (stocksAtEquilibrium(temp, juvenileTolerance, spawnerTolerance, sigmaZ, surface = surfaceBasin,
+                                                                                 propFemale  = propFemale,  aFecundity = aFecundity, pHoming = pHoming )))))
 names(stocks) = c('atEquilibrium', 'atTrap', 'atCrash')
 stocks$temperature = temperature
 
@@ -235,12 +248,10 @@ max(stocks$temperature[stocks$atEquilibrium == 0 & stocks$temperature < 20])
 tempe = 14.4
 stocks[stocks$temperature == tempe, ]
 
-
-
 S = seq(0, 5e5, 1e3) # only females
 
 recruit = thermalBevertonHolt(S * temperatureEffect(tempe, spawnerTolerance[1], spawnerTolerance[2], spawnerTolerance[3]),
-                              temperature = tempe, juvenileTolerance = juvenileTolerance, surface = surfaceBasin) * propFemale
+                              temperature = tempe, juvenileTolerance = juvenileTolerance, surface = surfaceBasin, aFecundity = aFecundity ) * propFemale * pHoming
 
 plot(S, recruit, type = 'l', xlab = 'Stock (# female)', ylab = 'Recruit (# of female)', main = paste(riverName, surfaceBasin))
 lines(c(0, max(recruit) * exp(-sigmaZ)), c(0, max(recruit)), col = 'green', lty = 2)
@@ -257,7 +268,7 @@ points(sAtCrash, thermalBevertonHolt(sAtCrash * temperatureEffect(tempe, spawner
                                     temperature = tempe, juvenileTolerance = juvenileTolerance, surface = surfaceBasin) * propFemale)
 
 
-# ==== recruitment according to temperature ===========================
+  # ==== recruitment according to temperature ===========================
 # but need to fix a reference stock !
 refStock = 1.5e6 / 2 # female !!!
 temperature = seq(5,30,.1)
