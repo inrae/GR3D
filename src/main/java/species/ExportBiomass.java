@@ -65,6 +65,8 @@ public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, Diadrom
 						bW.write(sep + birthBasinName); // write each basin name in the file 
 					}
 
+					bW.write("\n"); 
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

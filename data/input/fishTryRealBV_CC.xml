@@ -292,7 +292,7 @@
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<tempMinSurvivalSpawnerInRiv>10.7</tempMinSurvivalSpawnerInRiv>
-					<tempOptSurvivalSpawnerInRiv>17</tempOptSurvivalSpawnerInRiv>
+					<tempOptSurvivalSpawnerInRiv>17.0</tempOptSurvivalSpawnerInRiv>
 					<tempMaxSurvivalSpawnerInRiv>25.7</tempMaxSurvivalSpawnerInRiv>
 					<survivalProbOptSpawnerInRiv>1.0</survivalProbOptSpawnerInRiv>
 					<!--<mortalityRateInRiver>0.4</mortalityRateInRiver> -->
@@ -316,9 +316,9 @@
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>10.8</tempMinRep>
+					<tempMinRep>9.3</tempMinRep>
 					<tempOptRep>20.8</tempOptRep>
-					<tempMaxRep>29.8</tempMaxRep>
+					<tempMaxRep>31.0</tempMaxRep>
 					<eta>2.4</eta>
 					<ratioS95__S50>1.9</ratioS95__S50>
 					<a>270000</a>
