@@ -12,6 +12,8 @@ public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 	//TODO replace UNDIFFERENCIED by UNDETERMINED
 	public static enum Gender {UNDIFFERENCIED, FEMALE, MALE}; 
 
+	public enum SpawnerOrigin {AUTOCHTONOUS, ALLOCHTONOUS};
+	
 	private long amount;
 	/**
 	 *  age of the fish

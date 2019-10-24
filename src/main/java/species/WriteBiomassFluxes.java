@@ -24,12 +24,12 @@ import species.ReproduceAndSurviveAfterReproductionWithDiagnose;
 /**
  *
  */
-public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
+public class WriteBiomassFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
-	private double survivalRateAfterReproduction = 0.1;
+
 	private Season exportSeason = Season.SPRING;
 
-	private String fileNameOutput = "BiomassFluxes";
+	private String fileNameOutput = "biomassFluxes";
 
 	private transient BufferedWriter bW;
 	private transient String sep=";";
@@ -37,7 +37,7 @@ public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, Diadrom
 
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver()))
-				.toXML(new ExportBiomass()));
+				.toXML(new WriteBiomassFluxes()));
 	}
 
 	/* (non-Javadoc)
@@ -66,7 +66,7 @@ public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, Diadrom
 					}
 
 					bW.write("\n"); 
-					
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -79,26 +79,21 @@ public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, Diadrom
 
 				for (RiverBasin migrationBasin : group.getEnvironment().getRiverBasins()) {
 					//Create the map to get the biomass in each birth basin
-					Map<String, Double> spawnerOriginsBeforeReproduction = new HashMap<String, Double>(group.getEnvironment().getRiverBasinNames().length); 
+					Map<String, Double> spawnerAbundancesPerOrigin = new HashMap<String, Double>(group.getEnvironment().getRiverBasinNames().length); 
 					for (String basinName : group.getEnvironment().getRiverBasinNames()){
-						spawnerOriginsBeforeReproduction.put(basinName,  0.);			
+						spawnerAbundancesPerOrigin.put(basinName,  0.);			
 					}
 					double biomass=0.;
 					//compute the cumulative effective per birth basin 
 					if (migrationBasin.getFishs(group) != null) {
-						
+
 						for (DiadromousFish fish : migrationBasin.getFishs(group)) {
-							
-							double survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
-							 biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount() - survivalAmount); 
-							
+
 							if (fish.getStage() == Stage.MATURE) {
+								biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount();
 								String birthBasinName = fish.getBirthBasin().getName();
-								spawnerOriginsBeforeReproduction.put(birthBasinName, spawnerOriginsBeforeReproduction.get(birthBasinName) + biomass);
-
-
+								spawnerAbundancesPerOrigin.put(birthBasinName, spawnerAbundancesPerOrigin.get(birthBasinName) + biomass);
 							}
-
 						}
 					}
 
@@ -107,7 +102,7 @@ public class ExportBiomass extends AquaNismsGroupProcess<DiadromousFish, Diadrom
 
 					//write the cumulative effective from birth basin 
 					for (String birthBasinName : group.getEnvironment().getRiverBasinNames()) {
-						bW.write(sep+spawnerOriginsBeforeReproduction.get(birthBasinName));
+						bW.write(sep+spawnerAbundancesPerOrigin.get(birthBasinName));
 					}
 					//write an end-of(line
 					bW.write("\n");

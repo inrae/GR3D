@@ -152,34 +152,6 @@
 					</hashtable>
 				</entry>
 			</compoCarcassPreSpawning>
-			<compoCarcassPostSpawning class="hashtable">
-				<entry>
-					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
-					<hashtable>
-						<entry>
-							<string>P</string>
-							<double>0.00961</double>
-						</entry>
-						<entry>
-							<string>N</string>
-							<double>0.0279</double>
-						</entry>
-					</hashtable>
-				</entry>
-				<entry>
-					<species.DiadromousFish_-Gender>FEMALE</species.DiadromousFish_-Gender>
-					<hashtable>
-						<entry>
-							<string>P</string>
-							<double>0.00997</double>
-						</entry>
-						<entry>
-							<string>N</string>
-							<double>0.03216</double>
-						</entry>
-					</hashtable>
-				</entry>
-			</compoCarcassPostSpawning>
 			<compoGametes class="hashtable">
 				<entry>
 					<species.DiadromousFish_-Gender>MALE</species.DiadromousFish_-Gender>
@@ -300,18 +272,17 @@
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
-				<species.ExportFluxes>
+				<species.WriteEffectiveFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>EffectiveFluxes</fileNameOutput>
-				</species.ExportFluxes>
+					<fileNameOutput>effectiveFluxes</fileNameOutput>
+				</species.WriteEffectiveFluxes>
 
-				<species.ExportBiomass>
+				<species.WriteBiomassFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
 					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>BiomassFluxes</fileNameOutput>
-				</species.ExportBiomass>
+					<fileNameOutput>BiomassFluxessBeforeReproduction</fileNameOutput>
+				</species.WriteBiomassFluxes>
 
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
@@ -348,6 +319,11 @@
 			</processesEachStep>
 
 			<processesAtEnd>
+				<species.WriteImportNutrientFluxes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<fileName>fluxes</fileName>
+				</species.WriteImportNutrientFluxes>
+				
 				<species.IdentifyPopulation>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<consoleDisplay>false</consoleDisplay>
@@ -358,6 +334,7 @@
 					</years>
 					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
 				</species.IdentifyPopulation>
+				
 				<species.TypeTrajectoryCV>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
