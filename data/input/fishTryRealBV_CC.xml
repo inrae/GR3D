@@ -316,10 +316,10 @@
 			</processesEachStep>
 
 			<processesAtEnd>
-				<species.WriteImportNutrientFluxes>
+				<species.WriteNutrientImportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<fileName>fluxes</fileName>
-				</species.WriteImportNutrientFluxes>
+				</species.WriteNutrientImportFluxes>
 
 				<species.WriteNutrientExportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
