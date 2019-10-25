@@ -509,7 +509,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 			targetedAgeForMaleSpawnerForFirstTime = 4.5;
 
 		//this.nutrientRoutine.getNutrientFluxesCollection().setBasinNames(this.getEnvironment().getRiverBasinNames());
-		this.nutrientRoutine.createNutrienFluxesCollection(this.getEnvironment().getRiverBasinNames());
+		this.nutrientRoutine.createNutrienFluxesCollections(this.getEnvironment().getRiverBasinNames());
 	}
 
 

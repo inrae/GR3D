@@ -268,11 +268,11 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 								for (String nutrient: aFluxAfterSurvival.keySet()) {
 									//For all survival fish
-									group.getNutrientRoutine().getNutrientFluxesCollection().
+									group.getNutrientRoutine().getNutrientImportFluxesCollection().
 									put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxAfterSurvival.get(nutrient) * survivalAmount);
 
 									//For all dead fish
-									group.getNutrientRoutine().getNutrientFluxesCollection().
+									group.getNutrientRoutine().getNutrientImportFluxesCollection().
 									put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount));
 
 								}
@@ -299,7 +299,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								Map<String, Double> aFluxForDeadFish = group.getNutrientRoutine().computeNutrientsInputForDeathAfterSpawning(fish); // 
 
 								for (String nutrient: aFluxForDeadFish.keySet()) {
-									group.getNutrientRoutine().getNutrientFluxesCollection().
+									group.getNutrientRoutine().getNutrientImportFluxesCollection().
 									put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount));
 								}
 								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());

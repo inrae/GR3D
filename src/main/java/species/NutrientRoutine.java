@@ -106,17 +106,15 @@ public class NutrientRoutine {
 	 */
 	private Map<DiadromousFish.Gender, Map<String,Double>> compoGametes;
 
-	// For juveniles - Based on Taverny (1991)
-
 	/**
 	 * chemical composition of juveniles
 	 * 		<key> chemical element
 	 * 		<value> value
 	 */
-
 	private Map<String,Double> compoJuvenile;
 
 	private transient NutrientImportFluxesCollection nutrientImportFluxesCollection;
+	
 	private transient NutrientExportFluxesCollection nutrientExportFluxesCollection;
 
 	public NutrientRoutine() {
@@ -157,16 +155,26 @@ public class NutrientRoutine {
 		this.compoJuvenile = compoJuvenile; 
 
 		this.nutrientImportFluxesCollection = new NutrientImportFluxesCollection();
+		this.nutrientExportFluxesCollection =  new NutrientExportFluxesCollection();
 
 	}
 
-	public void createNutrienFluxesCollection(String[] basinNames) {
-		nutrientImportFluxesCollection = new NutrientImportFluxesCollection();
-		nutrientImportFluxesCollection.setBasinNames(basinNames);
+	public void createNutrienFluxesCollections(String[] basinNames) {
+		this.nutrientImportFluxesCollection = new NutrientImportFluxesCollection();
+		this.nutrientImportFluxesCollection.setBasinNames(basinNames);
+		
+		this.nutrientExportFluxesCollection =  new NutrientExportFluxesCollection();
+		this.nutrientExportFluxesCollection.setBasinNames(basinNames);
 	}
 
-	public NutrientImportFluxesCollection getNutrientFluxesCollection() {
+	
+	public NutrientImportFluxesCollection getNutrientImportFluxesCollection() {
 		return nutrientImportFluxesCollection;
+	}
+	
+	
+	public NutrientExportFluxesCollection getNutrientExportFluxesCollection() {
+		return nutrientExportFluxesCollection;
 	}
 
 	/**
@@ -624,10 +632,11 @@ public class NutrientRoutine {
 		 */
 		//  
 		private Map<Long, Map<String, Map<String, Double>>> exportFluxesCollection ;
+		
 		private transient String[] basinNames; 
 
+		
 		NutrientExportFluxesCollection() {
-
 			exportFluxesCollection  = new HashMap <Long,  Map<String, Map<String, Double>>> (); 
 		}
 

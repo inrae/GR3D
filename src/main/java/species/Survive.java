@@ -115,7 +115,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 							Map<String, Double> aFluxForDeadFishBeforeSpawning = group.getNutrientRoutine().computeNutrientsInputForDeathBeforeSpawning(fish); // 
 
 							for (String nutrient: aFluxForDeadFishBeforeSpawning.keySet()) {
-								group.getNutrientRoutine().getNutrientFluxesCollection().
+								group.getNutrientRoutine().getNutrientImportFluxesCollection().
 								put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), basin.getName(), aFluxForDeadFishBeforeSpawning.get(nutrient) * deathAmount);
 							}
 							
