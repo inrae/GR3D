@@ -117,10 +117,11 @@ public class NutrientRoutine {
 	private Map<String,Double> compoJuvenile;
 
 	private transient NutrientImportFluxesCollection nutrientImportFluxesCollection;
-
+	private transient NutrientExportFluxesCollection nutrientExportFluxesCollection;
 
 	public NutrientRoutine() {
 		this.nutrientImportFluxesCollection = new NutrientImportFluxesCollection();
+		this.nutrientExportFluxesCollection = new NutrientExportFluxesCollection();
 	}
 
 	/**
@@ -561,23 +562,12 @@ public class NutrientRoutine {
 		 */
 		private Map<Long, Map <String, Map<String, Map<String, Double>>>> importFluxesCollection ;
 		
-		/* 
-		 * collection of export fluxes (from river to sea)
-		 * <key> Year
-		 * <value> 
-		 * 	<key> Nutrient
-		 * 	<value>	
-		 * 		<key> origin basin name 
-		 * 		<value> flux
-		 */
-		private Map<Long, Map <String,  Map<String, Double>>> exportFluxesCollection ;
-		
+			
 		private transient String[] basinNames; 
 
 		NutrientImportFluxesCollection() {
 
 			importFluxesCollection  = new HashMap <Long, Map <String, Map<String, Map<String, Double>>>> ();
-			exportFluxesCollection = new HashMap <Long, Map <String,  Map<String, Double>>> ();
 		}
 
 
@@ -585,10 +575,6 @@ public class NutrientRoutine {
 			return importFluxesCollection;
 		}
 
-		
-		public Map<Long, Map<String,  Map<String, Double>>> getExportFluxesCollection() {
-			return exportFluxesCollection;
-		}
 		
 		public void setBasinNames(String[] basinNames) {
 			this.basinNames = basinNames;
@@ -646,7 +632,7 @@ public class NutrientRoutine {
 		}
 
 
-		public Map<Long,  Map<String, Map<String, Double>>> getFluxesCollection() {
+		public Map<Long,  Map<String, Map<String, Double>>> getExportFluxesCollection() {
 			return exportFluxesCollection;
 		}
 
