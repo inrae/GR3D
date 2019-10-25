@@ -39,7 +39,7 @@ import species.DiadromousFish.Stage;
 /**
  *
  */
-public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
+public class WriteEffectivesFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
 	private Season exportSeason = Season.SPRING;
 
@@ -50,7 +50,7 @@ public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver()))
-				.toXML(new ExportFluxes()));
+				.toXML(new WriteEffectivesFluxes()));
 	}
 
 	/* (non-Javadoc)
@@ -87,7 +87,6 @@ public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 
 		try {
 			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot)>1900) {
-
 
 				for (RiverBasin migrationBasin : group.getEnvironment().getRiverBasins()) {
 					//Create the map to get the abundance in each birth basin

@@ -93,8 +93,9 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 */
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
-	private String outputPath = "data/output/";
+	private String outputPath = "data/output/" ; 
 
+	//TODO:remove fileNameFluxes
 	private String fileNameFluxes = "fluxes";
 
 	private transient BufferedWriter bWForFluxes;
@@ -176,7 +177,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	// =================================================
 	// calibration
 	// =================================================
-	
+
 	private Double targetedAgeForFemaleSpawnerForFirstTime = 5.5;	
 	private Double targetedAgeForMaleSpawnerForFirstTime = 4.5;
 
@@ -318,7 +319,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		nutrientsOfInterest.add("P");
 
 
-		diadromousFishGroup.nutrientRoutine = new NutrientRoutine(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, 
+		diadromousFishGroup.nutrientRoutine = new NutrientRoutine(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, aCompoCarcassPreSpawning, 
 				aCompoGametes, aJuvenileFeatures, aCompoJuveniles);
 
 
@@ -498,12 +499,14 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		} catch (IOException ex) {
 			Logger.getLogger(DiadromousFishGroup.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		
+
 		// defaut values
 		if (targetedAgeForFemaleSpawnerForFirstTime == null)
 			targetedAgeForFemaleSpawnerForFirstTime = 5.5;		
 		if (targetedAgeForMaleSpawnerForFirstTime == null)
 			targetedAgeForMaleSpawnerForFirstTime = 4.5;
+
+		this.nutrientRoutine.getNutrientFluxesCollection().setBasinNames(this.getEnvironment().getRiverBasinNames());
 	}
 
 
@@ -709,8 +712,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return sum/nb;
 	}
-	
-	
+
+
 	public double computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(double TARGET ) {
 		double sum = 0;
 		for (RiverBasin riverBasin : getEnvironment().getRiverBasins()) {
@@ -727,7 +730,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public double computeMaleSpawnerForFirstTimeSummaryStatistic() {
 		return computeMaleSpawnerForFirstTimeSummaryStatisticWithTarget(targetedAgeForFemaleSpawnerForFirstTime); 
 	}
-	
+
 	@Observable(description="mean age of first reprodution for male")
 	public double getMeanAgeOfFirstReprodutionForMale() {
 		double sum = 0;
@@ -753,8 +756,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return sum/nb;
 	}
-	
-	
+
+
 	@Observable(description = "Likelihood Summary stat")
 	public double computeLikelihood() {
 		int obsVal;
@@ -932,7 +935,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 		return eff;
 	}
-	
+
 	/**
 	 * @return sum of male spawner effectives in all the river basins
 	 */
