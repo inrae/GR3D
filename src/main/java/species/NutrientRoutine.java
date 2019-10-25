@@ -24,8 +24,12 @@ import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFish.Gender;
 import species.DiadromousFish.Stage;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -91,7 +95,7 @@ public class NutrientRoutine {
 	 * 		<key> chemical element
 	 * 		<value> value
 	 */
-	private Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning;
+	//private Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning;
 
 	/**
 	 * chemical composition of gametes estimated from the MIGADO dataset (BDalosesBruch)
@@ -112,9 +116,11 @@ public class NutrientRoutine {
 
 	private Map<String,Double> compoJuvenile;
 
+	private transient NutrientFluxesCollection nutrientFluxesCollection;
+
 
 	public NutrientRoutine() {
-
+		this.nutrientFluxesCollection = new NutrientFluxesCollection();
 	}
 
 	/**
@@ -132,7 +138,7 @@ public class NutrientRoutine {
 			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPreSpawning,
 			Map<DiadromousFish.Gender, Map<String, Double>> fishFeaturesPostSpawning,
 			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPreSpawning,
-			Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning, 
+			//Map<DiadromousFish.Gender, Map<String, Double>> compoCarcassPostSpawning, 
 			Map<DiadromousFish.Gender, Map<String, Double>> compoGametes,
 			Map<String, Double> juvenileFeatures,
 			Map<String, Double> compoJuvenile)
@@ -144,11 +150,22 @@ public class NutrientRoutine {
 		this.fishFeaturesPreSpawning = fishFeaturesPreSpawning;
 		this.fishFeaturesPostSpawning = fishFeaturesPostSpawning;
 		this.compoCarcassPreSpawning = compoCarcassPreSpawning;
-		this.compoCarcassPostSpawning = compoCarcassPostSpawning;
+		//this.compoCarcassPostSpawning = compoCarcassPostSpawning;
 		this.compoGametes = compoGametes;
 		this.juvenileFeatures = juvenileFeatures;
 		this.compoJuvenile = compoJuvenile; 
 
+		this.nutrientFluxesCollection = new NutrientFluxesCollection();
+
+	}
+
+	public void createNutrienFluxesCollection(String[] basinNames) {
+		nutrientFluxesCollection = new NutrientFluxesCollection();
+		nutrientFluxesCollection.setBasinNames(basinNames);
+	}
+
+	public NutrientFluxesCollection getNutrientFluxesCollection() {
+		return nutrientFluxesCollection;
 	}
 
 	/**
@@ -176,8 +193,6 @@ public class NutrientRoutine {
 				nutrientsInput.put(nutrient, 0.);
 			}
 		}
-
-		//TODO Multiply by fish amount 
 		return nutrientsInput;
 	}
 
@@ -200,16 +215,16 @@ public class NutrientRoutine {
 
 			if (fish.getStage()== Stage.MATURE) {
 
-				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
+				double totalWeightPost = this.getWeight(fish, SpawningPosition.PRE);
 				double carcass = totalWeightPost 
-						* compoCarcassPostSpawning.get(fish.getGender()).get(nutrient); 
+						*  compoCarcassPreSpawning.get(fish.getGender()).get(nutrient); 
 				//double gametes = (totalWeightPre - totalWeightPost) FAUX car perte de poids somatique due a la reproduction  
-				double gametes = this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST)
-						*compoGametes.get(fish.getGender()).get(nutrient); 
+				//double gametes = (this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST))
+				//*compoGametes.get(fish.getGender()).get(nutrient); 
 				double excretion = totalWeightPost
 						* residenceTime 
 						* excretionRate.get(nutrient);
-				double nutrientImport = carcass + gametes + excretion;
+				double nutrientImport = carcass + excretion;
 
 				nutrientsInput.put(nutrient,nutrientImport);
 			}
@@ -219,6 +234,8 @@ public class NutrientRoutine {
 		}
 		return nutrientsInput; 
 	}
+
+
 
 	public Map<String, Double> computeNutrientsInputForDeathAfterSpawning(DiadromousFish fish){
 
@@ -237,10 +254,9 @@ public class NutrientRoutine {
 			if (fish.getStage()==Stage.MATURE) {
 
 				//TODO Fix with new data 
-				double totalWeightPost = this.getWeight(fish, SpawningPosition.POST);
+				double totalWeightPost = this.getWeight(fish, SpawningPosition.PRE);
 				//Gamete compositions depends on sex. 
-
-				double gametes = this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST)
+				double gametes = (this.getGonadWeight(fish, SpawningPosition.PRE) - this.getGonadWeight(fish, SpawningPosition.POST))
 						* compoGametes.get(fish.getGender()).get(nutrient);
 				double excretion = totalWeightPost 
 						* residenceTime 
@@ -294,8 +310,8 @@ public class NutrientRoutine {
 			if (spawningPosition == SpawningPosition.PRE)
 				weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") ); 
 			else 
-				weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
-
+				//weight = fishFeaturesPostSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPostSpawning.get(fish.getGender()).get("bLW"));
+				weight = fishFeaturesPreSpawning.get(fish.getGender()).get("aLW") * Math.pow(fish.getLength(), fishFeaturesPreSpawning.get(fish.getGender()).get("bLW") ); 
 		return weight;
 	}
 
@@ -380,7 +396,7 @@ public class NutrientRoutine {
 		aFeature.put("aLW", 1.2102E-6 * Math.pow(10., aFeature.get("bLW"))); //weight size relationship -- Conversion des g/mm en g.cm (from Taverny, 1991) 
 		aFeature.put("bLW_Gonad", 2.6729); // issu de la relation taille - poids des gonades Bruch
 		aFeature.put("aLW_Gonad", -5.2425); // issu de la relation taille - poids des gonades Bruch
-		
+
 		aFeaturePreSpawning.put(Gender.FEMALE, aFeature);
 
 		/*
@@ -444,18 +460,18 @@ public class NutrientRoutine {
 		System.out.println("aCompoCarcassPreSpawning: " + aCompoCarcassPreSpawning.toString()); //
 
 		// carcass composition for fish after spawning
-		Map<Gender, Map<String, Double>> aCompoCarcassPostSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
-		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 3.216 / 100.); //On remplit une collection avec un put. 
-		aCompo.put("P", 0.997 / 100.);
-		aCompoCarcassPostSpawning.put(Gender.FEMALE,aCompo);
+		//Map<Gender, Map<String, Double>> aCompoCarcassPostSpawning = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
+		//aCompo = new Hashtable<String,Double>();
+		//aCompo.put("N", 3.216 / 100.); //On remplit une collection avec un put. 
+		//aCompo.put("P", 0.997 / 100.);
+		//aCompoCarcassPostSpawning.put(Gender.FEMALE,aCompo);
 
-		aCompo = new Hashtable<String,Double>();
-		aCompo.put("N", 2.790 / 100.); // From Haskel et al, 2017 
-		aCompo.put("P", 0.961 / 100.);
-		aCompoCarcassPostSpawning.put(Gender.MALE,aCompo);
+		//aCompo = new Hashtable<String,Double>();
+		//aCompo.put("N", 2.790 / 100.); // From Haskel et al, 2017 
+		//aCompo.put("P", 0.961 / 100.);
+		//aCompoCarcassPostSpawning.put(Gender.MALE,aCompo);
 
-		System.out.println("aCompoCarcassPostSpawning: " + aCompoCarcassPostSpawning.toString()); //
+		//System.out.println("aCompoCarcassPostSpawning: " + aCompoCarcassPostSpawning.toString()); //
 
 		// Gametes composition approximated by the difference between gonads weight before and after spawning. 
 		Map<Gender, Map<String, Double>> aCompoGametes = new Hashtable<DiadromousFish.Gender,Map<String,Double>>();
@@ -494,7 +510,7 @@ public class NutrientRoutine {
 
 
 		NutrientRoutine fn = new NutrientRoutine(nutrientsOfInterest,aResidenceTime, anExcretionRate, aFeaturePreSpawning, aFeaturePostSpawning, 
-				aCompoCarcassPreSpawning, aCompoCarcassPostSpawning, aCompoGametes,
+				aCompoCarcassPreSpawning, aCompoGametes,
 				aJuvenileFeatures, aCompoJuveniles);
 
 		SeaBasin basin = new SeaBasin(0,"Bidon",10.,12., 14.,12.); //il faut aller dans "SeaBasin" dans "environement et regarder comment est construit le constructeur. Il lui faut ici un rang, un nom de bassin versant, et des temp�rature pour chaque saison 
@@ -529,6 +545,70 @@ public class NutrientRoutine {
 		System.out.println((new	XStream(new DomDriver())).toXML(fn));
 
 	} 
+
+	public class NutrientFluxesCollection { 
+
+		/* 
+		 * <key> Year
+		 * <value> 
+		 * 	<key> Nutrient
+		 * 	<value>	
+		 * 		<key> origin basin name 
+		 * 		<value> 
+		 * 			<key> destination basin name 
+		 * 			<value> flux 
+		 */
+		//  
+		private Map<Long, Map <String, Map<String, Map<String, Double>>>> fluxesCollection ;
+		private transient String[] basinNames; 
+
+		NutrientFluxesCollection() {
+
+			fluxesCollection  = new HashMap <Long, Map <String, Map<String, Map<String, Double>>>> (); 
+		}
+
+
+		public Map<Long, Map<String, Map<String, Map<String, Double>>>> getFluxesCollection() {
+			return fluxesCollection;
+		}
+
+
+		public void setBasinNames(String[] basinNames) {
+			this.basinNames = basinNames;
+		}
+
+
+		public void put(Long year,String nutrient, String originBasinName, String destinationBasinName, Double flux ) {
+
+			if(!fluxesCollection.containsKey(year)) {
+
+				Map <String, Map <String, Map <String, Double>>> nutrientsMap = new TreeMap <String, Map <String, Map <String, Double>>>();
+
+				for (String nutrientOfInterest : nutrientsOfInterest) {
+
+					Map <String, Map <String, Double>> originsMap = new TreeMap <String, Map <String, Double>>();
+					for (String originName : basinNames) {
+
+						Map <String, Double> destinationsMap = new HashMap <String, Double>();
+						for (String destinationName : basinNames) {
+							destinationsMap.put(destinationName, 0.);
+						}
+
+						originsMap.put(originName, destinationsMap); 
+					}
+
+					nutrientsMap.put(nutrientOfInterest, originsMap); 
+				}
+
+				fluxesCollection.put(year,nutrientsMap); 
+			} 
+
+			double previousFlux = fluxesCollection.get(year).get(nutrient).get(originBasinName).get(destinationBasinName); 
+			fluxesCollection.get(year).get(nutrient).get(originBasinName).put(destinationBasinName, previousFlux + flux);
+
+		} 
+	}
+
 }
 
 

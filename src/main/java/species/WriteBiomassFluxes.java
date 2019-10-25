@@ -1,22 +1,3 @@
-/**
- * patrick.lambert
- * @author Patrick Lambert
- * @copyright Copyright (c) 2018, Irstea
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
- */
 package species;
 
 import java.io.BufferedWriter;
@@ -24,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
@@ -34,23 +17,27 @@ import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 import fr.cemagref.simaqualife.pilot.Pilot;
+import miscellaneous.Miscellaneous;
 import species.DiadromousFish.Stage;
+import species.ReproduceAndSurviveAfterReproductionWithDiagnose;
 
 /**
  *
  */
-public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
+public class WriteBiomassFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
+
 
 	private Season exportSeason = Season.SPRING;
 
-	private String fileNameOutput = "effectiveFluxes";
+	private String fileNameOutput = "biomassFluxes";
 
 	private transient BufferedWriter bW;
 	private transient String sep=";";
 
+
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver()))
-				.toXML(new ExportFluxes()));
+				.toXML(new WriteBiomassFluxes()));
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +64,8 @@ public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 					for (String birthBasinName : group.getEnvironment().getRiverBasinNames()) {
 						bW.write(sep + birthBasinName); // write each basin name in the file 
 					}
-					bW.write("\n");
+
+					bW.write("\n"); 
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -86,22 +74,25 @@ public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 		}
 
 		try {
-			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot)>1900) {
+			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot) >= 	group.getMinYearToWrite()) {
 
 
 				for (RiverBasin migrationBasin : group.getEnvironment().getRiverBasins()) {
-					//Create the map to get the abundance in each birth basin
-					Map<String, Long> spawnerOriginsBeforeReproduction = new HashMap<String, Long>(group.getEnvironment().getRiverBasinNames().length); 
+					//Create the map to get the biomass in each birth basin
+					Map<String, Double> spawnerAbundancesPerOrigin = new HashMap<String, Double>(group.getEnvironment().getRiverBasinNames().length); 
 					for (String basinName : group.getEnvironment().getRiverBasinNames()){
-						spawnerOriginsBeforeReproduction.put(basinName,  0L);			
+						spawnerAbundancesPerOrigin.put(basinName,  0.);			
 					}
-
+					double biomass=0.;
 					//compute the cumulative effective per birth basin 
 					if (migrationBasin.getFishs(group) != null) {
+
 						for (DiadromousFish fish : migrationBasin.getFishs(group)) {
+
 							if (fish.getStage() == Stage.MATURE) {
+								biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount();
 								String birthBasinName = fish.getBirthBasin().getName();
-								spawnerOriginsBeforeReproduction.put(birthBasinName, spawnerOriginsBeforeReproduction.get(birthBasinName) + fish.getAmount() );
+								spawnerAbundancesPerOrigin.put(birthBasinName, spawnerAbundancesPerOrigin.get(birthBasinName) + biomass);
 							}
 						}
 					}
@@ -111,9 +102,9 @@ public class ExportFluxes extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 
 					//write the cumulative effective from birth basin 
 					for (String birthBasinName : group.getEnvironment().getRiverBasinNames()) {
-						bW.write(sep+spawnerOriginsBeforeReproduction.get(birthBasinName));
+						bW.write(sep+spawnerAbundancesPerOrigin.get(birthBasinName));
 					}
-					// write an end-of-line
+					//write an end-of(line
 					bW.write("\n");
 				}
 			}
