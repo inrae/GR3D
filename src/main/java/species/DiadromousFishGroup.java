@@ -95,6 +95,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 	private String outputPath = "data/output/" ; 
 
+	private long minYearToWrite = 1900;
+	
 	//TODO:remove fileNameFluxes
 	private String fileNameFluxes = "fluxes";
 
@@ -506,7 +508,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		if (targetedAgeForMaleSpawnerForFirstTime == null)
 			targetedAgeForMaleSpawnerForFirstTime = 4.5;
 
-		this.nutrientRoutine.getNutrientFluxesCollection().setBasinNames(this.getEnvironment().getRiverBasinNames());
+		//this.nutrientRoutine.getNutrientFluxesCollection().setBasinNames(this.getEnvironment().getRiverBasinNames());
+		this.nutrientRoutine.createNutrienFluxesCollection(this.getEnvironment().getRiverBasinNames());
 	}
 
 
@@ -664,6 +667,13 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		return nutrientRoutine; 
 	}
 
+
+	/**
+	 * @return the minYearToWrite
+	 */
+	public long getMinYearToWrite() {
+		return minYearToWrite;
+	}
 
 	// ================================================================
 	// statictis for calibration

@@ -4,7 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -27,7 +31,7 @@ public class WriteImportNutrientFluxes extends AquaNismsGroupProcess<DiadromousF
 	public void doProcess(DiadromousFishGroup group) {
 
 		BufferedWriter bW;
-	
+
 		String outputPath = "data/output/" ;
 		String sep = ";"; 
 		new File(outputPath + fileName).getParentFile().mkdirs();
@@ -45,24 +49,29 @@ public class WriteImportNutrientFluxes extends AquaNismsGroupProcess<DiadromousF
 
 			Map<Long, Map <String, Map<String, Map<String, Double>>>> fluxesCollection = group.getNutrientRoutine().getNutrientFluxesCollection().getFluxesCollection();
 
-			for (long year : fluxesCollection.keySet()) {
+			// to iterate on sorted years
+			List<Long> years =  new ArrayList<Long>(fluxesCollection.keySet());
+			Collections.sort(years);
 
-				Map <String, Map<String, Map<String, Double>>> yearsMap = fluxesCollection.get(year); 
 
-				for (String nutrient : yearsMap.keySet()) {
+			for (long year :years) {
+				if (year >= group.getMinYearToWrite()) {
+					Map <String, Map<String, Map<String, Double>>> yearsMap = fluxesCollection.get(year); 
 
-					Map<String, Map<String, Double>> originsMap = yearsMap.get(nutrient); 
+					for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 
-					for (String originBasinName : originsMap.keySet()) {
+						Map<String, Map<String, Double>> originsMap = yearsMap.get(nutrient); 
+						for (String originBasinName : group.getEnvironment().getRiverBasinNames()) {
+							bW.write(year+ sep+ nutrient + sep + originBasinName );
+							Map<String, Double> destinationsMap = originsMap.get(originBasinName); 
 
-						Map<String, Double> destinationsMap = originsMap.get(originBasinName); 
+							for (String destinationBasinName : group.getEnvironment().getRiverBasinNames()) {
+								Double aFlux = destinationsMap.get(destinationBasinName); 
+								bW.write( sep + aFlux);
+							}
 
-						for (String destinationBasinName : destinationsMap.keySet()) {
-
-							Double aFlux = destinationsMap.get(destinationBasinName); 
-
-							bW.write(year + sep+ nutrient + sep +  originBasinName + sep + aFlux + "\n");
-						}	
+							bW.write("\n");
+						}
 					}
 				}
 			}

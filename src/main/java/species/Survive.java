@@ -57,11 +57,15 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 			totalInputFluxes.get(origin).put("biomass",0.); 
 		}
 
+		double sumNGuadalquivir = 0.;
+
 		for(Basin basin : group.getEnvironment().getBasins()){
+			//System.out.print(basin.getName());
 
 			if (basin.getFishs(group)!=null) {
+				//System.out.println(" y a  des poissons");
 				for(DiadromousFish fish : basin.getFishs(group)){
-
+					
 					survivalProbability = 1.;
 					//Compute the survival probability according to the fish position
 					if(fish.getPosition().getType() == TypeBassin.RIVER && fish.isMature()){ //Survive in river before spawning 
@@ -114,18 +118,28 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 								group.getNutrientRoutine().getNutrientFluxesCollection().
 								put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), basin.getName(), aFluxForDeadFishBeforeSpawning.get(nutrient) * deathAmount);
 							}
+							
+							/*
+							 * if
+							 * (basin.getName().equalsIgnoreCase("Guadalquivir")
+							 * ) { sumNGuadalquivir +=
+							 * aFluxForDeadFishBeforeSpawning.get("N") *
+							 * deathAmount;
+							 * System.out.println(Time.getYear(group.getPilot())
+							 * + " : " + sumNGuadalquivir); }
+							 */
 						}
 					}
 				}//end on loop of fish 
+
 			}
 
 			for (DiadromousFish fish : deadFish){
 				group.removeAquaNism(fish);
 			}
-
 		} //end loop on basin 
-		
-		
+
+
 	}//end of doprocess 
 }//end of class 
 

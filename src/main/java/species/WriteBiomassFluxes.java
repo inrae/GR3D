@@ -74,7 +74,7 @@ public class WriteBiomassFluxes extends AquaNismsGroupProcess<DiadromousFish, Di
 		}
 
 		try {
-			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot)>1900) {
+			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot) >= 	group.getMinYearToWrite()) {
 
 
 				for (RiverBasin migrationBasin : group.getEnvironment().getRiverBasins()) {

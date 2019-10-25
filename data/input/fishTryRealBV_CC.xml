@@ -199,6 +199,7 @@
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
+		<minYearToWrite>1840</minYearToWrite>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<lengthAtHatching>2.0</lengthAtHatching>
 		<linfVonBertForFemale>70.0</linfVonBertForFemale>
@@ -272,11 +273,11 @@
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
-				<species.WriteEffectiveFluxes>
+				<species.WriteEffectivesFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>effectiveFluxes</fileNameOutput>
-				</species.WriteEffectiveFluxes>
+				</species.WriteEffectivesFluxes>
 
 				<species.WriteBiomassFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
@@ -323,7 +324,7 @@
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<fileName>fluxes</fileName>
 				</species.WriteImportNutrientFluxes>
-				
+
 				<species.IdentifyPopulation>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<consoleDisplay>false</consoleDisplay>
@@ -334,7 +335,7 @@
 					</years>
 					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
 				</species.IdentifyPopulation>
-				
+
 				<species.TypeTrajectoryCV>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>

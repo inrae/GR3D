@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -158,7 +159,10 @@ public class NutrientRoutine {
 
 	}
 
-
+	public void createNutrienFluxesCollection(String[] basinNames) {
+		nutrientFluxesCollection = new NutrientFluxesCollection();
+		nutrientFluxesCollection.setBasinNames(basinNames);
+	}
 
 	public NutrientFluxesCollection getNutrientFluxesCollection() {
 		return nutrientFluxesCollection;
@@ -578,11 +582,11 @@ public class NutrientRoutine {
 
 			if(!fluxesCollection.containsKey(year)) {
 
-				Map <String, Map <String, Map <String, Double>>> nutrientsMap = new HashMap <String, Map <String, Map <String, Double>>>();
+				Map <String, Map <String, Map <String, Double>>> nutrientsMap = new TreeMap <String, Map <String, Map <String, Double>>>();
 
 				for (String nutrientOfInterest : nutrientsOfInterest) {
 
-					Map <String, Map <String, Double>> originsMap = new HashMap <String, Map <String, Double>>();
+					Map <String, Map <String, Double>> originsMap = new TreeMap <String, Map <String, Double>>();
 					for (String originName : basinNames) {
 
 						Map <String, Double> destinationsMap = new HashMap <String, Double>();

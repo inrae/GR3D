@@ -113,7 +113,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 			basinList.add("Meuse");
 			basinList. add("Rhine");
 
-			System.out.print(group.getPilot().getCurrentTime() + " - ");
+			if (displayFluxesOnConsole == true)
+				System.out.print(group.getPilot().getCurrentTime() + " - ");
 
 			for(RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 
@@ -431,11 +432,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						}
 
 						// display info from a catchment list
-						if (basinList.contains(riverBasin.getName()) ) {
-							System.out.print(riverBasin.getName() + ": " + numberOfFemaleSpawners + " + "+ numberOfMaleSpawners +
-									" -> "+ numberOfRecruit + "\t")  ;
+						if (displayFluxesOnConsole == true) {
+							if (basinList.contains(riverBasin.getName()) ) {
+								System.out.print(riverBasin.getName() + ": " + numberOfFemaleSpawners + " + "+ numberOfMaleSpawners +
+										" -> "+ numberOfRecruit + "\t")  ;
+							}
 						}
-
 
 						// Creation of new superFish
 						if (numberOfRecruit > 0){
@@ -552,7 +554,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 				riverBasin.getSpawnerOrigins().push(spawnerOriginsDuringReproduction);
 				//System.out.println("  AFTER " +riverBasin.getSpawnerOrigins().keySet());
 			}
-			System.out.println();
+			if (displayFluxesOnConsole == true)
+				System.out.println();
 
 			// --------------------------------------------------------------------------------------------------
 			// update the observers

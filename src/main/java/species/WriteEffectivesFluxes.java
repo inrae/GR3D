@@ -85,8 +85,9 @@ public class WriteEffectivesFluxes extends AquaNismsGroupProcess<DiadromousFish,
 			}
 		}
 
+	
 		try {
-			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot)>1900) {
+			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot) >= group.getMinYearToWrite()) {
 
 				for (RiverBasin migrationBasin : group.getEnvironment().getRiverBasins()) {
 					//Create the map to get the abundance in each birth basin
@@ -116,8 +117,10 @@ public class WriteEffectivesFluxes extends AquaNismsGroupProcess<DiadromousFish,
 					bW.write("\n");
 				}
 			}
-			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1)
+			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1) {
+				bW.flush();
 				bW.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
