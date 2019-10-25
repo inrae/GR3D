@@ -139,9 +139,9 @@ abline(v=tr.b)
 
 par(mfrow=c(2,2))
 
-a<-plot.gbm(brtTempPres, 
-            i.var=1, 
-            return.grid = TRUE, type="link")
+  a<-plot.gbm(brtTempPres, 
+              i.var=1, 
+              return.grid = TRUE, type="link")
 
 
 b<-plot.gbm(brtTempPres, 
