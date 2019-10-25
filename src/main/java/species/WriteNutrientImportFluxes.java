@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 
-public class WriteImportNutrientFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
+public class WriteNutrientImportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
 	private String fileName= "fluxes";
 
@@ -23,7 +23,7 @@ public class WriteImportNutrientFluxes extends AquaNismsGroupProcess<DiadromousF
 
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver()))
-				.toXML(new WriteImportNutrientFluxes()));
+				.toXML(new WriteNutrientImportFluxes()));
 
 	}
 
