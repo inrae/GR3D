@@ -214,9 +214,9 @@
 			<processesEachStep>
 				<environment.InformTime>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					  <consoleDisplay>true</consoleDisplay>
+					<consoleDisplay>true</consoleDisplay>
 				</environment.InformTime>
-				
+
 				<species.PlopProcess>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<temporisation>0</temporisation>
@@ -280,7 +280,7 @@
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>effectiveBiomassFluxesBeforeReproduction</fileNameOutput>
 				</species.WriteEffectiveAndBiomassFluxes>
-				
+
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
@@ -321,21 +321,10 @@
 					<fileName>fluxes</fileName>
 				</species.WriteImportNutrientFluxes>
 
-				<species.IdentifyPopulation>
+				<species.WriteNutrientExportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<consoleDisplay>false</consoleDisplay>
-					<fluxesSeason>SPRING</fluxesSeason>
-					<years>
-						<long>2000</long>
-						<long>2100</long>
-					</years>
-					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
-				</species.IdentifyPopulation>
-
-				<species.TypeTrajectoryCV>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<fileNameOutput>JeuParam100_2100RCP85_A_essai</fileNameOutput>
-				</species.TypeTrajectoryCV>
+					<fileName>nutrientExportFluxes</fileName>
+				</species.WriteNutrientExportFluxes>
 
 			</processesAtEnd>
 		</processes>
