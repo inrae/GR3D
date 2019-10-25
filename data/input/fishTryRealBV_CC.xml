@@ -214,7 +214,9 @@
 			<processesEachStep>
 				<environment.InformTime>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					  <consoleDisplay>true</consoleDisplay>
 				</environment.InformTime>
+				
 				<species.PlopProcess>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<temporisation>0</temporisation>
@@ -273,18 +275,12 @@
 					<mortalityRateInOffshore>0.4</mortalityRateInOffshore>
 				</species.Survive>
 
-				<species.WriteEffectivesFluxes>
+				<species.WriteEffectiveAndBiomassFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>effectiveFluxes</fileNameOutput>
-				</species.WriteEffectivesFluxes>
-
-				<species.WriteBiomassFluxes>
-					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<exportSeason>SPRING</exportSeason>
-					<fileNameOutput>BiomassFluxessBeforeReproduction</fileNameOutput>
-				</species.WriteBiomassFluxes>
-
+					<fileNameOutput>effectiveBiomassFluxesBeforeReproduction</fileNameOutput>
+				</species.WriteEffectiveAndBiomassFluxes>
+				
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>

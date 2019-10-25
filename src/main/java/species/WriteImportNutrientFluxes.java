@@ -47,7 +47,7 @@ public class WriteImportNutrientFluxes extends AquaNismsGroupProcess<DiadromousF
 
 			bW.write("\n");
 
-			Map<Long, Map <String, Map<String, Map<String, Double>>>> fluxesCollection = group.getNutrientRoutine().getNutrientFluxesCollection().getFluxesCollection();
+			Map<Long, Map <String, Map<String, Map<String, Double>>>> fluxesCollection = group.getNutrientRoutine().getNutrientFluxesCollection().getImportFluxesCollection();
 
 			// to iterate on sorted years
 			List<Long> years =  new ArrayList<Long>(fluxesCollection.keySet());
