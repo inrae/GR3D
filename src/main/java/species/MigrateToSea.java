@@ -40,6 +40,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 
 			//On cr�er la Map pour stocker les flux d'export
 			Map<String, Double> totalOutputFluxes = new Hashtable<String, Double>(); 
+		
 
 			List<Duo<DiadromousFish,Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish,Basin>>();
 			for (RiverBasin basin : group.getEnvironment().getRiverBasins()) {
@@ -52,12 +53,14 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 					totalOutputFluxes.put(nutrient, 0.); 
 				}
 				totalOutputFluxes.put("biomass", 0.); //cr�ation de la biomasse 
+				totalOutputFluxes.put("abundanceExp", 0.);
 
 				if (fishes!=null) {
 					for (DiadromousFish fish : fishes) {
 						destination = group.getEnvironment().getAssociatedSeaBasin(fish.getPosition());
 						fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, destination)); //Mentionne la sortie d'un poisson de la boucle 
 
+						double abundanceExp = fish.getAmount();
 						double biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount(); 
 
 						if (fish.getStage()==Stage.IMMATURE) {
@@ -69,6 +72,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 							}
 
 							totalOutputFluxes.put("biomass", totalOutputFluxes.get("biomass") + biomass); 
+							totalOutputFluxes.put("abundanceExp", totalOutputFluxes.get("abundanceExp")+ abundanceExp); 
 						}
 					}     
 				}
@@ -88,7 +92,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 
 						bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
 						+";"+ basin.getName() + ";" + basin.getJuvenileNumber() + ";EXPORT; NONE");
-						bW.write(";" + totalOutputFluxes.get("biomass"));
+						bW.write(";" + totalOutputFluxes.get("abundanceExp") + ";" + totalOutputFluxes.get("biomass"));
 						for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 							bW.write(";" + totalOutputFluxes.get(nutrient));
 						}
@@ -101,4 +105,5 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 			}
 		}
 	}
+	
 }

@@ -199,7 +199,7 @@
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
 		<outputPath>data/output/</outputPath>
-		<minYearToWrite>1840</minYearToWrite>
+		<minYearToWrite>1900</minYearToWrite>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<lengthAtHatching>2.0</lengthAtHatching>
 		<linfVonBertForFemale>70.0</linfVonBertForFemale>
@@ -280,7 +280,7 @@
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>effectiveBiomassFluxesBeforeReproduction</fileNameOutput>
 				</species.WriteEffectiveAndBiomassFluxes>
-
+				
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
