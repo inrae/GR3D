@@ -230,7 +230,9 @@ Arrhenius = function(temperature, par){
 modifiedThorntonLessem = function(temperature, par){
   # Thornton, K. W. & Lessem, A. S. (1978) A temperature algorithm for modifying biological rates. Transactions of the American 
   #    Fisheries Society 107, 284–287.
-  
+  # Rodríguez, L., García, J. J., Carreño, F. & Martínez, B. (2019) Integration of physiological knowledge 
+  #   into hybrid species distribution modelling to improve forecast of distributional shifts of tropical corals. Diversity and Distributions 25, 715–728.
+
   Tlow01 = par[1]  # =~ Tmin
   Tlow80 = par[2]  # lower bound of tolerance range 
   Thigh80 = par[3] # higher bound of tolerance range 
