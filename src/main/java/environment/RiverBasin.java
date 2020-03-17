@@ -59,6 +59,12 @@ public class RiverBasin extends Basin {
 	
 	
 	/**
+	 *  identifier of basin coming from source information (database for exemple)
+	 * @unit --
+	 */
+	private long basin_id;
+	
+	/**
 	 *  year of the first non null reproduction (start of a functional population)
 	 *  	used to interpert dynamics
 	 * @unit
@@ -141,6 +147,17 @@ public class RiverBasin extends Basin {
 			double fallTemperature, double latitude, double longitude,
 			double surface, double firstDamHeight, double pAccessible, double pAttractive,
 			int memorySize, int memorySizeLongQueue) {
+		 this(pilot, id, basinName, winterTemperature, springTemperature, summerTemperature,
+			fallTemperature, latitude, longitude,
+			surface, firstDamHeight, pAccessible, pAttractive,
+			memorySize, memorySizeLongQueue, -1L);
+	}
+	
+	public RiverBasin(Pilot pilot, int id, String basinName, double winterTemperature,
+			double springTemperature, double summerTemperature,
+			double fallTemperature, double latitude, double longitude,
+			double surface, double firstDamHeight, double pAccessible, double pAttractive,
+			int memorySize, int memorySizeLongQueue, long basin_id) {
 		super(id, basinName, winterTemperature, springTemperature,
 				summerTemperature, fallTemperature);
 		this.latitude = latitude;
@@ -169,6 +186,8 @@ public class RiverBasin extends Basin {
 		
 		this.numberOfNonNulRecruitmentForFinalProbOfPres = new QueueMemory<Double>(memorySizeLongQueue);
 
+		this.basin_id = basin_id; 
+		
 		if (cobservable == null) {
 			cobservable = pilot.addObservable(this.getClass());
 		}
