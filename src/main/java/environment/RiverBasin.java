@@ -18,13 +18,58 @@ import species.DiadromousFishGroup;
  */
 public class RiverBasin extends Basin {
 
+	
+	/**
+	 * latitute of the  river basin outlet
+	 * @unit decimal degre (between -90 to 90)
+	 */
 	private final double latitude;
+	
+	/**
+	 * longitude of the  river basin outlet
+	 * @unit decimal degre (betwenn -180 to 180)
+	 */
 	private final double longitude;
-	private final double surface; // in km2
+	
+	/**
+	 * drainage area of the RiverBassin
+	 * @unit  km2
+	 */
+	private final double surface; 
+	
+	
+	/**
+	 * height of the fisrt dam on the main stream
+	 * @unit m
+	 */
 	private double firstDamHeight;
-	private double pAccessible; // in %
+	
+	/**
+	 *  pourcentage of the basin area accessible to the dih
+	 * @unit % 
+	 */
+	private double pAccessible; 
+	
+	
+	/**
+	 *  /TODO give definition
+	 * @unit
+	 */
 	private double pAttractive;
+	
+	
+	/**
+	 *  year of the first non null reproduction (start of a functional population)
+	 *  	used to interpert dynamics
+	 * @unit
+	 */
 	private long yearOfFirstNonNulRep;
+	
+	/**
+	 *  year of the last non null reproduction (end of a functional population)
+	 *  	used to interpret dynamics
+	 * @unit
+	 */
 	private long yearOfLastNulRep;
 
 	private QueueMemoryMap<Long> spawnerOrigins;

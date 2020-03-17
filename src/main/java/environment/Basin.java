@@ -24,12 +24,49 @@ public class Basin implements Position, Comparable<Basin> {
         RIVER, SEA, OFFSHORE
     };
 
+    /**
+     *  Identifier of basin in GR3D
+     *  	if n is the number of basin, id from 0 to n-1 correspond to riverBasin, from n to 2n-1 to seaBasin 
+     *     and the next to offshore basins.
+     *     with modulo operation it is possible to find to which riverBasin a seaBassin corresponds to
+     * @unit -
+     */
     private final int id;
+    
+    /**
+     *  the name of the catchement
+     * @unit -
+     */
     private final String name;
+    
+    /**
+     * the type of the basin 
+     * @unit -
+     */
     protected TypeBassin type;
+    
+    /**
+     * the mean temperature during the current winter
+     * @unit °C
+     */
     private double winterTemperature;
+    
+    /**
+     * the mean temperature during the current spring
+     * @unit °C
+     */
     private double springTemperature;
+    
+    /**
+     * the mean temperature during the current summer
+     * @unit °C
+     */
     private double summerTemperature;
+    
+    /**
+     * the mean temperature during the current winter
+     * @unit °C
+     */
     private double fallTemperature;
     //private double latitude;
     // private double longitude;
@@ -37,9 +74,32 @@ public class Basin implements Position, Comparable<Basin> {
 	//private double alphaBH; // Correspond to the carrying capacity
     //private double betaBH; // Correspond to level of genitors to produce alpha/2 recruits
     //private double depensatoryBH = 1.; // If d=1, no depensatory dynamics; if d>1 Allee effect
+    
+    /**
+     * the basin shape to be drawn
+     * @unit
+     */
     private final Path2D.Double shape;
+    
+    
+    /**
+     *  distance to other catchments in the universe (from the same type ?)
+     * @unit km
+     */
     private Map<Basin, Double> neighboursDistances;
+    
+    
+    /**
+     * list of diadromous fish present in the basin for each group 
+     * @unit
+     */
     private Map<DiadromousFishGroup, List<DiadromousFish>> fishPerGroup;
+    
+    
+    /**
+     *  effective of fish present in the basin for each group
+     * @unit
+     */
     private Map<DiadromousFishGroup, Long> effectivePerGroup;
 
     public Basin(int id, String name, double winterTemperature,
