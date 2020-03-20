@@ -62,7 +62,7 @@ public class RiverBasin extends Basin {
 	 *  identifier of basin coming from source information (database for exemple)
 	 * @unit --
 	 */
-	private long basin_id;
+	private int basin_id;
 	
 	/**
 	 *  year of the first non null reproduction (start of a functional population)
@@ -147,17 +147,17 @@ public class RiverBasin extends Basin {
 			double fallTemperature, double latitude, double longitude,
 			double surface, double firstDamHeight, double pAccessible, double pAttractive,
 			int memorySize, int memorySizeLongQueue) {
-		 this(pilot, id, basinName, winterTemperature, springTemperature, summerTemperature,
+		 this(pilot, id, basinName, -1, winterTemperature, springTemperature, summerTemperature,
 			fallTemperature, latitude, longitude,
 			surface, firstDamHeight, pAccessible, pAttractive,
-			memorySize, memorySizeLongQueue, -1L);
+			memorySize, memorySizeLongQueue);
 	}
 	
-	public RiverBasin(Pilot pilot, int id, String basinName, double winterTemperature,
+	public RiverBasin(Pilot pilot, int id, String basinName,  int basin_id, double winterTemperature,
 			double springTemperature, double summerTemperature,
 			double fallTemperature, double latitude, double longitude,
 			double surface, double firstDamHeight, double pAccessible, double pAttractive,
-			int memorySize, int memorySizeLongQueue, long basin_id) {
+			int memorySize, int memorySizeLongQueue) {
 		super(id, basinName, winterTemperature, springTemperature,
 				summerTemperature, fallTemperature);
 		this.latitude = latitude;
