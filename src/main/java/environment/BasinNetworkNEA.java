@@ -34,11 +34,11 @@ import org.opengis.feature.simple.SimpleFeature;
 
 public class BasinNetworkNEA extends BasinNetwork {
 
-	private String basinFile = "data/input/reality/basins.csv";
-	private String seaBasinShpFile = "data/input/reality/seaCatchment.shp";
-	private String riverBasinShpFile = "data/input/reality/bv_polygoneFacAtl_WGS84.shp";
+	private String basinFile = "data/input/northeastamerica/nea_basins.csv";
+	private String seaBasinShpFile = "data/input/northeastamerica/seabasins.shp";
+	private String riverBasinShpFile = "data/input/northeastamerica/riverbasins.shp";
 
-	private String distanceGridFileName = "data/input/reality/DistanceGrid_FacAtlaComp.csv";
+	private String distanceGridFileName = "data/input/reality/northeastamerica/distanceGridNEA.csv";
 	private String temperatureCatchmentFile = "data/input/reality/SeasonTempPredBVFacAtlant2000_2100A1FI.csv";
 
 	private boolean useRealPDam = false;
@@ -48,6 +48,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 	class Record implements Comparable<Record> {
 
 		private int order;
+		private int basin_id;
 		private String name;
 		private double longitude;
 		private double latitude;
@@ -55,14 +56,14 @@ public class BasinNetworkNEA extends BasinNetwork {
 		private double pDam;
 
 
-		Record(int order, String name, double longitude, double latitude, double surface, double pDam) {
+		Record(int order, int basin_id, String name, double longitude, double latitude, double surface, double pDam) {
 			this.order = order;
+			this. basin_id = basin_id;
 			this.name = name;
 			this.longitude = longitude;
 			this.latitude = latitude;
 			this.surface = surface;
 			this.pDam = pDam;
-
 		}
 
 		public int compareTo(Record rec) {
@@ -71,6 +72,13 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 		public int getOrder() {
 			return order;
+		}
+		
+		/**
+		 * @return the basin_id used in database
+		 */
+		public int getBasin_id() {
+			return basin_id;
 		}
 
 		public String getName() {
@@ -157,7 +165,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		String name;
 		double pDam = 1, pAttractive = 1;
 		double longitude, latitude, surface = 0., firstDamHeight = 0.;
-		int order;
+		int order, basin_id;
 		double winterTemperature = 5., springTemperature = 10., summerTemperature = 20., fallTemperature = 15.;
 		List<Record> records = new ArrayList<Record>();
 		try {
@@ -171,15 +179,11 @@ public class BasinNetworkNEA extends BasinNetwork {
 			//System.out.println(scanner.nextLine());
 			scanner.nextLine();
 			while (scanner.hasNext()) {
-				scanner.next(); // skip id
+				basin_id = scanner.nextInt(); // gid
 				name = scanner.next();
-				scanner.next(); // skip Country
-				scanner.next(); // skip Outlet
 				longitude = scanner.nextDouble();
 				latitude = scanner.nextDouble();
 				surface = scanner.nextDouble();
-				scanner.next(); // skip MainWaters
-				scanner.next(); // skip SourceElevation
 				order = scanner.nextInt();
 				if (useRealPDam == true){
 					pDam=scanner.nextDouble();
@@ -189,7 +193,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 					pDam=1.;} // skip pDam reel
 				scanner.nextLine();
 				//System.out.println(order);
-				records.add(new Record(order, name, longitude, latitude, surface, pDam));
+				records.add(new Record(order, basin_id, name, longitude, latitude, surface, pDam));
 			}
 			reader.close();
 		} catch (Exception e) {
@@ -208,7 +212,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		for (int index = 0; index < nbBasin; index++) {
 			Record record = records.get(index);
 
-			Basin riverBasin = new RiverBasin(pilot, index, record.getName(),
+			Basin riverBasin = new RiverBasin(pilot, index, record.getName(), record.getBasin_id(),
 					winterTemperature, springTemperature, summerTemperature, fallTemperature,
 					record.getLatitude(), record.getLongitude(), record.getSurface(), firstDamHeight, record.getPDam(), pAttractive,
 					this.memorySize, this.memorySizeLongQueue);
@@ -239,7 +243,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			reader = new FileReader(distanceGridFileName);
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a comma as decimal separator !!!
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
 			scanner.useDelimiter(Pattern.compile("[;\r]"));
 
 			int i, j;
@@ -248,7 +252,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 				j = index % nbBasin;
 				i = (index - j) / nbBasin;
 				//System.out.println("i"+i+"j"+j+"index"+index);
-				distanceGrid[i][j] = new Double(scanner.next());
+				distanceGrid[i][j] = Double.valueOf(scanner.next());
 				index++;
 			}
 			reader.close();
