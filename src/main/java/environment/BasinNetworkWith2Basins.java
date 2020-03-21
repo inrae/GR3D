@@ -1,5 +1,7 @@
 package environment;
 
+import java.util.Map;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
@@ -15,7 +17,7 @@ public class BasinNetworkWith2Basins extends BasinNetwork {
 	private double winterTemperatureOfBv1 =8.7;
 	private double springTemperatureOfBv1 = 17.4;
 	private double summerTemperatureOfBv1 = 23.1;
-	private double fallTemperatureOfBv1 = 13.;  // Gironde estuary values : We used daily estimates of estuarine water temperature (°C) close to the Blayais nuclear power plant provided by EDF (Electricité De France) between 1991 and 2009
+	private double fallTemperatureOfBv1 = 13.;  // Gironde estuary values : We used daily estimates of estuarine water temperature (ï¿½C) close to the Blayais nuclear power plant provided by EDF (Electricitï¿½ De France) between 1991 and 2009
 	private double winterTemperatureOfBv2 =8.7;
 	private double springTemperatureOfBv2 = 17.4;
 	private double summerTemperatureOfBv2 = 23.1;
@@ -73,5 +75,11 @@ public class BasinNetworkWith2Basins extends BasinNetwork {
 		for (Basin basin : grid){
 			basin.setNeighboursDistances(getNeighboursWithDistance(basin));
 		}
+	}
+
+	@Override
+	public Map<String, Double[]> getTemperaturesBasin(long year) {
+		// nothing to do
+		return null;
 	}
 }

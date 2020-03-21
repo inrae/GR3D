@@ -287,4 +287,6 @@ public abstract class BasinNetwork extends Environment<Basin, DiadromousFish> {
     public void removeAquaNism(DiadromousFish fish, AquaNismsGroup group) {
         // TODO Auto-generated method stub
     }
+    
+	public abstract Map<String, Double[]> getTemperaturesBasin(long year);
 }
