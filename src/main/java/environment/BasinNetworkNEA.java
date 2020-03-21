@@ -174,11 +174,11 @@ public class BasinNetworkNEA extends BasinNetwork {
 			reader = new FileReader(basinFile);
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a comma as decimal separator !!!
-			scanner.useDelimiter(Pattern.compile("[;\r]"));
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
+			scanner.useDelimiter(Pattern.compile("[;,\r]"));
 
 			//System.out.println(scanner.nextLine());
-			scanner.nextLine();
+			scanner.nextLine(); // skip the first line with headers
 			while (scanner.hasNext()) {
 				basin_id = scanner.nextInt(); // gid
 				name = scanner.next();
@@ -245,7 +245,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			// Parsing the file
 			scanner = new Scanner(reader);
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
-			scanner.useDelimiter(Pattern.compile("[;\r]"));
+			scanner.useDelimiter(Pattern.compile("[;,\r]"));
 
 			// skip the first line with headers
 			scanner.nextLine();
