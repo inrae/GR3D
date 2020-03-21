@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import miscellaneous.QueueMemoryMap;
+import species.ExportPopulationStatus;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
@@ -35,11 +36,11 @@ import org.opengis.feature.simple.SimpleFeature;
 public class BasinNetworkNEA extends BasinNetwork {
 
 	private String basinFile = "data/input/northeastamerica/nea_basins.csv";
-	private String seaBasinShpFile = "data/input/northeastamerica/seabasins.shp";
-	private String riverBasinShpFile = "data/input/northeastamerica/riverbasins.shp";
+	private String seaBasinShpFile = "data/input/northeastamerica/shape/seabasins.shp";
+	private String riverBasinShpFile = "data/input/northeastamerica/shape/riverbasins.shp";
 
-	private String distanceGridFileName = "data/input/reality/northeastamerica/distanceGridNEA.csv";
-	private String temperatureCatchmentFile = "data/input/reality/SeasonTempPredBVFacAtlant2000_2100A1FI.csv";
+	private String distanceGridFileName = "data/input/northeastamerica/distanceGridNEA.csv";
+	private String temperatureCatchmentFile = "data/input/northeastamerica/basins_temperatures.csv";
 
 	private boolean useRealPDam = false;
 
@@ -246,15 +247,20 @@ public class BasinNetworkNEA extends BasinNetwork {
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
 			scanner.useDelimiter(Pattern.compile("[;\r]"));
 
+			// skip the first line with headers
+			scanner.nextLine();
 			int i, j;
 			int index = 0;
 			while (scanner.hasNext() & index < Math.pow(nbBasin, 2.)) {
 				j = index % nbBasin;
 				i = (index - j) / nbBasin;
+				if (i ==0 ) 
+					scanner.next(); // to skip the first column
 				//System.out.println("i"+i+"j"+j+"index"+index);
 				distanceGrid[i][j] = Double.valueOf(scanner.next());
 				index++;
 			}
+			
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -281,18 +287,16 @@ public class BasinNetworkNEA extends BasinNetwork {
 			reader = new FileReader(temperatureCatchmentFile);
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a comma as decimal separator !!!
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
 			scanner.useDelimiter(Pattern.compile("[,;\r]"));
 			char[] charac = {'"'};
 			String doublequote = new String(charac);
-			scanner.nextLine(); // skip the first line
+			scanner.nextLine(); // skip the first line with headers
 			while (scanner.hasNext()) {
-				scanner.next(); // skip the number line
+				scanner.next(); // skip gid
 				name = scanner.next();
 				name = name.replaceAll(new String(doublequote), "");
 				scanner.next(); //skip id
-				scanner.next(); // ship long
-				scanner.next(); // skip lat
 				//System.out.println(scanner.next());
 				year = (long) scanner.nextInt();
 				Double[] seasonalTemperature = new Double[4];
@@ -300,7 +304,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 				seasonalTemperature[1] = scanner.nextDouble();
 				seasonalTemperature[2] = scanner.nextDouble();
 				seasonalTemperature[3] = scanner.nextDouble();
-				scanner.nextLine();
+				//scanner.nextLine();
 
 				Map<String, Double[]> temperatureYear = temperatureSeries.get(year);
 				if (temperatureYear == null) {
@@ -325,7 +329,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 	public String getTemperatureCatchmentFile() {
 		return temperatureCatchmentFile;
 	}
-
+	
 }
 
 
