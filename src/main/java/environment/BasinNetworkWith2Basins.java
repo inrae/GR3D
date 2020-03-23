@@ -82,4 +82,10 @@ public class BasinNetworkWith2Basins extends BasinNetwork {
 		// nothing to do
 		return null;
 	}
+
+	@Override
+	public String getTemperatureCatchmentFile() {
+		// no file with temperatue
+		return "";
+	}
 }

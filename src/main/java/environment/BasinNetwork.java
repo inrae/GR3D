@@ -289,4 +289,6 @@ public abstract class BasinNetwork extends Environment<Basin, DiadromousFish> {
     }
     
 	public abstract Map<String, Double[]> getTemperaturesBasin(long year);
+	
+	public abstract String getTemperatureCatchmentFile();
 }
