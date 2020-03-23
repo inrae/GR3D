@@ -71,13 +71,18 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
         if (this.colorScaleEnum == null) {
             this.colorScaleEnum = ColorScaleEnum.BluesScale;
         }
+        // the Jpanal that holds all the components to be displayed
         display = new JPanel(new BorderLayout());
+        
+        // the ad hoc compenment (specific internal class
         DisplayComponent displayComponent = new DisplayComponent();
         displayComponent.addMouseMotionListener(this);
         displayComponent.setVisible(true);
         displayComponent.setDoubleBuffered(true);
-        label = new JLabel("");
         display.add(displayComponent, BorderLayout.CENTER);
+        
+        // label where information will be displayed
+        label = new JLabel("");
         display.add(label, BorderLayout.PAGE_START);
 
         // Initialize the map linking shape with basin
@@ -87,7 +92,9 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
     @Override
     public void valueChanged(ObservablesHandler arg0, Object arg1, long arg2) {
         display.repaint();
-        String txt = (new Long(Time.getYear(pilot))).toString() + (" ")
+        
+        // update the label
+        String txt = Long.valueOf((Time.getYear(pilot))).toString() + (" ")
                 + Time.getSeason(pilot).toString();
         label.setText(txt);
     }
@@ -101,11 +108,13 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
     public void mouseMoved(MouseEvent e) {
         int y = (e.getY());
         int x = (e.getX());
-        Basin basin;
 
-        String txt = (new Long(Time.getYear(pilot))).toString() + (" ")
+        // to update the label
+        String txt = (Long.valueOf(Time.getYear(pilot))).toString() + (" ")
                 + Time.getSeason(pilot).toString() + " - ";
 
+        // identify the basin uunder the mouse position and enrich the label
+        Basin basin;
         for (Shape shape : shapeBasinMap.keySet()) {
             if (shape.contains(x, y)) {
                 basin = shapeBasinMap.get(shape);
@@ -183,6 +192,8 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
         @Override
         protected synchronized void paintComponent(Graphics g) {
 
+        	// affine transmortaion to resize the drawing according to window size
+        	//TODO fixed the same scalinf for x and y to avoid weird map deformation
             double W = this.getWidth();
             double H = this.getHeight();
             AffineTransform af = new AffineTransform(W / rangeX, 0., 0.,
@@ -190,7 +201,7 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
 			//System.out.println(af.toString());
 
             // Draw Background
-            g.setColor(Color.WHITE);
+            g.setColor(Color.BLUE);
             g.fillRect(0, 0, (int) W, (int) H);
 
             // prepare the graphics

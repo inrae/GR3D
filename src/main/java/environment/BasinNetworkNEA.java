@@ -36,6 +36,7 @@ import org.opengis.feature.simple.SimpleFeature;
 public class BasinNetworkNEA extends BasinNetwork {
 
 	private String basinFile = "data/input/northeastamerica/nea_basins.csv";
+	
 	private String seaBasinShpFile = "data/input/northeastamerica/shape/seabasins.shp";
 	private String riverBasinShpFile = "data/input/northeastamerica/shape/riverbasins.shp";
 
@@ -150,6 +151,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		Scanner scanner;
 
 		// shape files can be omitted (for batch mode)
+		
 		// load the shape of the seaBasin
 		Map<String, Path2D.Double> mapSeaBasin = null;
 		//String cwd = System.getProperty("user.dir").concat("/");
@@ -304,6 +306,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 				seasonalTemperature[3] = scanner.nextDouble();
 				//scanner.nextLine();
 
+				// store seasonal temperatures for each basin for the corresponding year
 				Map<String, Double[]> temperatureYear = temperatureSeries.get(year);
 				if (temperatureYear == null) {
 					temperatureYear = new TreeMap<String, Double[]>();
@@ -318,7 +321,6 @@ public class BasinNetworkNEA extends BasinNetwork {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
