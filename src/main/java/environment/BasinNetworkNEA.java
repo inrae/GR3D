@@ -175,7 +175,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			// Parsing the file
 			scanner = new Scanner(reader);
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
-			scanner.useDelimiter(Pattern.compile("[;,\r]"));
+			scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
 
 			//System.out.println(scanner.nextLine());
 			scanner.nextLine(); // skip the first line with headers
@@ -202,7 +202,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			e.printStackTrace();
 		}
 
-		// sort the record according to the order field (north to south)
+		// sort the record according to the order field 
 		Collections.sort(records);
 
 		// number of basin is equal to the size of the list
@@ -245,7 +245,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			// Parsing the file
 			scanner = new Scanner(reader);
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
-			scanner.useDelimiter(Pattern.compile("[;,\r]"));
+			scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
 
 			// skip the first line with headers
 			scanner.nextLine();
@@ -254,7 +254,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			while (scanner.hasNext() & index < Math.pow(nbBasin, 2.)) {
 				j = index % nbBasin;
 				i = (index - j) / nbBasin;
-				if (i ==0 ) 
+				if (j ==0 ) 
 					scanner.next(); // to skip the first column
 				//System.out.println("i"+i+"j"+j+"index"+index);
 				distanceGrid[i][j] = Double.valueOf(scanner.next());
@@ -288,7 +288,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			// Parsing the file
 			scanner = new Scanner(reader);
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
-			scanner.useDelimiter(Pattern.compile("[,;\r]"));
+			scanner.useDelimiter(Pattern.compile("[,;\r\n]"));
 			char[] charac = {'"'};
 			String doublequote = new String(charac);
 			scanner.nextLine(); // skip the first line with headers
