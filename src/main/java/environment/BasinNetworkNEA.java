@@ -111,7 +111,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		return temperatureSeries.get(year);
 	}
 
-	private Map<String, Path2D.Double> loadBasins(String basinShpFile) {
+	private Map<String, Path2D.Double> loadBasins(String basinShpFile, String name) {
 		Map<String, Path2D.Double> mapBasin = new HashMap<String, Path2D.Double>();
 		ShapefileDataStore basinStore = null;
 		SimpleFeatureIterator  iterator = null;
@@ -131,7 +131,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 					shape.lineTo((multiPolygon.getCoordinates())[i].x, (multiPolygon.getCoordinates())[i].y);
 				}
 				shape.closePath();
-				mapBasin.put((String) feature.getAttribute("NOM"), shape);
+				mapBasin.put((String) feature.getAttribute(name), shape);
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -155,12 +155,12 @@ public class BasinNetworkNEA extends BasinNetwork {
 		//String cwd = System.getProperty("user.dir").concat("/");
 		//System.out.println(cwd);
 		if (seaBasinShpFile != null && seaBasinShpFile.length() > 0) {
-			mapSeaBasin = loadBasins(seaBasinShpFile);
+			mapSeaBasin = loadBasins(seaBasinShpFile, "name");
 		}
 		// load the shape of the riverBasin
 		Map<String, Path2D.Double> mapRiverBasin = null;
 		if (riverBasinShpFile != null && riverBasinShpFile.length() > 0) {
-			mapRiverBasin = loadBasins(riverBasinShpFile);
+			mapRiverBasin = loadBasins(riverBasinShpFile, "NAME");
 		}
 		// load the feature of the riverBasin
 		String name;
