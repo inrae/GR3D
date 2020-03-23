@@ -296,8 +296,6 @@ public class BasinNetworkNEA extends BasinNetwork {
 				scanner.next(); // skip gid
 				name = scanner.next();
 				name = name.replaceAll(new String(doublequote), "");
-				scanner.next(); //skip id
-				//System.out.println(scanner.next());
 				year = (long) scanner.nextInt();
 				Double[] seasonalTemperature = new Double[4];
 				seasonalTemperature[0] = scanner.nextDouble();
