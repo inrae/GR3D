@@ -8,6 +8,7 @@
   <basinFile>data/input/northeastamerica/nea_basins.csv</basinFile>
   <seaBasinShpFile>data/input/northeastamerica/shape/seabasins.shp</seaBasinShpFile>
   <riverBasinShpFile>data/input/northeastamerica/shape/riverbasins.shp</riverBasinShpFile>
+  <continentShpFile>data/input/northeastamerica/shape/nea_continent.shp</continentShpFile>
   <distanceGridFileName>data/input/northeastamerica/distanceGridNEA.csv</distanceGridFileName>
   <temperatureCatchmentFile>data/input/northeastamerica/basins_temperatures_from_1800.csv</temperatureCatchmentFile>
   <useRealPDam>false</useRealPDam>

@@ -37,6 +37,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 	private String basinFile = "data/input/northeastamerica/nea_basins.csv";
 	
+	private String continentShpFile = "data/input/northeastamerica/shape/nea_continent.shp";
 	private String seaBasinShpFile = "data/input/northeastamerica/shape/seabasins.shp";
 	private String riverBasinShpFile = "data/input/northeastamerica/shape/riverbasins.shp";
 
@@ -46,7 +47,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 	private boolean useRealPDam = false;
 
 	private transient Map<Long, Map<String, Double[]>> temperatureSeries;
-
+	private transient Path2D continent ;
+	
 	class Record implements Comparable<Record> {
 
 		private int order;
@@ -149,8 +151,9 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 		FileReader reader;
 		Scanner scanner;
-
-		// shape files can be omitted (for batch mode)
+		// =============================================
+		//upload shapes
+		// shape files could be omitted (for batch mode)
 		
 		// load the shape of the seaBasin
 		Map<String, Path2D.Double> mapSeaBasin = null;
@@ -164,7 +167,16 @@ public class BasinNetworkNEA extends BasinNetwork {
 		if (riverBasinShpFile != null && riverBasinShpFile.length() > 0) {
 			mapRiverBasin = loadBasins(riverBasinShpFile, "NAME");
 		}
-		// load the feature of the riverBasin
+		
+		// load the continent
+		Map<String, Path2D.Double> mapContinent = null;
+		if (continentShpFile != null && continentShpFile.length() > 0) {
+			mapContinent = loadBasins(continentShpFile, "NAME");
+		}
+		continent = mapContinent.get(null);
+		
+		// ===========================================
+		// load features of  riverBasins
 		String name;
 		double pDam = 1, pAttractive = 1;
 		double longitude, latitude, surface = 0., firstDamHeight = 0.;
@@ -329,7 +341,17 @@ public class BasinNetworkNEA extends BasinNetwork {
 	public String getTemperatureCatchmentFile() {
 		return temperatureCatchmentFile;
 	}
+
+	/**
+	 * @return the continent
+	 */
+	public Path2D getContinent() {
+		return continent;
+	}
+	
 	
 }
+
+	
 
 
