@@ -41,13 +41,13 @@ Drawable, MouseMotionListener {
 	public ColorScaleEnum colorScaleEnum = ColorScaleEnum.BluesScale;
 
 	// a basin network
-	private transient BasinNetwork bn;
+	private transient BasinNetworkNEA bn;
 
 	// list of reachRect
 	private transient Map<Shape, Basin> shapeBasinMap;
 
 	// continent
-	private Path2D continent;
+	private Map<String, Path2D.Double> mapContinent;
 
 	// use to draw objects ( basins andt continent)
 	private transient double minX, minY, rangeX, rangeY;
@@ -95,7 +95,7 @@ Drawable, MouseMotionListener {
 		// Initialize the map linking shape with basin
 		shapeBasinMap = new HashMap<Shape, Basin>();
 
-		bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
+		bn = (BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment();
 
 	}
 
@@ -123,7 +123,7 @@ Drawable, MouseMotionListener {
 		String txt = (Long.valueOf(Time.getYear(pilot))).toString() + (" ")
 				+ Time.getSeason(pilot).toString() + " - ";
 
-		// identify the basin uunder the mouse position and enrich the label
+		// identify the basin under the mouse position and enrich the label
 		Basin basin;
 		for (Shape shape : shapeBasinMap.keySet()) {
 			if (shape.contains(x, y)) {
@@ -144,13 +144,13 @@ Drawable, MouseMotionListener {
 	public JComponent getDisplay() {
 		//ASK why here and not in inittransient parameter
 		// compute min and max of x and y 
-		double maxX, maxY;
+
 
 		/*
-        maxX = maxY = Double.NEGATIVE_INFINITY;
-        minX = minY = Double.POSITIVE_INFINITY;
+		 * 		double maxX, maxY;
 
-        rangeX = rangeY = 0.;
+		maxX = maxY = Double.NEGATIVE_INFINITY;
+		minX = minY = Double.POSITIVE_INFINITY;
 
         bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
         for (Basin basin : bn.getBasins()) {
@@ -160,15 +160,8 @@ Drawable, MouseMotionListener {
             maxX = Math.max(maxX, basin.getShape().getBounds2D().getMaxX());
             minY = Math.min(minY, basin.getShape().getBounds2D().getMinY());
             maxY = Math.max(maxY, basin.getShape().getBounds2D().getMaxY());
-        }*/
 
-		continent = ((BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment()).getContinent();
-		minX = continent.getBounds().getMinX();
-		maxX = continent.getBounds().getMaxX();
-		minY = continent.getBounds().getMinY();
-		maxY = continent.getBounds().getMaxY();
-
-		// compute the range with a small margin
+         // compute the range with a small margin
 		rangeX = maxX - minX; // need to calculate the margin
 		minX -= 0.02 * rangeX;
 		maxX += 0.02 * rangeX;
@@ -178,7 +171,22 @@ Drawable, MouseMotionListener {
 		minY -= 0.02 * rangeY;
 		maxY += 0.02 * rangeY;
 		rangeY = maxY - minY;
+        }*/
+		if (mapContinent == null) {
+			double maxX, maxY;
 
+			maxX = maxY = Double.NEGATIVE_INFINITY;
+			minX = minY = Double.POSITIVE_INFINITY;
+			mapContinent = ((BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment()).getMapContinent();
+			for (Path2D.Double path : mapContinent.values()) {
+				minX = Math.min(minX, path.getBounds2D().getMinX());
+				maxX = Math.max(maxX, path.getBounds2D().getMaxX());
+				minY = Math.min(minY, path.getBounds2D().getMinY());
+				maxY = Math.max(maxY, path.getBounds2D().getMaxY());
+			}
+			rangeX = maxX - minX;
+			rangeY = maxY - minY;
+		}
 		//System.out.println("ranges of network for display: "+rangeX+" "+rangeY);
 		return display;
 	}
@@ -214,27 +222,36 @@ Drawable, MouseMotionListener {
 			//TODO fixed the same scalinf for x and y to avoid weird map deformation
 			double W = this.getWidth();
 			double H = this.getHeight();
-			AffineTransform af = new AffineTransform(W / rangeX, 0., 0.,
-					-H / rangeY, -W * minX / rangeX, H * (1. + minY / rangeY));
+			double scaling = Math.min(W / rangeX, H / rangeY);
+			//AffineTransform af = new AffineTransform(W / rangeX, 0., 0.,
+			//		-H / rangeY, -W * minX / rangeX, H * (1. + minY / rangeY));
+			AffineTransform af = new AffineTransform(scaling, 0., 0.,
+					-scaling, - minX  *scaling, H + minY * scaling);
 			//System.out.println(af.toString());
 
 			// Draw Background
-			//g.setColor(Color.BLUE);
-			//g.fillRect(0, 0, (int) W, (int) H);
+			g.setColor(Color.BLUE);
+			g.fillRect(0, 0, (int) W, (int) H);
 
 			// prepare the graphics
 			this.paintComponents(g);
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setStroke(new BasicStroke(2)); // define the line
 
+
 			// draw the continent
 			g.setColor(Color.GRAY);
-			g2d.draw(continent);
-			g2d.fill(continent);
-			
+			for (Path2D.Double path :  bn.getMapContinent().values() ) {
+				Path2D.Double displayContinent =  (Path2D.Double) path.createTransformedShape(af);
+				//g2d.draw(displayContinent);
+				g2d.fill(displayContinent);
+			}
+
+
 			// draw the legend
 			colorScaleEnum.getScale().drawLegend(g2d, threshold);
 
+			// draw the basins and  fill the map for mouse detection
 			shapeBasinMap.clear();// to be used by the mouseMoved()
 			double abundance;
 			for (Basin basin : bn.getBasins()) {

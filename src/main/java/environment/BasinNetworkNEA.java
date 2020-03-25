@@ -47,7 +47,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 	private boolean useRealPDam = false;
 
 	private transient Map<Long, Map<String, Double[]>> temperatureSeries;
-	private transient Path2D continent ;
+	private transient Map<String, Path2D.Double> mapContinent ;
 	
 	class Record implements Comparable<Record> {
 
@@ -134,7 +134,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 					shape.lineTo((multiPolygon.getCoordinates())[i].x, (multiPolygon.getCoordinates())[i].y);
 				}
 				shape.closePath();
-				mapBasin.put((String) feature.getAttribute(name), shape);
+				mapBasin.put(String.valueOf(feature.getAttribute(name)), shape);
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -169,11 +169,10 @@ public class BasinNetworkNEA extends BasinNetwork {
 		}
 		
 		// load the continent
-		Map<String, Path2D.Double> mapContinent = null;
 		if (continentShpFile != null && continentShpFile.length() > 0) {
-			mapContinent = loadBasins(continentShpFile, "NAME");
+			mapContinent = loadBasins(continentShpFile, "PATH");
 		}
-		continent = mapContinent.get(null);
+
 		
 		// ===========================================
 		// load features of  riverBasins
@@ -345,10 +344,9 @@ public class BasinNetworkNEA extends BasinNetwork {
 	/**
 	 * @return the continent
 	 */
-	public Path2D getContinent() {
-		return continent;
-	}
-	
+	public Map<String, Path2D.Double> getMapContinent() {
+		return mapContinent;
+	}	
 	
 }
 
