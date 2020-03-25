@@ -81,7 +81,7 @@ Drawable, MouseMotionListener {
 		// the Jpanal that holds all the components to be displayed
 		display = new JPanel(new BorderLayout());
 
-		// the ad hoc compenment (specific internal class
+		// the ad hoc component (specific internal class
 		DisplayComponent displayComponent = new DisplayComponent();
 		displayComponent.addMouseMotionListener(this);
 		displayComponent.setVisible(true);
@@ -226,18 +226,21 @@ Drawable, MouseMotionListener {
 			//AffineTransform af = new AffineTransform(W / rangeX, 0., 0.,
 			//		-H / rangeY, -W * minX / rangeX, H * (1. + minY / rangeY));
 			AffineTransform af = new AffineTransform(scaling, 0., 0.,
-					-scaling, - minX  *scaling, H + minY * scaling);
+					-scaling, - minX  * scaling, H + minY * scaling);
 			//System.out.println(af.toString());
 
-			// Draw Background
-			g.setColor(Color.BLUE);
-			g.fillRect(0, 0, (int) W, (int) H);
-
-			// prepare the graphics
-			this.paintComponents(g);
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setStroke(new BasicStroke(2)); // define the line
-
+			
+			// Draw Background
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0, (int) W, (int) H);
+			this.paintComponents(g);
+			
+			g.setColor(Color.BLUE);
+			int side =(int)  ((W<H? W:H) * 1.05);
+			g.fillRect(0, 0, side, side);
+			this.paintComponents(g);
 
 			// draw the continent
 			g.setColor(Color.GRAY);
@@ -246,7 +249,6 @@ Drawable, MouseMotionListener {
 				//g2d.draw(displayContinent);
 				g2d.fill(displayContinent);
 			}
-
 
 			// draw the legend
 			colorScaleEnum.getScale().drawLegend(g2d, threshold);
