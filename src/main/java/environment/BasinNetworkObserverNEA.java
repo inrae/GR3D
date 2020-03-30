@@ -11,6 +11,7 @@ import fr.cemagref.ohoui.filters.NoTransientField;
 import fr.cemagref.ohoui.swing.OhOUI;
 import fr.cemagref.ohoui.swing.OhOUIDialog;
 import fr.cemagref.simaqualife.kernel.util.TransientParameters;
+import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
 import fr.cemagref.simaqualife.pilot.Pilot;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -100,7 +101,7 @@ Drawable, MouseMotionListener {
 
 		// load basin to a have access to the shape
 		bn = (BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment();
-		
+
 		// time in bn is not yet created
 		time = new Time();
 	}
@@ -109,10 +110,10 @@ Drawable, MouseMotionListener {
 	public void valueChanged(ObservablesHandler arg0, Object arg1, long arg2) {
 		display.repaint();
 
-	/*	// update the label
-			String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ")
-					+ time.getSeason(pilot).toString();
-			label.setText(txt);*/
+		//update the label
+		String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ")
+				+ time.getSeason(pilot).toString();
+		label.setText(txt);
 	}
 
 	@Override
@@ -122,12 +123,11 @@ Drawable, MouseMotionListener {
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		int y = (e.getY());
-		int x = (e.getX());
+		int x = (e.getY());
+		int y = (e.getX());
 
-		// to update the label
 		String txt = (Long.valueOf(time.getYear(pilot))).toString() + (" ")
-				+ time.getSeason(pilot).toString() + " - ";
+				+ time.getSeason(pilot).toString() + " - " ;
 
 		// identify the basin under the mouse position and enrich the label
 		Basin basin;
@@ -224,13 +224,10 @@ Drawable, MouseMotionListener {
 		@Override
 		protected synchronized void paintComponent(Graphics g) {
 
-			// affine transmortaion to resize the drawing according to window size
-			//TODO fixed the same scalinf for x and y to avoid weird map deformation
+			// affine transformation to resize the drawing according to the window size
 			double W = this.getWidth();
 			double H = this.getHeight();
 			double scaling = Math.min(W / rangeX, H / rangeY);
-			//AffineTransform af = new AffineTransform(W / rangeX, 0., 0.,
-			//		-H / rangeY, -W * minX / rangeX, H * (1. + minY / rangeY));
 			AffineTransform af = new AffineTransform(scaling, 0., 0.,
 					-scaling, - minX  * scaling, H + minY * scaling);
 			//System.out.println(af.toString());
