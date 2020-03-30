@@ -20,7 +20,7 @@ public class Age extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGro
                 for(Basin basin : group.getEnvironment().getBasins()){
                     if (basin.getFishs(group)!=null) for(DiadromousFish fish : basin.getFishs(group)){
 			//Age
-			fish.setAge(fish.getAge() + Time.getSeasonDuration());
+			fish.setAge(fish.getAge() + group.getEnvironment().getTime().getSeasonDuration());
                     }
                 }
 	}

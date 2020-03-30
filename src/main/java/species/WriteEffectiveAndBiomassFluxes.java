@@ -84,7 +84,9 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 			}
 		}
 
-		if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot) >= group.getMinYearToWrite()) {
+		Time time = group.getEnvironment().getTime();
+		
+		if (time.getSeason(pilot) == exportSeason & time.getYear(pilot) >= group.getMinYearToWrite()) {
 
 			//Create the map to get the biomass in each migration basin and birth basin
 			Map<String, Map<String, Long>> spawnerEffectivePerDestination = new HashMap<String,  Map<String, Long>>(group.getEnvironment().getRiverBasinNames().length); 
@@ -125,7 +127,7 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 			try {
 				// write effective
 				for (String originBasinName: group.getEnvironment().getRiverBasinNames()) {
-					bW.write(Time.getYear(pilot)+ sep + "effective" + sep + originBasinName );
+					bW.write(time.getYear(pilot)+ sep + "effective" + sep + originBasinName );
 
 					for (String destinationBasinName : group.getEnvironment().getRiverBasinNames()) {
 						bW.write(sep+spawnerEffectivePerDestination.get(destinationBasinName).get(originBasinName));
@@ -136,7 +138,7 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 
 				// write biomass
 				for (String originBasinName: group.getEnvironment().getRiverBasinNames()) {
-					bW.write(Time.getYear(pilot)+ sep + "biomass"+ sep + originBasinName );
+					bW.write(time.getYear(pilot)+ sep + "biomass"+ sep + originBasinName );
 
 					for (String destinationBasinName : group.getEnvironment().getRiverBasinNames()) {
 						bW.write(sep+spawnerBiomassPerDestination.get(destinationBasinName).get(originBasinName));

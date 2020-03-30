@@ -102,8 +102,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
-
-		if (Time.getSeason(group.getPilot()) == reproductionSeason){
+		Time time = group.getEnvironment().getTime();
+		if (time.getSeason(group.getPilot()) == reproductionSeason){
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 			// a River
 			List<String> basinList = new ArrayList<String>() ;
@@ -269,11 +269,11 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 								for (String nutrient: aFluxAfterSurvival.keySet()) {
 									//For all survival fish
 									group.getNutrientRoutine().getNutrientImportFluxesCollection().
-									put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxAfterSurvival.get(nutrient) * survivalAmount);
+									put(time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxAfterSurvival.get(nutrient) * survivalAmount);
 
 									//For all dead fish
 									group.getNutrientRoutine().getNutrientImportFluxesCollection().
-									put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount));
+									put(time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount));
 
 								}
 								for (String nutrient: aFluxAfterSurvival.keySet()) {
@@ -300,7 +300,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 								for (String nutrient: aFluxForDeadFish.keySet()) {
 									group.getNutrientRoutine().getNutrientImportFluxesCollection().
-									put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount));
+									put(time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), riverBasin.getName(), aFluxForDeadFish.get(nutrient) * (fish.getAmount() - survivalAmount));
 								}
 								biomass = group.getNutrientRoutine().getWeight(fish) * (fish.getAmount());
 								totalInputFluxes.get(spawnerOrigin).put("biomass", totalInputFluxes.get(spawnerOrigin).get("biomass") + biomass); 
@@ -471,7 +471,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							// keep information when reproduction with success
 							// stock the first year when recruitment is non nul
 							if (riverBasin.getYearOfFirstNonNulRep() == 0){
-								riverBasin.setYearOfFirstNonNulRep(Time.getYear(group.getPilot()));
+								riverBasin.setYearOfFirstNonNulRep(time.getYear(group.getPilot()));
 							}
 
 							// keep the last recruitments in the stack
@@ -491,7 +491,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						}
 						else {
 							// stock the last year of null recruitment
-							riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));							
+							riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));							
 							riverBasin.getLastRecruitmentExpectations().push((long) 0);
 							riverBasin.getLastRecruitments().push((long) 0);
 							riverBasin.getLastRecsOverProdCaps().push(0.);
@@ -502,7 +502,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					else {
 						// stock information when no spawners reproduce
 						//System.out.println(riverBasin.getName()+ "\tF:"+numberOfFemaleSpawners+ " M:"+numberOfMaleSpawners);
-						riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
+						riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));
 						riverBasin.getLastRecruitmentExpectations().push((long) 0);
 						riverBasin.getLastRecruitments().push((long) 0);
 						riverBasin.getLastRecsOverProdCaps().push(0.);
@@ -529,7 +529,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					if ( bW != null) {
 						try {
 							for (SpawnerOrigin origin : totalInputFluxes.keySet()) {
-								bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
+								bW.write(group.getPilot().getCurrentTime() + "; " + time.getYear(group.getPilot()) + ";" + time.getSeason(group.getPilot()) 
 								+";"+ riverBasin.getName() +  ";" + fluxBefore + ";" + "IMPORT"+ ";" + origin);
 								bW.write(";" + totalInputFluxes.get(origin).get("biomass"));
 
@@ -545,7 +545,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					}
 				}
 				else {
-					riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
+					riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));
 				}
 
 

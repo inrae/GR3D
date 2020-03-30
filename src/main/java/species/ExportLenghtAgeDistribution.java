@@ -81,7 +81,8 @@ public class ExportLenghtAgeDistribution extends AquaNismsGroupProcess<Diadromou
 		}
 
 		try {
-			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot)>1900) {
+			Time time = group.getEnvironment().getTime();
+			if (time.getSeason(pilot) == exportSeason & time.getYear(pilot)>1900) {
 				for (RiverBasin basin : group.getEnvironment().getRiverBasins()) {
 					if (basin.getFishs(group) != null) {
 						for (DiadromousFish fish : basin.getFishs(group)) {
@@ -90,8 +91,8 @@ public class ExportLenghtAgeDistribution extends AquaNismsGroupProcess<Diadromou
 								//System.out.println(fish.getAge() + " -> "+ fish.getLength() +" - "+fish.getNumberOfReproduction());
 								
 								bW.write(pilot.getCurrentTime() + sep);
-								bW.write(Time.getYear(pilot) + sep);
-								bW.write(Time.getSeason(pilot) + sep);
+								bW.write(time.getYear(pilot) + sep);
+								bW.write(time.getSeason(pilot) + sep);
 								bW.write(basin.getName() + sep);
 								bW.write(fish.getGender() + sep);
 								bW.write(fish.getAmount() + sep);

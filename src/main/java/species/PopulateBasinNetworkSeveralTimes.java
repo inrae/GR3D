@@ -27,7 +27,8 @@ public class PopulateBasinNetworkSeveralTimes extends AquaNismsGroupProcess<Diad
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
-		if (Time.getNbYearFromBegin(group.getPilot()) <= timesOfPopulate && Time.getSeason(group.getPilot()) == populateSeason){
+		if (group.getEnvironment().getTime().getNbYearFromBegin(group.getPilot()) <= timesOfPopulate &&
+				group.getEnvironment().getTime().getSeason(group.getPilot()) == populateSeason){
 
 			int nbFemaleSIPerBasin = nbSIPerBasin / 2;
 			int nbMaleSIPerBasin = nbSIPerBasin - nbFemaleSIPerBasin;

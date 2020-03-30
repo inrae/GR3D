@@ -87,7 +87,8 @@ public class WriteEffectivesFluxes extends AquaNismsGroupProcess<DiadromousFish,
 
 	
 		try {
-			if (Time.getSeason(pilot) == exportSeason & Time.getYear(pilot) >= group.getMinYearToWrite()) {
+			Time time = group.getEnvironment().getTime();
+			if (time.getSeason(pilot) == exportSeason & time.getYear(pilot) >= group.getMinYearToWrite()) {
 
 				for (RiverBasin migrationBasin : group.getEnvironment().getRiverBasins()) {
 					//Create the map to get the abundance in each birth basin
@@ -107,7 +108,7 @@ public class WriteEffectivesFluxes extends AquaNismsGroupProcess<DiadromousFish,
 					}
 
 					//write the first two fields of the line 
-					bW.write(Time.getYear(pilot)+sep+migrationBasin.getName());
+					bW.write(time.getYear(pilot)+sep+migrationBasin.getName());
 
 					//write the cumulative effective from birth basin 
 					for (String birthBasinName : group.getEnvironment().getRiverBasinNames()) {

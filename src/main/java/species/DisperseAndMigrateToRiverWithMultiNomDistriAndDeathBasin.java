@@ -92,15 +92,16 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
+		Time time = group.getEnvironment().getTime();
 
-		if (Time.getSeason(group.getPilot()) == riverMigrationSeason) {
+		if (time.getSeason(group.getPilot()) == riverMigrationSeason) {
 			BasinNetwork bn = group.getEnvironment();
 
 			long amountWithHoming, strayedAmount;
 
 			// probability of homing
 			double pHoming;
-			if (Time.getYear(group.getPilot()) < NbYearForInstallPop) {
+			if (time.getYear(group.getPilot()) < NbYearForInstallPop) {
 				pHoming = pHomingForReachEquil;
 			} else {
 				pHoming = pHomingAfterEquil;
@@ -128,7 +129,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 							amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
 
 							// strayed fish 
-							if (killStrayers == true && Time.getYear(group.getPilot()) >= yearOfTheKillings) {
+							if (killStrayers == true && time.getYear(group.getPilot()) >= yearOfTheKillings) {
 								strayedAmount = 0;
 							}
 							else { 
@@ -160,7 +161,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 									
 									// put weight to 0 for unused basins
 									if (group.isThereBasinToUpdate()){
-										if (Time.getYear(group.getPilot()) >= group.getYearOfTheUpdate()
+										if (time.getYear(group.getPilot()) >= group.getYearOfTheUpdate()
 												&& group.getPattractive(b.getName()) == 0){
 											//TODO use correctely getPaccessible
 											accBasinWeight = 0 ;

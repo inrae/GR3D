@@ -34,8 +34,8 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
-
-		if (Time.getSeason(group.getPilot()) == seaMigrationSeason ){
+		Time time = group.getEnvironment().getTime();
+		if (time.getSeason(group.getPilot()) == seaMigrationSeason ){
 			Basin destination;
 
 			//On cr�er la Map pour stocker les flux d'export
@@ -68,7 +68,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 							for (String nutrient: aFluxExportedByJuveniles.keySet()) {
 								totalOutputFluxes.put(nutrient,totalOutputFluxes.get(nutrient) + aFluxExportedByJuveniles.get(nutrient) * fish.getAmount()); 	
 								
-								group.getNutrientRoutine().getNutrientExportFluxesCollection().put(Time.getYear(group.getPilot()), nutrient, basin.getName(),  aFluxExportedByJuveniles.get(nutrient) * fish.getAmount());
+								group.getNutrientRoutine().getNutrientExportFluxesCollection().put(time.getYear(group.getPilot()), nutrient, basin.getName(),  aFluxExportedByJuveniles.get(nutrient) * fish.getAmount());
 							}
 
 							totalOutputFluxes.put("biomass", totalOutputFluxes.get("biomass") + biomass); 
@@ -82,7 +82,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 				}
 
 				if (displayFluxesOnConsole) {
-					System.out.println(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
+					System.out.println(group.getPilot().getCurrentTime() + "; " + time.getYear(group.getPilot()) + ";" + time.getSeason(group.getPilot()) 
 					+ ";EXPORT;"
 					+ basin.getName() + "; " + totalOutputFluxes);}
 
@@ -90,7 +90,7 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 				if ( bW != null) {
 					try {
 
-						bW.write(group.getPilot().getCurrentTime() + "; " + Time.getYear(group.getPilot()) + ";" + Time.getSeason(group.getPilot()) 
+						bW.write(group.getPilot().getCurrentTime() + "; " + time.getYear(group.getPilot()) + ";" + time.getSeason(group.getPilot()) 
 						+";"+ basin.getName() + ";" + basin.getJuvenileNumber() + ";EXPORT; NONE");
 						bW.write(";" + totalOutputFluxes.get("abundanceExp") + ";" + totalOutputFluxes.get("biomass"));
 						for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {

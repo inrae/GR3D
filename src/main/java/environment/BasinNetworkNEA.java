@@ -149,6 +149,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
 
+		 super.initTransientParameters(pilot);
+		 
 		FileReader reader;
 		Scanner scanner;
 		// =============================================

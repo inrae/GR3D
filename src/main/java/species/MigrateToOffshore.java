@@ -21,7 +21,7 @@ public class MigrateToOffshore extends AquaNismsGroupProcess<DiadromousFish, Dia
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
-		if (Time.getSeason(group.getPilot()) == offshoreMigrationSeason){
+		if (group.getEnvironment().getTime().getSeason(group.getPilot()) == offshoreMigrationSeason){
 			Basin destination = null;
 			for (DiadromousFish fish : group.getAquaNismsList()){
 				destination = group.getEnvironment().getAssociatedOffshoreBasin(fish.getPosition());

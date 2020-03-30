@@ -43,6 +43,7 @@ public class BasinNetworkObserver extends ObserverListener implements Configurab
     protected String title;
 
     protected transient BasinNetwork bn;
+    protected transient Time time;
     protected transient double minX, minY, rangeX, rangeY;
 
     // list of reachRect
@@ -140,10 +141,12 @@ public class BasinNetworkObserver extends ObserverListener implements Configurab
     }
 
     @Override
-    public void valueChanged(ObservablesHandler arg0, Object env, long time) {
+    public void valueChanged(ObservablesHandler arg0, Object env, long arg2) {
         display.repaint();
-        String txt = (new Long(Time.getYear(pilot))).toString() + (" ")
-                + Time.getSeason(pilot).toString();
+        
+        String txt = (Long.valueOf(time.getYear(pilot))).toString() + (" ")
+               + time.getSeason(pilot).toString();
+        
         label.setText(txt);
     }
 
@@ -158,8 +161,8 @@ public class BasinNetworkObserver extends ObserverListener implements Configurab
         int x = (e.getX());
         Basin basin;
 
-        String txt = (new Long(Time.getYear(pilot))).toString() + (" ")
-                + Time.getSeason(pilot).toString() + " - ";
+        String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ")
+                + time.getSeason(pilot).toString() + " - ";
 
         for (Shape shape : shapeBasinMap.keySet()) {
             if (shape.contains(x, y)) {
@@ -178,7 +181,11 @@ public class BasinNetworkObserver extends ObserverListener implements Configurab
 
     @Override
     public JComponent getDisplay() {
+    	//CHECK 
+    	if (bn == null) {
         bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
+        time = bn.getTime();
+    	}
 
         // compute min and max of x and y 
         double maxX, maxY;

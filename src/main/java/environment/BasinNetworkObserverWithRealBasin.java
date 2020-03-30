@@ -41,6 +41,7 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
     public ColorScaleEnum colorScaleEnum = ColorScaleEnum.BluesScale;
 
     private transient BasinNetwork bn;
+    private transient Time time;
     private transient double minX, minY, rangeX, rangeY;
 
     // list of reachRect
@@ -48,6 +49,8 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
 
     private transient JComponent display;
     private transient JLabel label;
+    
+    protected transient Pilot pilot;
 
     @Override
     public void addObservable(ObservablesHandler arg0) {
@@ -61,9 +64,9 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
 
     @Override
     public void init() {
-        // nothing to do
+    // nothing to do 
     }
-    protected transient Pilot pilot;
+
 
     @TransientParameters.InitTransientParameters
     public void init(Pilot pilot) {
@@ -94,8 +97,8 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
         display.repaint();
         
         // update the label
-        String txt = Long.valueOf((Time.getYear(pilot))).toString() + (" ")
-                + Time.getSeason(pilot).toString();
+        String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ")
+                + time.getSeason(pilot).toString();
         label.setText(txt);
     }
 
@@ -110,8 +113,8 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
         int x = (e.getX());
 
         // to update the label
-        String txt = (Long.valueOf(Time.getYear(pilot))).toString() + (" ")
-                + Time.getSeason(pilot).toString() + " - ";
+        String txt = (Long.valueOf(time.getYear(pilot))).toString() + (" ")
+                + time.getSeason(pilot).toString() + " - ";
 
         // identify the basin uunder the mouse position and enrich the label
         Basin basin;
@@ -132,8 +135,10 @@ public class BasinNetworkObserverWithRealBasin extends ObserverListener implemen
 
     @Override
     public JComponent getDisplay() {
+    	if (bn == null) { //CHECK
         bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
-
+        time = bn.getTime();
+    	}
         // compute min and max of x and y 
         double maxX, maxY;
         maxX = maxY = Double.NEGATIVE_INFINITY;

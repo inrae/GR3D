@@ -82,15 +82,15 @@ public class IdentifyPopulation extends AquaNismsGroupProcess<DiadromousFish, Di
 				}
 			}
 		}
-
-		if (years.contains(Time.getYear(group.getPilot())) && Time.getSeason(group.getPilot()) == fluxesSeason){
+		Time time = group.getEnvironment().getTime();
+		if (years.contains(time.getYear(group.getPilot())) && time.getSeason(group.getPilot()) == fluxesSeason){
 
 			String[] basinNames = group.getEnvironment().getRiverBasinNames();
 
 			if (fileNameOutput != null) {
 				try {
 					for (RiverBasin basin : group.getEnvironment().getRiverBasins()){
-						bW.write(Time.getYear(group.getPilot())+sep+basin.getName());
+						bW.write(time.getYear(group.getPilot())+sep+basin.getName());
 
 						for (String basinName : basinNames){
 							bW.write(sep+Math.round(basin.getSpawnerOrigins().getMeans().get(basinName)));

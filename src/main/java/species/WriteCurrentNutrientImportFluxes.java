@@ -34,6 +34,8 @@ public class WriteCurrentNutrientImportFluxes extends AquaNismsGroupProcess<Diad
 	public void doProcess(DiadromousFishGroup group) {
 		String sep = ";"; 
 
+		Time time = group.getEnvironment().getTime();
+		
 		try {
 			// initialise the bW the first time
 			if ( bW == null) {
@@ -55,9 +57,9 @@ public class WriteCurrentNutrientImportFluxes extends AquaNismsGroupProcess<Diad
 			Map<Long, Map <String, Map<String, Map<String, Double>>>> fluxesCollection = group.getNutrientRoutine().
 					getNutrientImportFluxesCollection().getImportFluxesCollection();
 
-			long year = Time.getYear(group.getPilot());
+			long year = time.getYear(group.getPilot());
 
-			if (year >= group.getMinYearToWrite() & Time.getSeason(group.getPilot()) == writeSeason) {
+			if (year >= group.getMinYearToWrite() & time.getSeason(group.getPilot()) == writeSeason) {
 
 				Map <String, Map<String, Map<String, Double>>> yearsMap = fluxesCollection.get(year); 
 

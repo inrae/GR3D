@@ -42,12 +42,16 @@ Drawable, MouseMotionListener {
 
 	// a basin network
 	private transient BasinNetworkNEA bn;
+	// the time
+	private transient Time time;
 
 	// list of reachRect
 	private transient Map<Shape, Basin> shapeBasinMap;
 
 	// continent
-	private Map<String, Path2D.Double> mapContinent;
+	private transient Map<String, Path2D.Double> mapContinent;
+
+	protected transient Pilot pilot;
 
 	// use to draw objects ( basins andt continent)
 	private transient double minX, minY, rangeX, rangeY;
@@ -70,7 +74,6 @@ Drawable, MouseMotionListener {
 	public void init() {
 		// nothing to do
 	}
-	protected transient Pilot pilot;
 
 	@TransientParameters.InitTransientParameters
 	public void init(Pilot pilot) {
@@ -95,18 +98,21 @@ Drawable, MouseMotionListener {
 		// Initialize the map linking shape with basin
 		shapeBasinMap = new HashMap<Shape, Basin>();
 
+		// load basin to a have access to the shape
 		bn = (BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment();
-
+		
+		// time in bn is not yet created
+		time = new Time();
 	}
 
 	@Override
 	public void valueChanged(ObservablesHandler arg0, Object arg1, long arg2) {
 		display.repaint();
 
-		// update the label
-		String txt = Long.valueOf((Time.getYear(pilot))).toString() + (" ")
-				+ Time.getSeason(pilot).toString();
-		label.setText(txt);
+	/*	// update the label
+			String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ")
+					+ time.getSeason(pilot).toString();
+			label.setText(txt);*/
 	}
 
 	@Override
@@ -120,8 +126,8 @@ Drawable, MouseMotionListener {
 		int x = (e.getX());
 
 		// to update the label
-		String txt = (Long.valueOf(Time.getYear(pilot))).toString() + (" ")
-				+ Time.getSeason(pilot).toString() + " - ";
+		String txt = (Long.valueOf(time.getYear(pilot))).toString() + (" ")
+				+ time.getSeason(pilot).toString() + " - ";
 
 		// identify the basin under the mouse position and enrich the label
 		Basin basin;
@@ -231,12 +237,12 @@ Drawable, MouseMotionListener {
 
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setStroke(new BasicStroke(2)); // define the line
-			
+
 			// Draw Background
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, (int) W, (int) H);
 			this.paintComponents(g);
-			
+
 			g.setColor(Color.BLUE);
 			int side =(int)  ((W<H? W:H) * 1.05);
 			g.fillRect(0, 0, side, side);

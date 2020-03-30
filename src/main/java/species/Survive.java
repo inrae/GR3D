@@ -41,6 +41,8 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
+		Time time = group.getEnvironment().getTime();
+		
 		double survivalProbability=1.;
 		List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 		long survivalAmount;
@@ -83,11 +85,11 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 						//TODO:add nutrientFluxesRoutine
 
 					}else if (fish.getPosition().getType() == TypeBassin.SEA){ //Survive at sea 
-						survivalProbability = Math.exp(-mortalityRateInSea * Time.getSeasonDuration());
+						survivalProbability = Math.exp(-mortalityRateInSea * time.getSeasonDuration());
 						//System.out.println("le poisson situ� dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalit� de " + fish.getMortalityRateInSea() + " et donc une prob de survie de " + survivalProbability);
 
 					}else if (fish.getPosition().getType() == TypeBassin.OFFSHORE){ //Survive offshore
-						survivalProbability = Math.exp(-mortalityRateInOffshore * Time.getSeasonDuration());
+						survivalProbability = Math.exp(-mortalityRateInOffshore * time.getSeasonDuration());
 						//System.out.println("le poisson situ� dans le bassin " + fish.getPosition().getName() + " en " + Time.getSeason() + " a un coeff de mortalit� de " + fish.getMortalityRateInOffshore() + " et donc une prob de survie de " + survivalProbability);
 
 					}else{
@@ -116,7 +118,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 
 							for (String nutrient: aFluxForDeadFishBeforeSpawning.keySet()) {
 								group.getNutrientRoutine().getNutrientImportFluxesCollection().
-								put(Time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), basin.getName(), aFluxForDeadFishBeforeSpawning.get(nutrient) * deathAmount);
+								put(time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), basin.getName(), aFluxForDeadFishBeforeSpawning.get(nutrient) * deathAmount);
 							}
 							
 							/*

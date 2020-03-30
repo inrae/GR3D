@@ -23,7 +23,7 @@ public class MigrateToRiver extends AquaNismsGroupProcess<DiadromousFish, Diadro
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
-		if (Time.getSeason(group.getPilot()) == riverMigrationSeason ){
+		if (group.getEnvironment().getTime().getSeason(group.getPilot()) == riverMigrationSeason ){
 			Basin destination = null;
 			for (DiadromousFish fish : group.getAquaNismsList()){
 				destination = group.getEnvironment().getAssociatedRiverBasin(fish.getPosition());

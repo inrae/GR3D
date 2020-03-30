@@ -123,9 +123,8 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 					// 2) Update the fish length with a lognormal normal draw  of increment
 					// limit the fish length to Linf
 					if (fish.getLength() < group.getLinfVonBert(fish)){
-						muDeltaLVonBert = Math.log((group.getLinfVonBert(fish) - fish.getLength()) * (1 - Math.exp(-kVonBert * Time.getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
+						muDeltaLVonBert = Math.log((group.getLinfVonBert(fish) - fish.getLength()) * (1 - Math.exp(-kVonBert * group.getEnvironment().getTime().getSeasonDuration()))) - (sigmaDeltaLVonBert*sigmaDeltaLVonBert)/2;
 						growthIncrement = Math.exp(genNormal.nextDouble()*sigmaDeltaLVonBert + muDeltaLVonBert);
-					
 						
 						fish.setLength(Math.min(group.getLinfVonBert(fish), fish.getLength() + growthIncrement));											
 					}

@@ -34,7 +34,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		
-		if (Time.getSeason(group.getPilot()) == riverMigrationSeason ){
+		if (group.getEnvironment().getTime().getSeason(group.getPilot()) == riverMigrationSeason ){
 			BasinNetwork bn = group.getEnvironment();
 			double dMaxDispFish = 0.;
 
