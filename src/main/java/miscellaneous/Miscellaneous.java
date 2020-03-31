@@ -22,9 +22,10 @@ public class Miscellaneous {
 			}
 
 		} else {
+			UniformGen aleaGen = new UniformGen(pilot.getRandomStream(), 0., 1.);
 			amountWithSuccess = 0;
 			for (long i = 0; i < amount; i++) {
-				if (UniformGen.nextDouble(pilot.getRandomStream(), 0, 1) < succesProba) {
+				if (aleaGen.nextDouble() < succesProba) {
 					amountWithSuccess++;
 				}
 			}
