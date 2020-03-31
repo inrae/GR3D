@@ -8,7 +8,7 @@ import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 import org.openide.util.lookup.ServiceProvider;
-
+@Deprecated
 @ServiceProvider(service = AquaNismsGroupProcess.class)
 public class MigrateToRiver extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
