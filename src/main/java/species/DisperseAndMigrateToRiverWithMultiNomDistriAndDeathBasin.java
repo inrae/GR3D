@@ -1,6 +1,7 @@
 package species;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -143,7 +144,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								double totalWeight = 0.;
 								double probToGo = 0.;
 								long amountToGo = 0;
-								Map<RiverBasin, Double> basinWeightsFromDeparture = new TreeMap<RiverBasin, Double>();
+								Map<RiverBasin, Double> basinWeightsFromDeparture = new HashMap<RiverBasin, Double>();
 								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {	
 									double accBasinWeight = 1. / (1. + Math.exp(-(entry.getValue() + weightFishLength)));
 									
