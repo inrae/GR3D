@@ -3,9 +3,11 @@ package species;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import environment.Basin;
 import environment.BasinNetwork;
+import environment.RiverBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
@@ -143,7 +145,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 
 								// upload the weights associated with features of the catchment (accessibility and attractivity)
 								List<Duo<Basin, Double>> accBasOfFish = new ArrayList<Duo<Basin, Double>>();
-								for (Map.Entry<Basin, Double> entry : accessibleBasinsPerBasin.get(fish.getPosition()).entrySet()) {
+								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(fish.getPosition()).entrySet()) {
 									Duo<Basin, Double> duo = new Duo<Basin, Double>(entry.getKey(), entry.getValue());
 									accBasOfFish.add(duo);
 								}
