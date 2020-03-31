@@ -1,12 +1,13 @@
 package species;
 
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.Map;
 
 import environment.Basin;
 import environment.BasinNetwork;
 import environment.RiverBasin;
-
+import environment.SeaBasin;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
 import fr.cemagref.simaqualife.pilot.Pilot;
@@ -72,9 +73,9 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 	 *  <key> SeaBasin
 	 *  <value>
 	 *  	<key> RiverBasin
-	 *  	<value> weight  to calculate probaility to disperse
+	 *  	<value>  part of weight independant of fish size used to calculate probability to disperse
 	 */
-	protected transient Map<Basin,Map<Basin,Double>> accessibleBasinsPerBasin;
+	protected transient Map<SeaBasin,Map<RiverBasin,Double>> basinWeightsPerBasin;
 	
 	/**
 	 *  a map associtaing a sea bassin with the distance for each river bassin
@@ -83,7 +84,7 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 	 *  	<key> RiverBasin
 	 *  	<value> distance between the river Basin and the river basin associated with the sea basin
 	 */
-	protected transient Map<Basin,Map<Basin,Double>> distanceBasinsPerBasin;
+	protected transient Map<SeaBasin,Map<RiverBasin,Double>> basinDistancesPerBasin;
 	
 
 	@Override
@@ -92,23 +93,34 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
             super.initTransientParameters(pilot);
 		// calcul les poids des bassins voisins qui ne d�pendent pas des poissons pour chaque SeaBassin
 		BasinNetwork bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
-		accessibleBasinsPerBasin = new TreeMap<Basin, Map<Basin,Double>>();
-		distanceBasinsPerBasin = new TreeMap<Basin, Map<Basin,Double>>();
+		basinWeightsPerBasin = new TreeMap<SeaBasin, Map<RiverBasin,Double>>();
+		basinDistancesPerBasin = new TreeMap<SeaBasin, Map<RiverBasin,Double>>();
 
-		for (Basin seaBas : bn.getSeaBasins()){
-			// compoute the distance with between seaBas and all the river basins 
-			Map<Basin,Double> mapDist = bn.getNeighboursWithDistance(seaBas);	
-			distanceBasinsPerBasin.put(seaBas, mapDist);
+		for (SeaBasin seaBasin : bn.getSeaBasins()){
+			// prepare the distance matrix with riverBasin as key
+			Map<RiverBasin,Double> mapDist = new TreeMap<RiverBasin, Double>();	
+			for (Entry<Basin,Double> entry : bn.getNeighboursWithDistance(seaBasin).entrySet() ) {
+				mapDist.put((RiverBasin) bn.getAssociatedRiverBasin(entry.getKey()), entry.getValue());
+			}
+	
+			
+			// fill basin Distances Per Basin
+			basinDistancesPerBasin.put(seaBasin, mapDist);
 						
 			// Compute the weight of each river basin
-			Map<Basin,Double> accessibleBasins = bn.getNeighboursWithDistance(seaBas);
-			for (Basin bas : accessibleBasins.keySet()){
-				double weight = alpha0Rep 
-						- alpha1Rep * ((accessibleBasins.get(bas)-meanInterDistance)/standardDeviationInterDistance)
-						+ alpha3Rep*((((RiverBasin) bn.getAssociatedRiverBasin(bas)).getAttractiveSurface()-meanBvSurface)/standardDeviationBvSurface);
-				accessibleBasins.put(bas, weight);
-			}						
-			accessibleBasinsPerBasin.put(seaBas, accessibleBasins);
+			//Map<Basin,Double> accessibleBasins = bn.getNeighboursWithDistance(seaBas);
+			Map<RiverBasin,Double> mapWeights = new TreeMap<RiverBasin, Double>();	
+			for (Entry<Basin,Double> entry : bn.getNeighboursWithDistance(seaBasin).entrySet() ) {
+				mapWeights.put((RiverBasin) bn.getAssociatedRiverBasin(entry.getKey()), entry.getValue());
+			}
+			 //replace the value by the weight
+				for (Entry<RiverBasin, Double> entry : mapWeights.entrySet()) {
+					double weight = alpha0Rep 
+							- alpha1Rep * ((entry.getValue() - meanInterDistance) / standardDeviationInterDistance)
+							+ alpha3Rep* ((entry.getKey().getSurface() - meanBvSurface) / standardDeviationBvSurface);
+					mapWeights.put(entry.getKey(), weight);
+				}						
+				basinWeightsPerBasin.put(seaBasin, mapWeights);
 		}
 	}
 
