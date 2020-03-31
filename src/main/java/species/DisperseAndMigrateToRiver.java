@@ -7,6 +7,7 @@ import java.util.Map;
 
 import environment.Basin;
 import environment.BasinNetwork;
+import environment.RiverBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
@@ -30,7 +31,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 		System.out.println((new XStream(new DomDriver()))
 				.toXML(new DisperseAndMigrateToRiver()));
 	}
-
+//TODO need to be corrected to remove fish remove
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		
@@ -40,7 +41,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 
 			long amountWithHoming, strayedAmount;
 
-			Map<Basin,Double> distBasOfFish;
+			Map<RiverBasin,Double> distBasOfFish;
 
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 			List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
@@ -56,11 +57,11 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 					
 					if (strayedAmount != 0) {
 						// On r�cup�re les info du poids des bassin par rapport � la position du poisson
-						Map<Basin,Double> accBasOfFish= new TreeMap<Basin, Double>(accessibleBasinsPerBasin.get(fish.getPosition()));
+						Map<Basin,Double> accBasOfFish= new TreeMap<Basin, Double>(basinWeightsPerBasin.get(fish.getPosition()));
 						//accBasOfFish = accessibleBasinsPerBasin.get(fish.getPosition());						
 
 						// On retire certains bassins si on consid�re une distance max de dispersion
-						distBasOfFish = distanceBasinsPerBasin.get(fish.getPosition());
+						distBasOfFish = basinDistancesPerBasin.get(fish.getPosition());
 						if (group.getdMaxDisp() != 0){
 							// TODO pourquoi distbasoffish peut �tre nul ?
 							if (distBasOfFish != null){
