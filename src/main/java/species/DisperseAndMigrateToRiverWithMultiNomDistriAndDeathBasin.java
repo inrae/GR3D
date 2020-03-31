@@ -2,12 +2,14 @@ package species;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import environment.Basin;
 import environment.BasinNetwork;
 import environment.RiverBasin;
+import environment.SeaBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
@@ -109,22 +111,26 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 				pHoming = pHomingAfterEquil;
 			}
 
-			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
-			List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
+			//List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
+			//List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
 
 			// creation of the death basin (for the lost strayers)
 			//TODO move as a transient field
 			Basin deathBasin = new Basin(-1, "deathBasin", 0, 0, 0, 0);
 			
-			List<Duo<DiadromousFish, Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish, Basin>>();
-			for (Basin basin : group.getEnvironment().getSeaBasins()) {
-
-				List<DiadromousFish> fishes = basin.getFishs(group);
+			//List<Duo<DiadromousFish, Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish, Basin>>();
+			for (SeaBasin departure : group.getEnvironment().getSeaBasins()) {
+				
+				RiverBasin homingDestination = (RiverBasin) bn.getAssociatedRiverBasin(departure);
+				
+				List<DiadromousFish> fishes = departure.getFishs(group);
 				if (fishes != null) {
-					for (DiadromousFish fish : fishes) {
-	
+					//for (DiadromousFish fish : fishes) {
+					ListIterator<DiadromousFish> fishIterator = fishes.listIterator();
+					while (fishIterator.hasNext()) {
+						DiadromousFish fish=fishIterator.next();
 						// verify that fish is in a sea basin
-						assert fish.getPosition().getType() == Basin.TypeBassin.SEA;
+						//assert fish.getPosition().getType() == Basin.TypeBassin.SEA;
 						
 						if (fish.isMature()) {
 							// fish with homing
@@ -174,7 +180,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								}
 
 								// add the deathBasin in the list
-								accBasOfFish.add(new Duo<Basin, Double>(deathBasin, weightOfDeathBasin));
+								//accBasOfFish.add(new Duo<Basin, Double>(deathBasin, weightOfDeathBasin));
 								totalWeight = totalWeight + weightOfDeathBasin;
 
 								// compute sequentially the prob to go into a  basin
@@ -186,7 +192,8 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 
 									if (amountToGo > 0) {
 										if (b.getId() != -1) {
-											newFish.add(fish.duplicateWithNewPositionAndAmount(group.getPilot(), bn.getAssociatedRiverBasin(b), amountToGo));
+											RiverBasin  strayerDestination = (RiverBasin) bn.getAssociatedRiverBasin(b);
+											strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(), strayerDestination, amountToGo), group);
 										}
 										//else{
 											//TODO add to the cemetery 
@@ -207,15 +214,19 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								fish.setAmount(amountWithHoming);
 								// retour soit dans le bassin de naissance pour les semelpares 
 								// soit dans le dernier bassin de reproduction pour les it�ropares
-								fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, bn.getAssociatedRiverBasin(fish.getPosition())));
-							} else {
+								homingDestination.addFish(fish, group);
+								//fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, bn.getAssociatedRiverBasin(fish.getPosition())));
+							} 
+							/*else {
 								deadFish.add(fish);
-							}
+							}*/
+							
+							fishIterator.remove();
 						}
 					}
 				}
 			}
-			for (Duo<DiadromousFish, Basin> duo : fishesToMove) {
+			/*for (Duo<DiadromousFish, Basin> duo : fishesToMove) {
 				duo.getFirst().moveTo(group.getPilot(), duo.getSecond(), group);
 			}
 			for (DiadromousFish fish : deadFish) {
@@ -223,7 +234,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 			}
 			for (DiadromousFish fish : newFish) {
 				group.addAquaNism(fish);
-			}
+			}*/
 		}
 	}
 }
