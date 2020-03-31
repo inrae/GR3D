@@ -4,6 +4,7 @@ import environment.Basin;
 import environment.BasinNetwork;
 import fr.cemagref.simaqualife.kernel.AquaNism;
 import fr.cemagref.simaqualife.kernel.AquaNismsGroup;
+import fr.cemagref.simaqualife.kernel.spatial.Position;
 import fr.cemagref.simaqualife.pilot.Pilot;
 
 public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
@@ -108,6 +109,10 @@ public class DiadromousFish extends AquaNism<Basin, BasinNetwork> {
 		return gender;
 	}
 
+	
+	public void  setPosition(Basin position) {
+		this.position = position;
+	}
 
 	@Override
 	public <ANG extends AquaNismsGroup<?, BasinNetwork>> void moveTo(

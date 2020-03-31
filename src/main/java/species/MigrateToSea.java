@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import miscellaneous.Duo;
@@ -36,30 +37,34 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 	public void doProcess(DiadromousFishGroup group) {
 		Time time = group.getEnvironment().getTime();
 		if (time.getSeason(group.getPilot()) == seaMigrationSeason ){
-			Basin destination;
 
-			//On cr�er la Map pour stocker les flux d'export
+			// create a Map to store export fluxes
 			Map<String, Double> totalOutputFluxes = new Hashtable<String, Double>(); 
-		
 
-			List<Duo<DiadromousFish,Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish,Basin>>();
+			//List<Duo<DiadromousFish,Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish,Basin>>();
 			for (RiverBasin basin : group.getEnvironment().getRiverBasins()) {
-		
-				//Fish move to sea and compute the related export of nutrients 
-				List<DiadromousFish> fishes = basin.getFishs(group);
 
-				// ON r�-initialise notre map pour chauqe bassin 
+				// initialize the map for each basin
 				for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 					totalOutputFluxes.put(nutrient, 0.); 
 				}
 				totalOutputFluxes.put("biomass", 0.); //cr�ation de la biomasse 
 				totalOutputFluxes.put("abundanceExp", 0.);
 
-				if (fishes!=null) {
-					for (DiadromousFish fish : fishes) {
-						destination = group.getEnvironment().getAssociatedSeaBasin(fish.getPosition());
-						fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, destination)); //Mentionne la sortie d'un poisson de la boucle 
+				// destination to move
+				Basin destination = group.getEnvironment().getAssociatedSeaBasin(basin);
 
+				// Fish move to sea and compute the related export of nutrients 
+				List<DiadromousFish> fishes = basin.getFishs(group);
+				if (fishes!=null) {
+					ListIterator<DiadromousFish> fishIterator = fishes.listIterator();
+					// for (DiadromousFish fish : fishes) {
+					while (fishIterator.hasNext()) {
+						DiadromousFish fish = fishIterator.next();
+						//destination = group.getEnvironment().getAssociatedSeaBasin(fish.getPosition());
+						//fishesToMove.add(new Duo<DiadromousFish, Basin>(fish, destination)); //Mentionne la sortie d'un poisson de la boucle 
+
+						// ----------------------------------------------------------------- compute nutrients fluxes
 						double abundanceExp = fish.getAmount();
 						double biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount(); 
 
@@ -67,19 +72,27 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 							Map <String, Double> aFluxExportedByJuveniles= group.getNutrientRoutine().computeNutrientsExportForJuveniles(fish); 
 							for (String nutrient: aFluxExportedByJuveniles.keySet()) {
 								totalOutputFluxes.put(nutrient,totalOutputFluxes.get(nutrient) + aFluxExportedByJuveniles.get(nutrient) * fish.getAmount()); 	
-								
+
 								group.getNutrientRoutine().getNutrientExportFluxesCollection().put(time.getYear(group.getPilot()), nutrient, basin.getName(),  aFluxExportedByJuveniles.get(nutrient) * fish.getAmount());
 							}
 
 							totalOutputFluxes.put("biomass", totalOutputFluxes.get("biomass") + biomass); 
 							totalOutputFluxes.put("abundanceExp", totalOutputFluxes.get("abundanceExp")+ abundanceExp); 
 						}
-					}     
+						// -----------------------------------------------------------------------
+
+						// add fish with its new position to destination basin
+						fish.setPosition(destination);
+						destination.addFish(fish, group);
+						// remove fish from the present basin (with the listIterator to speed up !)
+						fishIterator.remove();
+
+					} // end loop on fish    
 				}
 
-				for (Duo<DiadromousFish,Basin> duo : fishesToMove) {
+				/*for (Duo<DiadromousFish,Basin> duo : fishesToMove) {
 					duo.getFirst().moveTo(group.getPilot(), duo.getSecond(), group); //on d�place les poissons dans le fichier MoveTo et on d�note la destination du poisson.
-				}
+				}*/
 
 				if (displayFluxesOnConsole) {
 					System.out.println(group.getPilot().getCurrentTime() + "; " + time.getYear(group.getPilot()) + ";" + time.getSeason(group.getPilot()) 
@@ -105,5 +118,4 @@ public class MigrateToSea extends AquaNismsGroupProcess<DiadromousFish, Diadromo
 			}
 		}
 	}
-	
 }
