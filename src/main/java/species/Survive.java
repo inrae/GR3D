@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
@@ -33,16 +34,16 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 	public double mortalityRateInSea = 0.4;
 	public double mortalityRateInOffshore = 0.4;
 
-
-
+	
 	public static void main(String[] args) { System.out.println((new
 			XStream(new DomDriver())) .toXML(new Survive())); }
 
+	
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
 		Time time = group.getEnvironment().getTime();
-		
+
 		double survivalProbability=1.;
 		List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 		long survivalAmount;
@@ -66,8 +67,9 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 
 			if (basin.getFishs(group)!=null) {
 				//System.out.println(" y a  des poissons");
-				for(DiadromousFish fish : basin.getFishs(group)){
-					
+				ListIterator<DiadromousFish> fishIterator = basin.getFishs(group).listIterator();
+				while (fishIterator.hasNext()) {
+					DiadromousFish  fish = fishIterator.next();
 					survivalProbability = 1.;
 					//Compute the survival probability according to the fish position
 					if(fish.getPosition().getType() == TypeBassin.RIVER && fish.isMature()){ //Survive in river before spawning 
@@ -104,7 +106,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 						if (survivalAmount > 0) 
 							fish.setAmount(survivalAmount);
 						else 
-							deadFish.add(fish);
+							fishIterator.remove();
 
 						if (deathAmount > 0L && fish.getPosition().getType() == TypeBassin.RIVER) { //Compute the fluxes for dead fish in river in the SI. 
 
@@ -120,7 +122,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 								group.getNutrientRoutine().getNutrientImportFluxesCollection().
 								put(time.getYear(group.getPilot()), nutrient, fish.getBirthBasin().getName(), basin.getName(), aFluxForDeadFishBeforeSpawning.get(nutrient) * deathAmount);
 							}
-							
+
 							/*
 							 * if
 							 * (basin.getName().equalsIgnoreCase("Guadalquivir")
@@ -133,15 +135,8 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 						}
 					}
 				}//end on loop of fish 
-
-			}
-
-			for (DiadromousFish fish : deadFish){
-				group.removeAquaNism(fish);
 			}
 		} //end loop on basin 
-
-
 	}//end of doprocess 
 }//end of class 
 
