@@ -1,6 +1,7 @@
 package species;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -14,7 +15,6 @@ import environment.SeaBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
-import fr.cemagref.simaqualife.pilot.Pilot;
 import miscellaneous.Miscellaneous;
 
 import org.openide.util.lookup.ServiceProvider;
@@ -96,14 +96,6 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 				.toXML(new DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin()));
 	}
 
-
-	@Override
-	public void initTransientParameters(Pilot pilot) {
-		// TODO Auto-generated method stub
-		super.initTransientParameters(pilot);
-	}
-
-
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		Time time = group.getEnvironment().getTime();
@@ -121,21 +113,17 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 				pHoming = pHomingAfterEquil;
 			}
 
-			//List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
-			//List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
-			//List<Duo<DiadromousFish, Basin>> fishesToMove = new ArrayList<Duo<DiadromousFish, Basin>>();
-
 			for (SeaBasin departure : group.getEnvironment().getSeaBasins()) {
 
-				RiverBasin homingDestination  = (RiverBasin) bn.getAssociatedRiverBasin(departure);
+				RiverBasin homingDestination = (RiverBasin) bn.getAssociatedRiverBasin(departure);
 
 				List<DiadromousFish> fishes = departure.getFishs(group);
 				if (fishes != null) {
-					ListIterator<DiadromousFish> fishIterator = fishes .listIterator();
-					while (fishIterator.hasNext()) {		
-						DiadromousFish fish = fishIterator.next();
+					//for (DiadromousFish fish : fishes) {
+					ListIterator<DiadromousFish> fishIterator = fishes.listIterator();
+					while (fishIterator.hasNext()) {
+						DiadromousFish fish=fishIterator.next();
 
-						//for (DiadromousFish fish : fishes) {
 						if (fish.isMature()) {
 							// fish with homing
 							homingAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
@@ -147,69 +135,50 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								strayedAmount = fish.getAmount() - homingAmount;
 							}
 
-							// manage strayed fish
+							// influence of the fish length on the probability to disperse
 							if (strayedAmount != 0) {
-								// calculate the weight associated with the fish length in the probabaility to disperse
+								// calcula the weight associated with the fish length in the probabaility to disperse
 								double weightFishLength = -(alpha2Rep * ((fish.getLength() - meanSpawnersLengthAtRepro) / standardDeviationOfSpawnersLengthAtRepro));
-
-
-								Map<RiverBasin, Double> basinWeightswithDeathWeight = new TreeMap<RiverBasin,Double>();
 
 								// We fill the weight table
 								double totalWeight = 0.;
 								double probToGo = 0.;
 								long amountToGo = 0;
-								// TODO manage the case when AccBasOfFish is empty
-								//for (Duo<Basin, Double> accBasin : accBasOfFish) {
-
-								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {
-
-									// total weight for the basins
-									RiverBasin destination = entry.getKey();
-									double weight = entry.getValue();
-									double accBasinWeight = 1 / (1 + Math.exp(-(weight + weightFishLength)));
-
+								Map<RiverBasin, Double> basinWeightsFromDeparture = new HashMap<RiverBasin, Double>();
+								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {	
+									double accBasinWeight = 1. / (1. + Math.exp(-(entry.getValue() + weightFishLength)));
+									
 									// put weight to 0 for unused basins
 									if (group.isThereBasinToUpdate()){
 										if (time.getYear(group.getPilot()) >= group.getYearOfTheUpdate()
-												&& group.getPattractive(destination.getName()) == 0){
+												&& group.getPattractive(entry.getKey().getName()) == 0){
 											//TODO use correctely getPaccessible
 											accBasinWeight = 0 ;
 										}
 									}
 									totalWeight += accBasinWeight;
-
-									basinWeightswithDeathWeight.put(destination, accBasinWeight);
+									basinWeightsFromDeparture.put (entry.getKey(),accBasinWeight );
 								}
 
-								// add the deathBasin in the map
-								//accBasOfFish.add(new Duo<Basin, Double>(deathBasin, weightOfDeathBasin));
-								//basinWeightswithDeathWeight.put(deathBasin, weightOfDeathBasin);
+								// sum the deathBasin weight in the list
 								totalWeight = totalWeight + weightOfDeathBasin;
 
 								// compute sequentially the prob to go into a  basin
-								for (Entry<RiverBasin, Double> entry : basinWeightswithDeathWeight.entrySet()) {
-									RiverBasin destination = entry.getKey();
-									double weight = entry.getValue();
+								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {	
+									RiverBasin strayerDestination = entry.getKey();
+									Double weight = entry.getValue();
 									probToGo = weight / totalWeight;
 									amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
 
 									if (amountToGo > 0) {
-										// add a "duplicated" fish in the destination basin
-										DiadromousFish duplicatedFish = fish.duplicateWithNewPositionAndAmount(group.getPilot(), destination, amountToGo);
-										destination.addFish(duplicatedFish, group);
-										//newFish.add(fish.duplicateWithNewPositionAndAmount(group.getPilot(), bn.getAssociatedRiverBasin(b), amountToGo));
+											strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(), strayerDestination, amountToGo), group);
 									}
-									//else{
-									//TODO add to the cemetery 
-									//deadFish.add(fish.duplicateWithNewPositionAndAmount(accBasin, amountToGo));
-									//}
-
+									
 									totalWeight -= weight;
 									strayedAmount -= amountToGo;
 
 									if (strayedAmount <= 0) {
-										//CHECK if it not alwalys the northorn catcments that do not receive fish
+										//CHECK if it occurs and for which basins
 										break;
 									}
 								}
@@ -218,32 +187,18 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 							// update fish with homing
 							if (homingAmount > 0) {
 								fish.setAmount(homingAmount);
+								fish.setPosition(homingDestination);
 								// retour soit dans le bassin de naissance pour les semelpares 
 								// soit dans le dernier bassin de reproduction pour les it�ropares
-								//fish.moveTo(group.getPilot(), bn.getAssociatedRiverBasin(fish.getPosition()), group);
-								fish.setPosition(homingDestination);
+								homingDestination.addFish(fish, group);
 							} 
-							/*else {
-								deadFish.add(fish);
-							}*/
-							
-							// remove from the list of departure basin
-							fishIterator.remove();
-						} // end if mature
 
-					} // end of listiterator
+							// remove fish from the departure basin
+							fishIterator.remove();
+						}
+					}
 				}
 			}
-			/*	for (Duo<DiadromousFish, Basin> duo : fishesToMove) {
-				duo.getFirst().moveTo(group.getPilot(), duo.getSecond(), group);
-			}
-			for (DiadromousFish fish : deadFish) {
-				group.removeAquaNism(fish);
-			}
-			for (DiadromousFish fish : newFish) {
-				group.addAquaNism(fish);
-			}*/
 		}
 	}
-
 }
