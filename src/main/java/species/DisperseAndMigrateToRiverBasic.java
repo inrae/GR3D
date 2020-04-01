@@ -1,8 +1,8 @@
 package species;
 
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import environment.Basin;
 import environment.BasinNetwork;
@@ -73,7 +73,7 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 	 *  <key> SeaBasin
 	 *  <value>
 	 *  	<key> RiverBasin
-	 *  	<value>  part of weight independant of fish size used to calculate probability to disperse
+	 *  	<value> weight  to calculate probaility to disperse
 	 */
 	protected transient Map<SeaBasin,Map<RiverBasin,Double>> basinWeightsPerBasin;
 	
@@ -93,34 +93,27 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
             super.initTransientParameters(pilot);
 		// calcul les poids des bassins voisins qui ne d�pendent pas des poissons pour chaque SeaBassin
 		BasinNetwork bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
-		basinWeightsPerBasin = new TreeMap<SeaBasin, Map<RiverBasin,Double>>();
 		basinDistancesPerBasin = new TreeMap<SeaBasin, Map<RiverBasin,Double>>();
+		basinWeightsPerBasin = new TreeMap<SeaBasin, Map<RiverBasin,Double>>();
 
-		for (SeaBasin seaBasin : bn.getSeaBasins()){
-			// prepare the distance matrix with riverBasin as key
-			Map<RiverBasin,Double> mapDist = new TreeMap<RiverBasin, Double>();	
-			for (Entry<Basin,Double> entry : bn.getNeighboursWithDistance(seaBasin).entrySet() ) {
-				mapDist.put((RiverBasin) bn.getAssociatedRiverBasin(entry.getKey()), entry.getValue());
-			}
-	
-			
-			// fill basin Distances Per Basin
-			basinDistancesPerBasin.put(seaBasin, mapDist);
-						
+		for (SeaBasin seaBas : bn.getSeaBasins()){
+			// compute the distance with between seaBas and all the river basins 
+			Map<RiverBasin, Double> mapDist = new TreeMap<RiverBasin, Double>();
 			// Compute the weight of each river basin
-			//Map<Basin,Double> accessibleBasins = bn.getNeighboursWithDistance(seaBas);
-			Map<RiverBasin,Double> mapWeights = new TreeMap<RiverBasin, Double>();	
-			for (Entry<Basin,Double> entry : bn.getNeighboursWithDistance(seaBasin).entrySet() ) {
-				mapWeights.put((RiverBasin) bn.getAssociatedRiverBasin(entry.getKey()), entry.getValue());
-			}
-			 //replace the value by the weight
-				for (Entry<RiverBasin, Double> entry : mapWeights.entrySet()) {
-					double weight = alpha0Rep 
-							- alpha1Rep * ((entry.getValue() - meanInterDistance) / standardDeviationInterDistance)
-							+ alpha3Rep* ((entry.getKey().getSurface() - meanBvSurface) / standardDeviationBvSurface);
-					mapWeights.put(entry.getKey(), weight);
-				}						
-				basinWeightsPerBasin.put(seaBasin, mapWeights);
+			Map<RiverBasin,Double> mapWeight = new TreeMap<RiverBasin, Double>();
+			
+			for (Entry<Basin, Double> entry :  bn.getNeighboursWithDistance(seaBas).entrySet()) {
+				RiverBasin associatedRiverBasin = (RiverBasin) bn.getAssociatedRiverBasin(entry.getKey());
+				mapDist.put(associatedRiverBasin, entry.getValue());
+			
+				double weight = alpha0Rep 
+						- alpha1Rep * ((entry.getValue()-meanInterDistance)/standardDeviationInterDistance)
+						+ alpha3Rep*((associatedRiverBasin.getAttractiveSurface()-meanBvSurface)/standardDeviationBvSurface);
+				mapWeight.put(associatedRiverBasin, weight);
+			
+			}	
+			basinDistancesPerBasin.put(seaBas, mapDist);
+			basinWeightsPerBasin.put(seaBas, mapWeight);			
 		}
 	}
 
@@ -134,3 +127,4 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 		
 	}
 }
+
