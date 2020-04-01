@@ -41,7 +41,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 
 			long amountWithHoming, strayedAmount;
 
-			Map<RiverBasin,Double> distBasOfFish;
+			Map<RiverBasin, Double> distBasOfFish;
 
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 			List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
