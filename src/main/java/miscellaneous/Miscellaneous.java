@@ -7,31 +7,32 @@ import umontreal.iro.lecuyer.randvar.UniformGen;
 public class Miscellaneous {
 
 	public static long binomialForSuperIndividual(Pilot pilot, long amount, double succesProba, long threshold) {
-			long amountWithSuccess;
-			if (amount > threshold) { // use a normal approximation for huge amount 
-				/*			double p=-1.;
-	             while (p<0 | p>1){
-	             p = genAleaNormal.nextDouble() * 
-	             Math.sqrt(succesProba * (1 - succesProba) /amount) + succesProba;
-	             }
-	             amountWithSuccess = (long) Math.round(p* amount);*/
-				amountWithSuccess = -1;
-				while (amountWithSuccess < 0 | amountWithSuccess > amount) {
-					amountWithSuccess = Math.round(NormalGen.nextDouble(pilot.getRandomStream(), 0., 1.) * Math.sqrt(succesProba * (1 - succesProba) * amount)
-							+ succesProba * amount);
-				}
+		long amountWithSuccess;
+		if (amount > threshold) { // use a normal approximation for huge amount 
+			/*			double p=-1.;
+             while (p<0 | p>1){
+             p = genAleaNormal.nextDouble() * 
+             Math.sqrt(succesProba * (1 - succesProba) /amount) + succesProba;
+             }
+             amountWithSuccess = (long) Math.round(p* amount);*/
+			amountWithSuccess = -1;
+			while (amountWithSuccess < 0 | amountWithSuccess > amount) {
+				amountWithSuccess = Math.round(NormalGen.nextDouble(pilot.getRandomStream(), 0., 1.) * Math.sqrt(succesProba * (1 - succesProba) * amount)
+						+ succesProba * amount);
+			}
 
-			} else {
-				UniformGen aleaGen = new UniformGen(pilot.getRandomStream(), 0., 1.);
-				amountWithSuccess = 0;
-				for (long i = 0; i < amount; i++) {
-					if (aleaGen.nextDouble() < succesProba) {
-						amountWithSuccess++;
-					}
+		} else {
+			UniformGen aleaGen = new UniformGen(pilot.getRandomStream(), 0., 1.);
+			amountWithSuccess = 0;
+			for (long i = 0; i < amount; i++) {
+				if (aleaGen.nextDouble() < succesProba) {
+					amountWithSuccess++;
 				}
 			}
-			return amountWithSuccess;
 		}
+		return amountWithSuccess;
+	}
+
 	public static long binomialForSuperIndividual(Pilot pilot, long amount, double succesProba) {
 		return binomialForSuperIndividual(pilot, amount, succesProba, 50);
 	}
