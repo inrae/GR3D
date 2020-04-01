@@ -15,6 +15,7 @@ import environment.SeaBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
+import fr.cemagref.simaqualife.pilot.Pilot;
 import miscellaneous.Miscellaneous;
 
 import org.openide.util.lookup.ServiceProvider;
@@ -22,6 +23,7 @@ import org.openide.util.lookup.ServiceProvider;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Duo;
 
 /**
@@ -91,11 +93,25 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 	 */
 	private long yearOfTheKillings;
 
+	/**
+	 * the random numbers generator for binomial draws
+	 * @unit --
+	 */
+	private transient BinomialForSuperIndividualGen aleaGen;
+	
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver()))
 				.toXML(new DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin()));
 	}
 
+	
+	@Override
+	public void initTransientParameters(Pilot pilot) {
+		super.initTransientParameters(pilot);
+		aleaGen = new BinomialForSuperIndividualGen(pilot.getRandomStream());
+	}
+
+	
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		Time time = group.getEnvironment().getTime();
@@ -126,7 +142,8 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 
 						if (fish.isMature()) {
 							// fish with homing
-							homingAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
+							//homingAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50	
+							homingAmount = aleaGen.getSuccessNumber(fish.getAmount(), pHoming);
 							// strayed fish 
 							if (killStrayers == true && time.getYear(group.getPilot()) >= yearOfTheKillings) {
 								strayedAmount = 0;
@@ -168,8 +185,8 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 									RiverBasin strayerDestination = entry.getKey();
 									Double weight = entry.getValue();
 									probToGo = weight / totalWeight;
-									amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
-
+									//amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
+									amountToGo = aleaGen.getSuccessNumber(strayedAmount, probToGo);
 									if (amountToGo > 0) {
 											strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(), strayerDestination, amountToGo), group);
 									}
