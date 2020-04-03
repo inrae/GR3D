@@ -16,7 +16,8 @@ import environment.Basin;
 import environment.Basin.TypeBassin;
 import environment.Time;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
-
+import fr.cemagref.simaqualife.pilot.Pilot;
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Miscellaneous;
 import species.DiadromousFish.SpawnerOrigin;
 
@@ -34,9 +35,21 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 	public double mortalityRateInSea = 0.4;
 	public double mortalityRateInOffshore = 0.4;
 
+	/**
+	 * the random numbers generator for binomial draws
+	 * @unit --
+	 */
+	private transient BinomialForSuperIndividualGen aleaGen;
 	
 	public static void main(String[] args) { System.out.println((new
 			XStream(new DomDriver())) .toXML(new Survive())); }
+
+
+	@Override
+	public void initTransientParameters(Pilot pilot) {
+		super.initTransientParameters(pilot);
+		aleaGen = new BinomialForSuperIndividualGen(pilot.getRandomStream());
+	}
 
 	
 	@Override
@@ -45,7 +58,6 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 		Time time = group.getEnvironment().getTime();
 
 		double survivalProbability=1.;
-		List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 		long survivalAmount;
 		long deathAmount; 
 
@@ -60,7 +72,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 			totalInputFluxes.get(origin).put("biomass",0.); 
 		}
 
-		double sumNGuadalquivir = 0.;
+		//double sumNGuadalquivir = 0.;
 
 		for(Basin basin : group.getEnvironment().getBasins()){
 			//System.out.print(basin.getName());
@@ -100,7 +112,7 @@ public class Survive extends AquaNismsGroupProcess<DiadromousFish, DiadromousFis
 					//Compute survival amount in the SI for one fish whatever its position 
 					deathAmount = 0L; 
 					if (survivalProbability<1.){
-						survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalProbability);
+						survivalAmount = aleaGen.getSuccessNumber2(fish.getAmount(), survivalProbability);
 						deathAmount = fish.getAmount() - survivalAmount;
 
 						if (survivalAmount > 0) 
