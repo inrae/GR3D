@@ -143,7 +143,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 						if (fish.isMature()) {
 							// fish with homing
 							//homingAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50	
-							homingAmount = aleaGen.getSuccessNumber(fish.getAmount(), pHoming);
+							homingAmount = aleaGen.getSuccessNumber2(fish.getAmount(), pHoming);
 							// strayed fish 
 							if (killStrayers == true && time.getYear(group.getPilot()) >= yearOfTheKillings) {
 								strayedAmount = 0;
@@ -186,7 +186,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 									Double weight = entry.getValue();
 									probToGo = weight / totalWeight;
 									//amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
-									amountToGo = aleaGen.getSuccessNumber(strayedAmount, probToGo);
+									amountToGo = aleaGen.getSuccessNumber2(strayedAmount, probToGo);
 									if (amountToGo > 0) {
 											strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(), strayerDestination, amountToGo), group);
 									}
