@@ -19,6 +19,7 @@ import org.openide.util.lookup.ServiceProvider;
 import species.DiadromousFish.Gender;
 import species.DiadromousFish.Stage;
 import umontreal.iro.lecuyer.probdist.NormalDist;
+import umontreal.iro.lecuyer.randvar.NormalACRGen;
 import umontreal.iro.lecuyer.randvar.NormalGen;
 
 @ServiceProvider(service = AquaNismsGroupProcess.class)
@@ -100,7 +101,7 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
 		super.initTransientParameters(pilot);
-		genNormal = new NormalGen( pilot.getRandomStream(),
+		genNormal = new NormalACRGen( pilot.getRandomStream(),
 				new NormalDist(0., 1.));		
 	}
 
