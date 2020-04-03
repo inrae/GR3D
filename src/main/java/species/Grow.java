@@ -92,7 +92,7 @@ public class Grow extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGr
 	 */
 	private double sigmaDeltaLVonBert = 0.2;
 
-	private transient NormalACRGen genNormal;
+	private transient NormalGen genNormal;
 
 	public static void main(String[] args) { System.out.println((new
 			XStream(new DomDriver())) .toXML(new Grow())); }
