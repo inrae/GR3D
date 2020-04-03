@@ -47,22 +47,72 @@ public class BinomialForSuperIndividualGen {
 	}
 
 	public long getSuccessNumber(long draws,  double succesProbability) {
-		double successes = -1. ;
+
 		if (draws >= threshold) {
-			// approximate the binomial by a normal distribution of mean n p and variance n p (1-p)
-			while (successes < 0 | successes > draws) {
-				successes = Math.round(normalGen.nextDouble() * Math.sqrt(succesProbability * (1 - succesProbability) * draws)
-						+ succesProbability * draws);
+			double mean = succesProbability * draws;
+			double standardDeviation = Math.sqrt(succesProbability * (1 - succesProbability) * draws);
+			//int nbTRy =0;
+			if (3. * standardDeviation < 1.)
+				return (long) Math.round( mean);
+			else {
+				long successes = -1L ;
+				// approximate the binomial by a normal distribution of mean n p and variance n p (1-p)
+				while (successes < 0 | successes > draws) {
+					successes = (long) Math.round(normalGen.nextDouble() * standardDeviation + mean);
+					//nbTRy ++;
+				}
+				//if (nbTRy >1)
+				//	System.out.println("n =" + draws + "\t p= "+  succesProbability + "\tect = " + standardDeviation+   " \tnp = " + Math.round(mean) +" --> " +nbTRy + " for " + successes);
+				return successes;
 			}
 
 		} else {
-			successes = 0.;
+			long successes = 0;
 			for (long i = 0; i < draws; i++) {
 				if (uniformGen.nextDouble() < succesProbability) {
 					successes++;
 				}
 			}
+			return successes;
 		}
-		return (long) successes;
 	}
+
+	private long constantDraw(double mean) {
+		return (long) Math.round( mean);
+	}
+
+	private long normalDraw(long draws, double mean, double standardDeviation) {
+		double successes = -1. ;
+		while (successes < 0 | successes > draws) {
+			successes = Math.round(normalGen.nextDouble() * standardDeviation + mean);
+		}
+		return (long) Math.round(successes);
+	}
+
+	private long binomialDraw(long draws, double succesProbability) {
+		long successes = 0 ;
+		for (successes = 0; successes < draws; successes++) {
+			if (uniformGen.nextDouble() < succesProbability) {
+				successes++;
+			}
+		} 
+		return successes;
+	}
+	
+	public long getSuccessNumber2(long draws,  double succesProbability) {
+
+		if (draws >= threshold) {
+			double mean = succesProbability * draws;
+			double standardDeviation = Math.sqrt(succesProbability * (1 - succesProbability) * draws);
+
+			if (3. * standardDeviation < 1.)
+				return constantDraw(mean);
+			else {
+				return normalDraw(draws, mean, standardDeviation);
+			}
+		} else {
+			return binomialDraw(draws,succesProbability );
+		}
+	}
+
 }
