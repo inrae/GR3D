@@ -177,8 +177,6 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 					// effective temperature for reproduction (priority to the ANG value) 
 					double tempEffectRep;
-					//CHECK if currentTemp can be removed
-					double currentTemp = riverBasin.getCurrentTemperature(group.getPilot());
 					if (Double.isNaN(group.getTempMinRep())){
 						tempEffectRep = Miscellaneous.temperatureEffect(riverBasin.getCurrentTemperature(group.getPilot()), tempMinRep, tempOptRep, tempMaxRep);
 					}
@@ -271,8 +269,9 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
 							double biomass = 0.; 
-							//survivalAmount = aleaGen.getSuccessNumber2(fish.getAmount(), survivalRateAfterReproduction); 
-							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
+							survivalAmount = aleaGen.getSuccessNumber(fish.getAmount(), survivalRateAfterReproduction); 
+							//survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
+							
 							// update the amount of fish or kill the fish if survival amount = 0		
 							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
 
