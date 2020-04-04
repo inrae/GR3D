@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Duo;
 import miscellaneous.Miscellaneous;
 import species.DiadromousFish.Gender;
@@ -160,7 +161,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 							fish.incNumberOfReproduction();	
 
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
-							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction);
+							survivalAmount = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction);
 							if (survivalAmount > 0) 
 								fish.setAmount(survivalAmount);
 								

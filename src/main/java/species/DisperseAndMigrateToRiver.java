@@ -11,6 +11,7 @@ import environment.RiverBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Miscellaneous;
 
 import org.openide.util.lookup.ServiceProvider;
@@ -50,7 +51,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 		
 				if (fish.isMature())   {
 					// fish with homing
-					amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
+					amountWithHoming = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
 
 					// strayed fish 
 					strayedAmount = fish.getAmount() - amountWithHoming;					
@@ -93,7 +94,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 						// compute sequentially the prob to go into a  basin
 						for (Basin accBasin : accBasOfFish.keySet()){
 							probToGo = accBasOfFish.get(accBasin) / totalWeight;
-							amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
+							amountToGo = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), strayedAmount, probToGo);
 
 							if (amountToGo > 0){
 								newFish.add(fish.duplicateWithNewPositionAndAmount(group.getPilot(), bn.getAssociatedRiverBasin(accBasin), amountToGo));			

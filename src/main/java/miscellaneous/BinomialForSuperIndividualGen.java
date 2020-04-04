@@ -19,6 +19,7 @@
  */
 package miscellaneous;
 
+import fr.cemagref.simaqualife.pilot.Pilot;
 import umontreal.iro.lecuyer.randvar.NormalACRGen;
 import umontreal.iro.lecuyer.randvar.NormalGen;
 import umontreal.iro.lecuyer.randvar.UniformGen;
@@ -107,12 +108,44 @@ public class BinomialForSuperIndividualGen {
 
 			if (3. * standardDeviation < 1.)
 				return constantDraw(mean);
-			else {
+			else 
 				return normalDraw(draws, mean, standardDeviation);
-			}
+			
 		} else {
 			return binomialDraw(draws,succesProbability );
 		}
+	}
+	
+	public static long getSuccessNumber(Pilot pilot, long amount, double succesProba, long threshold) {
+
+		if (amount > threshold) { // use a normal approximation for huge amount 
+			/*			double p=-1.;
+             while (p<0 | p>1){
+             p = genAleaNormal.nextDouble() * 
+             Math.sqrt(succesProba * (1 - succesProba) /amount) + succesProba;
+             }
+             amountWithSuccess = (long) Math.round(p* amount);*/
+			double amountWithSuccess = -1;
+			while (amountWithSuccess < 0 | amountWithSuccess > amount) {
+				amountWithSuccess = Math.round(NormalGen.nextDouble(pilot.getRandomStream(), 0., 1.) * Math.sqrt(succesProba * (1 - succesProba) * amount)
+						+ succesProba * amount);
+			}
+			return (long) amountWithSuccess;
+
+		} else {
+			UniformGen aleaGen = new UniformGen(pilot.getRandomStream(), 0., 1.);
+			long amountWithSuccess = 0L;
+			for (long i = 0; i < amount; i++) {
+				if (aleaGen.nextDouble() < succesProba) {
+					amountWithSuccess++;
+				}
+			}
+			return amountWithSuccess;
+		}	
+	}
+
+	public static long getSuccessNumber(Pilot pilot, long amount, double succesProba) {
+		return getSuccessNumber(pilot, amount, succesProba, 50);
 	}
 
 }

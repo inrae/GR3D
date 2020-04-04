@@ -16,7 +16,7 @@ import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
 import fr.cemagref.simaqualife.pilot.Pilot;
-
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Miscellaneous;
 
 import org.openide.util.lookup.ServiceProvider;
@@ -140,7 +140,7 @@ public class DisperseAndMigrateToRiverStandardization extends AquaNismsGroupProc
 					if (fish.isMature())   {
 
 						// fish with homing
-						homingAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
+						homingAmount = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
 						// strayed fish 
 						strayedAmount = fish.getAmount() - homingAmount;					
 
@@ -177,7 +177,7 @@ public class DisperseAndMigrateToRiverStandardization extends AquaNismsGroupProc
 							// compute sequentially the prob to go into a  basin
 							for (RiverBasin destination : wForAccessibleBasins.keySet()){
 								probToGo = wForAccessibleBasins.get(destination) / totalWeight;
-								amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
+								amountToGo = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), strayedAmount, probToGo);
 
 								if (amountToGo > 0){
 									// add a "duplicated" fish in the destination basin
