@@ -96,7 +96,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
 		super.initTransientParameters(pilot);
-		genNormal = new NormalACRGen( pilot.getRandomStream(),
+		genNormal = new NormalGen( pilot.getRandomStream(),
 				new NormalDist(0., 1.));
 
 		aleaGen = new BinomialForSuperIndividualGen(pilot.getRandomStream());
@@ -271,8 +271,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
 							double biomass = 0.; 
-							survivalAmount = aleaGen.getSuccessNumber2(fish.getAmount(), survivalRateAfterReproduction); 
-
+							//survivalAmount = aleaGen.getSuccessNumber2(fish.getAmount(), survivalRateAfterReproduction); 
+							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction); 
 							// update the amount of fish or kill the fish if survival amount = 0		
 							if (survivalAmount > 0) {// SUperindividu est encore vivant mais il perd des effectifs 
 
@@ -311,7 +311,6 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 							}
 							else {
 								//Le superindividu est mort !!! 
-								//deadFish.add(fish);
 
 								// --------------------------------------------------------------------------------------- nutrient routine -----------------------------
 								//Export for fished died after spawning (fish.getAmount): carcasses + excretion + gametes 
@@ -327,6 +326,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 								// remove fish because fish is dead
 								fishIterator.remove();
+								//deadFish.add(fish);
 							}
 						}
 					}
