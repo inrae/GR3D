@@ -31,15 +31,19 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.locationtech.jts.geom.MultiPolygon;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 
 public class BasinNetworkNEA extends BasinNetwork {
 
 	private String basinFile = "data/input/northeastamerica/nea_basins.csv";
-	
+
 	private String continentShpFile = "data/input/northeastamerica/shape/nea_continent.shp";
 	private String seaBasinShpFile = "data/input/northeastamerica/shape/seabasins.shp";
 	private String riverBasinShpFile = "data/input/northeastamerica/shape/riverbasins.shp";
+	private String riverBasinNameLabel = "NAME";
+	private String seaBasinNameLabel = "name";
+	private String continentPathName = "PATH";
 
 	private String distanceGridFileName = "data/input/northeastamerica/distanceGridNEA.csv";
 	private String temperatureCatchmentFile = "data/input/northeastamerica/basins_temperatures.csv";
@@ -48,7 +52,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 	private transient Map<Long, Map<String, Double[]>> temperatureSeries;
 	private transient Map<String, Path2D.Double> mapContinent ;
-	
+
 	class Record implements Comparable<Record> {
 
 		private int order;
@@ -77,7 +81,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		public int getOrder() {
 			return order;
 		}
-		
+
 		/**
 		 * @return the basin_id used in database
 		 */
@@ -104,6 +108,12 @@ public class BasinNetworkNEA extends BasinNetwork {
 		public double getPDam(){
 			return pDam;
 		}
+
+		@Override
+		public String toString() {
+			return "Record [order=" + this.order + ", basin_id=" + this.basin_id + ", name=" + this.name + ", longitude=" + this.longitude + ", latitude=" + this.latitude + ", surface=" + this.surface
+					+ ", pDam=" + this.pDam + "]";
+		}
 	}
 
 	public static void main(String[] args) {
@@ -114,7 +124,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		return temperatureSeries.get(year);
 	}
 
-	private Map<String, Path2D.Double> loadBasins(String basinShpFile, String name) {
+	private Map<String, Path2D.Double> loadBasins(String basinShpFile, String name) throws Exception {
 		Map<String, Path2D.Double> mapBasin = new HashMap<String, Path2D.Double>();
 		ShapefileDataStore basinStore = null;
 		SimpleFeatureIterator  iterator = null;
@@ -123,18 +133,53 @@ public class BasinNetworkNEA extends BasinNetwork {
 			basinStore = new ShapefileDataStore(aFile.toURI().toURL());
 
 			ContentFeatureSource  featureBasin = basinStore.getFeatureSource();
+
 			iterator = featureBasin.getFeatures().features();
+			// test if the header exist for the first feature
+			SimpleFeature feature = iterator.next();
+			boolean test = false; 
+
+			for (Property property : feature.getProperties()) {
+				if (property.getName().toString().matches(name)) {
+					test = true;
+					break;
+				}
+			}
+			if (test == false) {
+				StringBuilder message = new StringBuilder();
+				message.append("The name header ").append(name).append(" does not exist in ").
+				append(basinShpFile).append(". Choose between ");
+				for (Property property : feature.getProperties()) {
+					message.append(property.getName().toString()).append(" ");
+				}
+				message.append("and change in the xml");
+				throw new Exception(message.toString());
+			}
+
+			// do the job for the first feature
+			MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry();
+			//    build the shape for each basin
+			Path2D.Double shape = new Path2D.Double();
+			shape.moveTo((multiPolygon.getCoordinates())[0].x, (multiPolygon.getCoordinates())[0].y);
+			for (int i = 1; i < multiPolygon.getCoordinates().length; i++) {
+				shape.lineTo((multiPolygon.getCoordinates())[i].x, (multiPolygon.getCoordinates())[i].y);
+			}
+			shape.closePath();
+			mapBasin.put(String.valueOf(feature.getAttribute(name)), shape);
+			// do the same  job for the following features
 			while (iterator.hasNext()) {
-				SimpleFeature feature = iterator.next();
-				MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry();
-				// build the shape for each basin
-				Path2D.Double shape = new Path2D.Double();
+				feature = iterator.next();
+
+				multiPolygon = (MultiPolygon) feature.getDefaultGeometry();
+				// -- build the shape for each basin
+				shape = new Path2D.Double();
 				shape.moveTo((multiPolygon.getCoordinates())[0].x, (multiPolygon.getCoordinates())[0].y);
 				for (int i = 1; i < multiPolygon.getCoordinates().length; i++) {
 					shape.lineTo((multiPolygon.getCoordinates())[i].x, (multiPolygon.getCoordinates())[i].y);
 				}
 				shape.closePath();
 				mapBasin.put(String.valueOf(feature.getAttribute(name)), shape);
+
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -149,33 +194,44 @@ public class BasinNetworkNEA extends BasinNetwork {
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
 
-		 super.initTransientParameters(pilot);
-		 
+		super.initTransientParameters(pilot);
+
 		FileReader reader;
 		Scanner scanner;
 		// =============================================
 		//upload shapes
 		// shape files could be omitted (for batch mode)
-		
+
 		// load the shape of the seaBasin
 		Map<String, Path2D.Double> mapSeaBasin = null;
-		//String cwd = System.getProperty("user.dir").concat("/");
-		//System.out.println(cwd);
+
 		if (seaBasinShpFile != null && seaBasinShpFile.length() > 0) {
-			mapSeaBasin = loadBasins(seaBasinShpFile, "name");
+			try {
+				mapSeaBasin = loadBasins(seaBasinShpFile, seaBasinNameLabel);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		// load the shape of the riverBasin
 		Map<String, Path2D.Double> mapRiverBasin = null;
 		if (riverBasinShpFile != null && riverBasinShpFile.length() > 0) {
-			mapRiverBasin = loadBasins(riverBasinShpFile, "NAME");
-		}
-		
-		// load the continent
-		if (continentShpFile != null && continentShpFile.length() > 0) {
-			mapContinent = loadBasins(continentShpFile, "PATH");
+			try {
+				mapRiverBasin = loadBasins(riverBasinShpFile, riverBasinNameLabel);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
-		
+		// load the continent
+		if (continentShpFile != null && continentShpFile.length() > 0) {
+			try {
+				mapContinent = loadBasins(continentShpFile, continentPathName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+
 		// ===========================================
 		// load features of  riverBasins
 		String name;
@@ -242,10 +298,23 @@ public class BasinNetworkNEA extends BasinNetwork {
 			// append the shape for each basin
 			//System.out.println(record.getName());
 			if (mapRiverBasin != null) {
-				riverBasin.getShape().append(mapRiverBasin.get(record.getName()), true);
+				if (mapRiverBasin.containsKey(record.getName()))
+					riverBasin.getShape().append(mapRiverBasin.get(record.getName()), true);
+				else {
+					System.out.println(record.getName()+ "does not exist in river basin shape");
+					System.out.println(record.toString());
+					System.exit(1);;
+				}
+
 			}
 			if (mapSeaBasin != null) {
+				if (mapSeaBasin.containsKey(record.getName()))
 				seaBasin.getShape().append(mapSeaBasin.get(record.getName()), true);
+				else {
+					System.out.println(record.getName()+ "does not exist in sea basin shape");
+					System.out.println(record.toString());
+					System.exit(1);;
+				}
 			}
 			// add the basins to the basin grid
 			grid[index] = riverBasin;
@@ -275,7 +344,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 				distanceGrid[i][j] = Double.valueOf(scanner.next());
 				index++;
 			}
-			
+
 			reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -349,9 +418,9 @@ public class BasinNetworkNEA extends BasinNetwork {
 	public Map<String, Path2D.Double> getMapContinent() {
 		return mapContinent;
 	}	
-	
+
 }
 
-	
+
 
 
