@@ -5,7 +5,7 @@
 			<observers>
 				<environment.BasinNetworkObserverNEA>
 					<title>Atlantic Area</title>
-					<threshold>1000000</threshold>
+					<threshold>10000</threshold>
 				</environment.BasinNetworkObserverNEA>
 
 			</observers>
