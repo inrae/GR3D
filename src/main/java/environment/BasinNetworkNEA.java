@@ -1,12 +1,5 @@
 package environment;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
-
-import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
-import fr.cemagref.simaqualife.pilot.Pilot;
-
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileReader;
@@ -20,19 +13,19 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import miscellaneous.QueueMemoryMap;
-import species.ExportPopulationStatus;
-
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FileDataStore;
-import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.store.ContentFeatureSource;
-import org.geotools.feature.FeatureIterator;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
+import fr.cemagref.simaqualife.pilot.Pilot;
+import miscellaneous.QueueMemoryMap;
 
 public class BasinNetworkNEA extends BasinNetwork {
 
@@ -51,7 +44,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 	private boolean useRealPDam = false;
 
 	private transient Map<Long, Map<String, Double[]>> temperatureSeries;
-	private transient Map<String, Path2D.Double> mapContinent ;
+	private transient Map<String, Path2D.Double> mapContinent;
 
 	class Record implements Comparable<Record> {
 
@@ -66,7 +59,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 		Record(int order, int basin_id, String name, double longitude, double latitude, double surface, double pDam) {
 			this.order = order;
-			this. basin_id = basin_id;
+			this.basin_id = basin_id;
 			this.name = name;
 			this.longitude = longitude;
 			this.latitude = latitude;
@@ -74,13 +67,17 @@ public class BasinNetworkNEA extends BasinNetwork {
 			this.pDam = pDam;
 		}
 
+
+		@Override
 		public int compareTo(Record rec) {
 			return this.order - rec.order;
 		}
 
+
 		public int getOrder() {
 			return order;
 		}
+
 
 		/**
 		 * @return the basin_id used in database
@@ -89,25 +86,31 @@ public class BasinNetworkNEA extends BasinNetwork {
 			return basin_id;
 		}
 
+
 		public String getName() {
 			return name;
 		}
+
 
 		public double getLongitude() {
 			return longitude;
 		}
 
+
 		public double getLatitude() {
 			return latitude;
 		}
+
 
 		public double getSurface() {
 			return surface;
 		}
 
-		public double getPDam(){
+
+		public double getPDam() {
 			return pDam;
 		}
+
 
 		@Override
 		public String toString() {
@@ -116,28 +119,32 @@ public class BasinNetworkNEA extends BasinNetwork {
 		}
 	}
 
+
 	public static void main(String[] args) {
 		System.out.println((new XStream(new DomDriver())).toXML(new BasinNetworkNEA()));
 	}
 
+
+	@Override
 	public Map<String, Double[]> getTemperaturesBasin(long year) {
 		return temperatureSeries.get(year);
 	}
 
+
 	private Map<String, Path2D.Double> loadBasins(String basinShpFile, String name) throws Exception {
 		Map<String, Path2D.Double> mapBasin = new HashMap<String, Path2D.Double>();
 		ShapefileDataStore basinStore = null;
-		SimpleFeatureIterator  iterator = null;
+		SimpleFeatureIterator iterator = null;
 		try {
 			File aFile = new File(basinShpFile);
 			basinStore = new ShapefileDataStore(aFile.toURI().toURL());
 
-			ContentFeatureSource  featureBasin = basinStore.getFeatureSource();
+			ContentFeatureSource featureBasin = basinStore.getFeatureSource();
 
 			iterator = featureBasin.getFeatures().features();
 			// test if the header exist for the first feature
 			SimpleFeature feature = iterator.next();
-			boolean test = false; 
+			boolean test = false;
 
 			for (Property property : feature.getProperties()) {
 				if (property.getName().toString().matches(name)) {
@@ -147,8 +154,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			}
 			if (test == false) {
 				StringBuilder message = new StringBuilder();
-				message.append("The name header ").append(name).append(" does not exist in ").
-				append(basinShpFile).append(". Choose between ");
+				message.append("The name header ").append(name).append(" does not exist in ").append(basinShpFile).append(". Choose between ");
 				for (Property property : feature.getProperties()) {
 					message.append(property.getName().toString()).append(" ");
 				}
@@ -158,7 +164,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 			// do the job for the first feature
 			MultiPolygon multiPolygon = (MultiPolygon) feature.getDefaultGeometry();
-			//    build the shape for each basin
+			// build the shape for each basin
 			Path2D.Double shape = new Path2D.Double();
 			shape.moveTo((multiPolygon.getCoordinates())[0].x, (multiPolygon.getCoordinates())[0].y);
 			for (int i = 1; i < multiPolygon.getCoordinates().length; i++) {
@@ -166,7 +172,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			}
 			shape.closePath();
 			mapBasin.put(String.valueOf(feature.getAttribute(name)), shape);
-			// do the same  job for the following features
+			// do the same job for the following features
 			while (iterator.hasNext()) {
 				feature = iterator.next();
 
@@ -191,6 +197,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 		return mapBasin;
 	}
 
+
+	@Override
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
 
@@ -199,7 +207,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		FileReader reader;
 		Scanner scanner;
 		// =============================================
-		//upload shapes
+		// upload shapes
 		// shape files could be omitted (for batch mode)
 
 		// load the shape of the seaBasin
@@ -231,9 +239,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 			}
 		}
 
-
 		// ===========================================
-		// load features of  riverBasins
+		// load features of riverBasins
 		String name;
 		double pDam = 1, pAttractive = 1;
 		double longitude, latitude, surface = 0., firstDamHeight = 0.;
@@ -245,10 +252,11 @@ public class BasinNetworkNEA extends BasinNetwork {
 			reader = new FileReader(basinFile);
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal
+												// separator !!!
 			scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
 
-			//System.out.println(scanner.nextLine());
+			// System.out.println(scanner.nextLine());
 			scanner.nextLine(); // skip the first line with headers
 			while (scanner.hasNext()) {
 				basin_id = scanner.nextInt(); // gid
@@ -257,14 +265,14 @@ public class BasinNetworkNEA extends BasinNetwork {
 				latitude = scanner.nextDouble();
 				surface = scanner.nextDouble();
 				order = scanner.nextInt();
-				if (useRealPDam == true){
-					pDam=scanner.nextDouble();
-				}               	
-				else {
+				if (useRealPDam == true) {
+					pDam = scanner.nextDouble();
+				} else {
 					scanner.next();
-					pDam=1.;} // skip pDam reel
+					pDam = 1.;
+				} // skip pDam reel
 				scanner.nextLine();
-				//System.out.println(order);
+				// System.out.println(order);
 				records.add(new Record(order, basin_id, name, longitude, latitude, surface, pDam));
 			}
 			reader.close();
@@ -273,7 +281,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			e.printStackTrace();
 		}
 
-		// sort the record according to the order field 
+		// sort the record according to the order field
 		Collections.sort(records);
 
 		// number of basin is equal to the size of the list
@@ -284,36 +292,34 @@ public class BasinNetworkNEA extends BasinNetwork {
 		for (int index = 0; index < nbBasin; index++) {
 			Record record = records.get(index);
 
-			Basin riverBasin = new RiverBasin(pilot, index, record.getName(), record.getBasin_id(),
-					winterTemperature, springTemperature, summerTemperature, fallTemperature,
-					record.getLatitude(), record.getLongitude(), record.getSurface(), firstDamHeight, record.getPDam(), pAttractive,
-					this.memorySize, this.memorySizeLongQueue);
-			//Basin offshoreBasin = new OffshoreBasin(index + 2 * nbBasin, name+"-o", 
-			//		12., 12., 12., 12.);
-			Basin seaBasin = new SeaBasin(index + nbBasin, record.getName() + "-s",
-					(12. + winterTemperature) / 2.,
-					(12. + springTemperature) / 2.,
-					(12. + summerTemperature) / 2.,
+			Basin riverBasin = new RiverBasin(pilot, index, record.getName(), record.getBasin_id(), winterTemperature, springTemperature, summerTemperature, fallTemperature, record.getLatitude(),
+					record.getLongitude(), record.getSurface(), firstDamHeight, record.getPDam(), pAttractive, this.memorySize, this.memorySizeLongQueue);
+			// Basin offshoreBasin = new OffshoreBasin(index + 2 * nbBasin,
+			// name+"-o",
+			// 12., 12., 12., 12.);
+			Basin seaBasin = new SeaBasin(index + nbBasin, record.getName() + "-s", (12. + winterTemperature) / 2., (12. + springTemperature) / 2., (12. + summerTemperature) / 2.,
 					(12. + fallTemperature) / 2.);
 			// append the shape for each basin
-			//System.out.println(record.getName());
+			// System.out.println(record.getName());
 			if (mapRiverBasin != null) {
 				if (mapRiverBasin.containsKey(record.getName()))
 					riverBasin.getShape().append(mapRiverBasin.get(record.getName()), true);
 				else {
-					System.out.println(record.getName()+ "does not exist in river basin shape");
+					System.out.println(record.getName() + "does not exist in river basin shape");
 					System.out.println(record.toString());
-					System.exit(1);;
+					System.exit(1);
+					;
 				}
 
 			}
 			if (mapSeaBasin != null) {
 				if (mapSeaBasin.containsKey(record.getName()))
-				seaBasin.getShape().append(mapSeaBasin.get(record.getName()), true);
+					seaBasin.getShape().append(mapSeaBasin.get(record.getName()), true);
 				else {
-					System.out.println(record.getName()+ "does not exist in sea basin shape");
+					System.out.println(record.getName() + "does not exist in sea basin shape");
 					System.out.println(record.toString());
-					System.exit(1);;
+					System.exit(1);
+					;
 				}
 			}
 			// add the basins to the basin grid
@@ -328,7 +334,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 			reader = new FileReader(distanceGridFileName);
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal
+												// separator !!!
 			scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
 
 			// skip the first line with headers
@@ -338,9 +345,9 @@ public class BasinNetworkNEA extends BasinNetwork {
 			while (scanner.hasNext() & index < Math.pow(nbBasin, 2.)) {
 				j = index % nbBasin;
 				i = (index - j) / nbBasin;
-				if (j ==0 ) 
+				if (j == 0)
 					scanner.next(); // to skip the first column
-				//System.out.println("i"+i+"j"+j+"index"+index);
+				// System.out.println("i"+i+"j"+j+"index"+index);
 				distanceGrid[i][j] = Double.valueOf(scanner.next());
 				index++;
 			}
@@ -356,10 +363,10 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 		// create a QueueMemoryMap to keep the spawnerOrigine in each basin
 		List<String> basinNames = new ArrayList<String>();
-		for (RiverBasin basin : this.getRiverBasins()){
+		for (RiverBasin basin : this.getRiverBasins()) {
 			basinNames.add(basin.getName());
 		}
-		for (RiverBasin basin : this.getRiverBasins()){
+		for (RiverBasin basin : this.getRiverBasins()) {
 			basin.setSpawnerOrigins(new QueueMemoryMap<Long>(basinNames, memorySize));
 		}
 
@@ -371,9 +378,10 @@ public class BasinNetworkNEA extends BasinNetwork {
 			reader = new FileReader(temperatureCatchmentFile);
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal
+												// separator !!!
 			scanner.useDelimiter(Pattern.compile("[,;\r\n]"));
-			char[] charac = {'"'};
+			char[] charac = { '"' };
 			String doublequote = new String(charac);
 			scanner.nextLine(); // skip the first line with headers
 			while (scanner.hasNext()) {
@@ -386,9 +394,10 @@ public class BasinNetworkNEA extends BasinNetwork {
 				seasonalTemperature[1] = scanner.nextDouble();
 				seasonalTemperature[2] = scanner.nextDouble();
 				seasonalTemperature[3] = scanner.nextDouble();
-				//scanner.nextLine();
+				// scanner.nextLine();
 
-				// store seasonal temperatures for each basin for the corresponding year
+				// store seasonal temperatures for each basin for the
+				// corresponding year
 				Map<String, Double[]> temperatureYear = temperatureSeries.get(year);
 				if (temperatureYear == null) {
 					temperatureYear = new TreeMap<String, Double[]>();
@@ -405,22 +414,21 @@ public class BasinNetworkNEA extends BasinNetwork {
 		}
 	}
 
+
 	/**
 	 * @return the temperatureCatchmentFile
 	 */
+	@Override
 	public String getTemperatureCatchmentFile() {
 		return temperatureCatchmentFile;
 	}
+
 
 	/**
 	 * @return the continent
 	 */
 	public Map<String, Path2D.Double> getMapContinent() {
 		return mapContinent;
-	}	
+	}
 
 }
-
-
-
-
