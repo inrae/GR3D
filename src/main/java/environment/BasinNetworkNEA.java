@@ -114,7 +114,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 		@Override
 		public String toString() {
-			return "Record [order=" + this.order + ", basin_id=" + this.basin_id + ", name=" + this.name + ", longitude=" + this.longitude + ", latitude=" + this.latitude + ", surface=" + this.surface
+			return "Record [order=" + this.order + ", basin_id=" + this.basin_id + ", name=" + this.name
+					+ ", longitude=" + this.longitude + ", latitude=" + this.latitude + ", surface=" + this.surface
 					+ ", pDam=" + this.pDam + "]";
 		}
 	}
@@ -154,7 +155,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 			}
 			if (test == false) {
 				StringBuilder message = new StringBuilder();
-				message.append("The name header ").append(name).append(" does not exist in ").append(basinShpFile).append(". Choose between ");
+				message.append("The name header ").append(name).append(" does not exist in ").append(basinShpFile)
+						.append(". Choose between ");
 				for (Property property : feature.getProperties()) {
 					message.append(property.getName().toString()).append(" ");
 				}
@@ -292,15 +294,17 @@ public class BasinNetworkNEA extends BasinNetwork {
 		for (int index = 0; index < nbBasin; index++) {
 			Record record = records.get(index);
 
-			Basin riverBasin = new RiverBasin(pilot, index, record.getName(), record.getBasin_id(), winterTemperature, springTemperature, summerTemperature, fallTemperature, record.getLatitude(),
-					record.getLongitude(), record.getSurface(), firstDamHeight, record.getPDam(), pAttractive, this.memorySize, this.memorySizeLongQueue);
+			Basin riverBasin = new RiverBasin(pilot, index, record.getName(), record.getBasin_id(), winterTemperature,
+					springTemperature, summerTemperature, fallTemperature, record.getLatitude(), record.getLongitude(),
+					record.getSurface(), firstDamHeight, record.getPDam(), pAttractive, this.memorySize,
+					this.memorySizeLongQueue);
 			// Basin offshoreBasin = new OffshoreBasin(index + 2 * nbBasin,
 			// name+"-o",
 			// 12., 12., 12., 12.);
-			Basin seaBasin = new SeaBasin(index + nbBasin, record.getName() + "-s", (12. + winterTemperature) / 2., (12. + springTemperature) / 2., (12. + summerTemperature) / 2.,
-					(12. + fallTemperature) / 2.);
+			Basin seaBasin = new SeaBasin(index + nbBasin, record.getName() + "-s", (12. + winterTemperature) / 2.,
+					(12. + springTemperature) / 2., (12. + summerTemperature) / 2., (12. + fallTemperature) / 2.);
+
 			// append the shape for each basin
-			// System.out.println(record.getName());
 			if (mapRiverBasin != null) {
 				if (mapRiverBasin.containsKey(record.getName()))
 					riverBasin.getShape().append(mapRiverBasin.get(record.getName()), true);
