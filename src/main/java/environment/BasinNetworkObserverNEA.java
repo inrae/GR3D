@@ -119,7 +119,7 @@ public class BasinNetworkObserverNEA extends ObserverListener implements Configu
 	public void valueChanged(ObservablesHandler arg0, Object arg1, long arg2) {
 
 		// update the label
-		String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ") + time.getSeason(pilot).toString();
+		String txt = Long.valueOf((time.getYear(pilot))).toString() + (" ") + time.getSeason(pilot).toString() + " - ";
 		label.setText(txt);
 		if (basinUnderMouse != null) {
 			txt += (basinUnderMouse.getName() + " ");
