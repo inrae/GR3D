@@ -34,7 +34,7 @@ import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFishGroup;
 
 @SuppressWarnings("serial")
-public class BasinNetworkObserverNEA extends ObserverListener implements Configurable, Drawable, MouseMotionListener {
+public class BasinNetworkObserverWithContinent extends ObserverListener implements Configurable, Drawable, MouseMotionListener {
 
 	private String title;
 	private double threshold = 13000000.;
@@ -43,7 +43,7 @@ public class BasinNetworkObserverNEA extends ObserverListener implements Configu
 	public ColorScaleEnum colorScaleEnum = ColorScaleEnum.BluesScale;
 
 	// a basin network
-	private transient BasinNetworkNEA bn;
+	private transient BasinNetworkSWithContinent bn;
 	// the time
 	private transient Time time;
 
@@ -108,7 +108,7 @@ public class BasinNetworkObserverNEA extends ObserverListener implements Configu
 		shapeBasinMap = new HashMap<Shape, Basin>();
 
 		// load basin to a have access to the shape
-		bn = (BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment();
+		bn = (BasinNetworkSWithContinent) pilot.getAquaticWorld().getEnvironment();
 
 		// time in bn is not yet created
 		time = new Time();
@@ -192,7 +192,7 @@ public class BasinNetworkObserverNEA extends ObserverListener implements Configu
 
 			maxX = maxY = Double.NEGATIVE_INFINITY;
 			minX = minY = Double.POSITIVE_INFINITY;
-			mapContinent = ((BasinNetworkNEA) pilot.getAquaticWorld().getEnvironment()).getMapContinent();
+			mapContinent = ((BasinNetworkSWithContinent) pilot.getAquaticWorld().getEnvironment()).getMapContinent();
 			for (Path2D.Double path : mapContinent.values()) {
 				minX = Math.min(minX, path.getBounds2D().getMinX());
 				maxX = Math.max(maxX, path.getBounds2D().getMaxX());
@@ -229,7 +229,7 @@ public class BasinNetworkObserverNEA extends ObserverListener implements Configu
 
 
 	public static void main(String[] args) {
-		System.out.println((new XStream(new DomDriver())).toXML(new BasinNetworkObserverNEA()));
+		System.out.println((new XStream(new DomDriver())).toXML(new BasinNetworkObserverWithContinent()));
 	}
 
 	private class DisplayComponent extends JComponent {

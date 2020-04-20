@@ -27,7 +27,7 @@ import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientPara
 import fr.cemagref.simaqualife.pilot.Pilot;
 import miscellaneous.QueueMemoryMap;
 
-public class BasinNetworkNEA extends BasinNetwork {
+public class BasinNetworkSWithContinent extends BasinNetwork {
 
 	private String basinFile = "data/input/northeastamerica/nea_basins.csv";
 
@@ -122,7 +122,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 
 	public static void main(String[] args) {
-		System.out.println((new XStream(new DomDriver())).toXML(new BasinNetworkNEA()));
+		System.out.println((new XStream(new DomDriver())).toXML(new BasinNetworkSWithContinent()));
 	}
 
 

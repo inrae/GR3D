@@ -3,10 +3,10 @@
 		<java-class>fr.cemagref.simaqualife.kernel.AquaticWorld</java-class>
 		<fr.cemagref.observation.kernel.ObservablesHandler>
 			<observers>
-				<environment.BasinNetworkObserverNEA>
+				<environment.BasinNetworkObserverWithContinent>
 					<title>Atlantic Area</title>
 					<threshold>10000</threshold>
-				</environment.BasinNetworkObserverNEA>
+				</environment.BasinNetworkObserverWithContinent>
 
 			</observers>
 		</fr.cemagref.observation.kernel.ObservablesHandler>

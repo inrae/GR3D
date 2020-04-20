@@ -1,4 +1,4 @@
-<environment.BasinNetworkNEA>
+<environment.BasinNetworkSWithContinent>
 	<nbBasin>0</nbBasin>
 	<memorySize>10</memorySize>
 	<memorySizeLongQueue>30</memorySizeLongQueue>
@@ -15,4 +15,4 @@
 	<distanceGridFileName>data/input/northeastamerica/distanceGridNEA.csv</distanceGridFileName>
 	<temperatureCatchmentFile>data/input/northeastamerica/basins_temperatures_from_1800.csv</temperatureCatchmentFile>
 	<useRealPDam>false</useRealPDam>
-</environment.BasinNetworkNEA>
+</environment.BasinNetworkSWithContinent>
