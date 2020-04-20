@@ -1,0 +1,18 @@
+<environment.BasinNetworkNEA>
+	<nbBasin>0</nbBasin>
+	<memorySize>10</memorySize>
+	<memorySizeLongQueue>30</memorySizeLongQueue>
+	<cVthresholdForFinalStates>5.0</cVthresholdForFinalStates>
+	<RecruitmentThresholdForFsAndKappa>50.0</RecruitmentThresholdForFsAndKappa>
+	<yearOfTheBegin>1800</yearOfTheBegin>
+	<basinFile>data/input/atlanticarea/aa_basins.csv</basinFile>
+	<seaBasinShpFile>data/input/atlanticarea/shape/seabasins.shp</seaBasinShpFile>
+	<riverBasinShpFile>data/input/atlanticarea/shape/riverbasins.shp</riverBasinShpFile>
+	<continentShpFile>data/input/atlanticarea/shape/aa_continent.shp</continentShpFile>
+	<riverBasinNameLabel>BASIN_NAME</riverBasinNameLabel>
+	<seaBasinNameLabel>BASIN_NAME</seaBasinNameLabel>
+	<continentPathName>ID</continentPathName>
+	<distanceGridFileName>data/input/atlanticarea/distanceGridAA.csv</distanceGridFileName>
+	<temperatureCatchmentFile>data/input/atlanticarea/aa_sst_depuis1800.csv</temperatureCatchmentFile>
+	<useRealPDam>false</useRealPDam>
+</environment.BasinNetworkNEA>
