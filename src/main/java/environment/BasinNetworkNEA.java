@@ -136,6 +136,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 		Map<String, Path2D.Double> mapBasin = new HashMap<String, Path2D.Double>();
 		ShapefileDataStore basinStore = null;
 		SimpleFeatureIterator iterator = null;
+
 		try {
 			File aFile = new File(basinShpFile);
 			basinStore = new ShapefileDataStore(aFile.toURI().toURL());
@@ -208,6 +209,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 
 		FileReader reader;
 		Scanner scanner;
+
 		// =============================================
 		// upload shapes
 		// shape files could be omitted (for batch mode)
@@ -222,7 +224,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 				e.printStackTrace();
 			}
 		}
-		// load the shape of the riverBasin
+
+		// ----- load the shape of the riverBasin
 		Map<String, Path2D.Double> mapRiverBasin = null;
 		if (riverBasinShpFile != null && riverBasinShpFile.length() > 0) {
 			try {
@@ -232,7 +235,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 			}
 		}
 
-		// load the continent
+		// ----- load the continent
 		if (continentShpFile != null && continentShpFile.length() > 0) {
 			try {
 				mapContinent = loadBasins(continentShpFile, continentPathName);
@@ -278,6 +281,7 @@ public class BasinNetworkNEA extends BasinNetwork {
 				records.add(new Record(order, basin_id, name, longitude, latitude, surface, pDam));
 			}
 			reader.close();
+			scanner.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -355,11 +359,12 @@ public class BasinNetworkNEA extends BasinNetwork {
 				distanceGrid[i][j] = Double.valueOf(scanner.next());
 				index++;
 			}
-
 			reader.close();
+			scanner.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		// TODO fill the distance in each basin
 		for (Basin basin : grid) {
 			basin.setNeighboursDistances(getNeighboursWithDistance(basin));
@@ -412,6 +417,8 @@ public class BasinNetworkNEA extends BasinNetwork {
 					temperatureSeries.put(year, temperatureYear);
 				}
 			}
+			reader.close();
+			scanner.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
