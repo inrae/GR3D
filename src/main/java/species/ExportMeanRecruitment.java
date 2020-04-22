@@ -65,10 +65,11 @@ public class ExportMeanRecruitment extends AquaNismsGroupProcess<DiadromousFish,
 			}
 		}
 
-		if (Time.getSeason(group.getPilot()) == reproductionSeason){
+		Time time = group.getEnvironment().getTime();
+		if (time.getSeason(group.getPilot()) == reproductionSeason){
 			try {
-				bW.write(group.getPilot().getCurrentTime()+sep+Time.getYear(group.getPilot()));
-				bW.write(sep+Time.getSeason(group.getPilot()));
+				bW.write(group.getPilot().getCurrentTime()+sep+time.getYear(group.getPilot()));
+				bW.write(sep+time.getSeason(group.getPilot()));
 
 				for (RiverBasin basin :group.getEnvironment().getRiverBasins()){
 					bW.write(sep+basin.getLastRecruitments().getMean());

@@ -31,6 +31,8 @@ public class WriteCurrentNutrientExportFluxes extends AquaNismsGroupProcess<Diad
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		String sep = ";"; 
+		
+		Time time = group.getEnvironment().getTime();
 
 		// initialise the bW the first time
 		try {
@@ -47,9 +49,9 @@ public class WriteCurrentNutrientExportFluxes extends AquaNismsGroupProcess<Diad
 			// write information for the current year
 			Map<Long, Map <String,  Map<String, Double>>> fluxesCollection = group.getNutrientRoutine().getNutrientExportFluxesCollection().getExportFluxesCollection();
 
-			long year = Time.getYear(group.getPilot());
+			long year = time.getYear(group.getPilot());
 
-			if (year >= group.getMinYearToWrite() & Time.getSeason(group.getPilot()) == writeSeason) {
+			if (year >= group.getMinYearToWrite() & time.getSeason(group.getPilot()) == writeSeason) {
 
 				for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 					for (String originBasinName : group.getEnvironment().getRiverBasinNames()) {

@@ -7,6 +7,7 @@ import fr.cemagref.simaqualife.pilot.Pilot;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -148,6 +149,18 @@ public class BasinNetworkWithnBasins extends BasinNetwork {
 		for (Basin basin : grid){
 			basin.setNeighboursDistances(getNeighboursWithDistance(basin));
 		}
+	}
+
+	@Override
+	public Map<String, Double[]> getTemperaturesBasin(long year) {
+		// nothing to do
+		return null;
+	}
+
+	@Override
+	public String getTemperatureCatchmentFile() {
+		// no file with temperatures
+		return "";
 	}
 
 }

@@ -79,8 +79,9 @@ public class ExportSpeciesRange extends AquaNismsGroupProcess<DiadromousFish, Di
 		}
 		
 		try {
-			bW.write(group.getPilot().getCurrentTime()+sep+Time.getYear(group.getPilot()));
-			bW.write(sep+Time.getSeason(group.getPilot()));
+			Time time = group.getEnvironment().getTime();
+			bW.write(group.getPilot().getCurrentTime()+sep+time.getYear(group.getPilot()));
+			bW.write(sep+time.getSeason(group.getPilot()));
 			
 			for (double value : group.getRangeDistributionWithLat()){
 				bW.write(sep+value);

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Duo;
 import miscellaneous.Miscellaneous;
 import species.DiadromousFish.Gender;
@@ -73,7 +74,8 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
-		if (Time.getSeason(group.getPilot()) == reproductionSeason){
+		Time time = group.getEnvironment().getTime();
+		if (time.getSeason(group.getPilot()) == reproductionSeason){
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 			double b, c, alpha, beta, amountPerSuperIndividual , Setoile, S95, S50 ;
 
@@ -159,7 +161,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 							fish.incNumberOfReproduction();	
 
 							// survival after reproduction (semelparity or iteroparity) of SI (change the amount of the SI)
-							survivalAmount = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction);
+							survivalAmount = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), fish.getAmount(), survivalRateAfterReproduction);
 							if (survivalAmount > 0) 
 								fish.setAmount(survivalAmount);
 								
@@ -241,7 +243,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 							
 							// stock the first year when recruitment is non nul
 							if (riverBasin.getYearOfFirstNonNulRep() == 0){
-								riverBasin.setYearOfFirstNonNulRep(Time.getYear(group.getPilot()));
+								riverBasin.setYearOfFirstNonNulRep(time.getYear(group.getPilot()));
 							}	
 							riverBasin.getLastRecruitmentExpectations().push(Math.round(meanNumberOfRecruit));
 							riverBasin.getLastRecruitments().push(numberOfsuperIndividual * effectiveAmount); // on remplit la pile qui permet de stocker un nombre fix� de derniers recrutement
@@ -259,7 +261,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 						}
 						else {
 							// stock the last year of null recruitment
-							riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));							
+							riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));							
 							riverBasin.getLastRecruitmentExpectations().push((long) 0);
 							riverBasin.getLastRecruitments().push((long) 0);
 							riverBasin.getLastRecsOverProdCaps().push(0.);
@@ -269,7 +271,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 					}
 					else {
 						// stock information when no spawners reproduce
-						riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
+						riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));
 						riverBasin.getLastRecruitmentExpectations().push((long) 0);
 						riverBasin.getLastRecruitments().push((long) 0);
 						riverBasin.getLastRecsOverProdCaps().push(0.);
@@ -285,7 +287,7 @@ public class ReproduceAndSurviveAfterReproduction extends AquaNismsGroupProcess<
 					deadFish.clear();
 				}
 				else {
-					riverBasin.setYearOfLastNulRep(Time.getYear(group.getPilot()));
+					riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));
 				}
 
 				// System.out.println("("+numberOfGenitors+")");

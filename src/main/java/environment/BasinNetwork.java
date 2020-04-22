@@ -2,6 +2,9 @@ package environment;
 
 import fr.cemagref.simaqualife.kernel.AquaNismsGroup;
 import fr.cemagref.simaqualife.kernel.spatial.Environment;
+import fr.cemagref.simaqualife.kernel.util.TransientParameters.InitTransientParameters;
+import fr.cemagref.simaqualife.pilot.Pilot;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,14 @@ public abstract class BasinNetwork extends Environment<Basin, DiadromousFish> {
     
     protected transient Basin[] grid;
     protected transient double[][] distanceGrid;
+    
+    protected transient Time time;
+    
+    @InitTransientParameters
+    public void initTransientParameters(Pilot pilot) {
+    	time = new Time();
+    }
+    
 
     public int getRow(int id) {
         return (id % nbBasin);
@@ -287,4 +298,21 @@ public abstract class BasinNetwork extends Environment<Basin, DiadromousFish> {
     public void removeAquaNism(DiadromousFish fish, AquaNismsGroup group) {
         // TODO Auto-generated method stub
     }
+    
+	public abstract Map<String, Double[]> getTemperaturesBasin(long year);
+	
+	public abstract String getTemperatureCatchmentFile();
+
+	/**
+	 * @return the time
+	 */
+	public Time getTime() {
+		return time;
+		
+		
+	}
+
+
+	
+	
 }

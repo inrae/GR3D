@@ -2,29 +2,31 @@ package environment;
 
 import fr.cemagref.simaqualife.pilot.Pilot;
 
-public final class Time {
+public class Time {
 
 
 	public static enum Season {WINTER, SPRING, SUMMER, AUTOMN};
 
-	public static Season getSeason(Pilot pilot){
+	public  Season getSeason(Pilot pilot){
 		return getSeason(pilot.getCurrentTime());
 	}
 
-	public static Season getSeason(long time){
+	// use dans MyCSvObserver
+	public static  Season getSeason(long time){
 		return Season.values()[(int)time% Season.values().length];
 	}
 
-	public static long getYear(Pilot pilot){
+	public  long getYear(Pilot pilot){
 		return getNbYearFromBegin(pilot.getCurrentTime())+
 				((BasinNetwork) pilot.getAquaticWorld().getEnvironment()).getYearOfTheBegin();		
 	}
 	
-	public static long getNbYearFromBegin(Pilot pilot){
+	public  long getNbYearFromBegin(Pilot pilot){
 		return getNbYearFromBegin(pilot.getCurrentTime());
 
 	}
 	
+	// use dans MyCSvObserver
 	public static long getNbYearFromBegin(long time){
 		return (long) Math.floor(time / Season.values().length);		
 	}
@@ -34,7 +36,7 @@ public final class Time {
 	 * @return the duration of season (time step) 
 	 * @unit year
 	 */
-	public static double getSeasonDuration(){
+	public  double getSeasonDuration(){
 		return 1./ Season.values().length;
 	}
 }
