@@ -201,10 +201,10 @@
 		<outputPath>data/output/</outputPath>
 		<minYearToWrite>1900</minYearToWrite>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
-		<lengthAtHatching>2.0</lengthAtHatching>
-		<linfVonBertForFemale>70.0</linfVonBertForFemale>
-		<linfVonBertForMale>70.0</linfVonBertForMale>
-		<lFirstMaturityForFemale>55.0</lFirstMaturityForFemale>
+		<lengthAtHatching>2.8</lengthAtHatching>
+		<linfVonBertForFemale>76.0</linfVonBertForFemale>
+		<linfVonBertForMale>76.0</linfVonBertForMale>
+		<lFirstMaturityForFemale>45.0</lFirstMaturityForFemale>
 		<lFirstMaturityForMale>40.0</lFirstMaturityForMale>
 		<processes>
 			<processesAtBegin>
@@ -225,7 +225,7 @@
 				<species.PopulateBasinNetworkSeveralTimesAccordingToBasinSize>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<nbFishPerSI>100000</nbFishPerSI>
-					<initialLength>2.0</initialLength>
+					<initialLength>2.8</initialLength>
 					<etaPopulate>40.0</etaPopulate>
 					<timesOfPopulate>5</timesOfPopulate>
 					<populateSeason>SPRING</populateSeason>
@@ -254,8 +254,8 @@
 					<standardDeviationBvSurface>35594</standardDeviationBvSurface>
 					<meanInterDistance>300.0</meanInterDistance>
 					<standardDeviationInterDistance>978.0</standardDeviationInterDistance>
-					<pHomingForReachEquil>0.75</pHomingForReachEquil>
-					<pHomingAfterEquil>0.75</pHomingAfterEquil>
+					<pHomingForReachEquil>0.97</pHomingForReachEquil>
+					<pHomingAfterEquil>0.97</pHomingAfterEquil>
 					<NbYearForInstallPop>0</NbYearForInstallPop>
 					<riverMigrationSeason>SPRING</riverMigrationSeason>
 					<alpha2Rep>0.0</alpha2Rep>
@@ -266,9 +266,9 @@
 
 				<species.Survive>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<tempMinSurvivalSpawnerInRiv>10.7</tempMinSurvivalSpawnerInRiv>
+					<tempMinSurvivalSpawnerInRiv>8</tempMinSurvivalSpawnerInRiv>
 					<tempOptSurvivalSpawnerInRiv>17.0</tempOptSurvivalSpawnerInRiv>
-					<tempMaxSurvivalSpawnerInRiv>25.7</tempMaxSurvivalSpawnerInRiv>
+					<tempMaxSurvivalSpawnerInRiv>26</tempMaxSurvivalSpawnerInRiv>
 					<survivalProbOptSpawnerInRiv>1.0</survivalProbOptSpawnerInRiv>
 					<!--<mortalityRateInRiver>0.4</mortalityRateInRiver> -->
 					<mortalityRateInSea>0.4</mortalityRateInSea>
@@ -280,13 +280,13 @@
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>effectiveBiomassFluxesBeforeReproduction</fileNameOutput>
 				</species.WriteEffectiveAndBiomassFluxes>
-				
+
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
-					<tempMinRep>9.3</tempMinRep>
-					<tempOptRep>20.8</tempOptRep>
-					<tempMaxRep>31.0</tempMaxRep>
+					<tempMinRep>10</tempMinRep>
+					<tempOptRep>17</tempOptRep>
+					<tempMaxRep>30</tempMaxRep>
 					<eta>2.4</eta>
 					<ratioS95__S50>1.9</ratioS95__S50>
 					<a>270000</a>
@@ -294,10 +294,10 @@
 					<survOptRep>0.0017</survOptRep>
 					<lambda>4.1E-4</lambda>
 					<proportionOfFemaleAtBirth>0.5</proportionOfFemaleAtBirth>
-					<initialLength>2.0</initialLength>
+					<initialLength>2.8</initialLength>
 					<sigmaRecruitment>0.2</sigmaRecruitment>
 					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
-					<maxNumberOfSuperIndividualPerReproduction>500.0
+					<maxNumberOfSuperIndividualPerReproduction>150.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
 					<displayFluxesOnConsole>false</displayFluxesOnConsole>
