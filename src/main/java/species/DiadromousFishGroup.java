@@ -466,7 +466,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 						fileNameFluxes +this.getSimulationId() + ".csv")));
 
 				bWForFluxes.write("timestep"+sep+"year"+sep+"season"+sep+"basin"
-						+sep+"abundance" + sep + "fluxType"+ sep + "origin" +sep+"biomass");
+						+sep+"abundance" + sep + "fluxType"+ sep + "origin" +sep+"abundanceExp"+sep+ "biomass");
 				for (String nutrient : nutrientRoutine.getNutrientsOfInterest()) {
 					bWForFluxes.write(sep+nutrient);
 				}
@@ -1010,7 +1010,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	public String getSimulationId(){
 		String id="_";
 		id=id.concat(Integer.toString(getPilot().getParameters().getRngStatusIndex()));
-		String temperatureFile = ((BasinNetworkReal) getPilot().getAquaticWorld().getEnvironment()).getTemperatureCatchmentFile();
+		String temperatureFile = ((BasinNetwork) getPilot().getAquaticWorld().getEnvironment()).getTemperatureCatchmentFile();
 		id=id.concat("-").concat(temperatureFile.substring(temperatureFile.length()-9, temperatureFile.length()-4));
 		if (parameterSetLine>0){
 			id=id.concat("-").concat(Integer.toString(parameterSetLine));

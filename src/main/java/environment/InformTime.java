@@ -32,7 +32,7 @@ import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 public class InformTime extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
 	private boolean consoleDisplay = true;
-	
+
 	public static void main(String[] args) { System.out.println((new
 			XStream(new DomDriver())) .toXML(new InformTime())); }
 
@@ -42,8 +42,9 @@ public class InformTime extends AquaNismsGroupProcess<DiadromousFish, Diadromous
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		if (consoleDisplay)
-		System.out.println("--- "+ group.getPilot().getCurrentTime() + " :\t "+
-				Time.getSeason(group.getPilot())+" \t"+Time.getYear(group.getPilot())+ " ---");
+			System.out.println("--- "+ group.getPilot().getCurrentTime() + " :\t "+
+					group.getEnvironment().getTime().getSeason(group.getPilot())+" \t"+
+					group.getEnvironment().getTime().getYear(group.getPilot())	+ " ---");
 	}
 
 }

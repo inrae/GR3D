@@ -25,15 +25,16 @@ public class UpdateTemperature extends AquaNismsGroupProcess<DiadromousFish, Dia
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		// TODO Include a power in the equation
-
-		if (Time.getYear(group.getPilot())>nbYearBeforeWarming & Time.getYear(group.getPilot())<nbYearForStopWarming){
+		Time time = group.getEnvironment().getTime();
+		if (time.getYear(group.getPilot())>nbYearBeforeWarming & 
+				time.getYear(group.getPilot())<nbYearForStopWarming){
 
 			for (Basin basin : group.getEnvironment().getBasins()){			
-				basin.setFallTemperature(basin.getFallTemperature() + tempValueOfCenturyWarmingAutomn / (incrementDuration/Time.getSeasonDuration()));
-				basin.setWinterTemperature(basin.getWinterTemperature() + tempValueOfCenturyWarmingWinter / (incrementDuration/Time.getSeasonDuration()));
-				basin.setSummerTemperature(basin.getSummerTemperature() + tempValueOfCenturyWarmingSummer / (incrementDuration/Time.getSeasonDuration()));
-				basin.setSpringTemperature(basin.getSpringTemperature() + tempValueOfCenturyWarmingSpring / (incrementDuration/Time.getSeasonDuration()));
-				//System.out.println("la température dans le bassin " + basin.getId() + " dont le nom est " + basin.getName() + " vaut " + basin.getCurrentTemperature() + " en "+  Time.getSeason() + " de l'année " + Time.getYear());
+				basin.setFallTemperature(basin.getFallTemperature() + tempValueOfCenturyWarmingAutomn / (incrementDuration/time.getSeasonDuration()));
+				basin.setWinterTemperature(basin.getWinterTemperature() + tempValueOfCenturyWarmingWinter / (incrementDuration/time.getSeasonDuration()));
+				basin.setSummerTemperature(basin.getSummerTemperature() + tempValueOfCenturyWarmingSummer / (incrementDuration/time.getSeasonDuration()));
+				basin.setSpringTemperature(basin.getSpringTemperature() + tempValueOfCenturyWarmingSpring / (incrementDuration/time.getSeasonDuration()));
+				//System.out.println("la tempï¿½rature dans le bassin " + basin.getId() + " dont le nom est " + basin.getName() + " vaut " + basin.getCurrentTemperature() + " en "+  time.getSeason() + " de l'annï¿½e " + time.getYear());
 			}		
 		}
 	}

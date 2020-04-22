@@ -18,13 +18,64 @@ import species.DiadromousFishGroup;
  */
 public class RiverBasin extends Basin {
 
+	
+	/**
+	 * latitute of the  river basin outlet
+	 * @unit decimal degre (between -90 to 90)
+	 */
 	private final double latitude;
+	
+	/**
+	 * longitude of the  river basin outlet
+	 * @unit decimal degre (betwenn -180 to 180)
+	 */
 	private final double longitude;
-	private final double surface; // in km2
+	
+	/**
+	 * drainage area of the RiverBassin
+	 * @unit  km2
+	 */
+	private final double surface; 
+	
+	
+	/**
+	 * height of the fisrt dam on the main stream
+	 * @unit m
+	 */
 	private double firstDamHeight;
-	private double pAccessible; // in %
+	
+	/**
+	 *  pourcentage of the basin area accessible to the dih
+	 * @unit % 
+	 */
+	private double pAccessible; 
+	
+	
+	/**
+	 *  /TODO give definition
+	 * @unit
+	 */
 	private double pAttractive;
+	
+	
+	/**
+	 *  identifier of basin coming from source information (database for exemple)
+	 * @unit --
+	 */
+	private int basin_id;
+	
+	/**
+	 *  year of the first non null reproduction (start of a functional population)
+	 *  	used to interpert dynamics
+	 * @unit
+	 */
 	private long yearOfFirstNonNulRep;
+	
+	/**
+	 *  year of the last non null reproduction (end of a functional population)
+	 *  	used to interpret dynamics
+	 * @unit
+	 */
 	private long yearOfLastNulRep;
 
 	private QueueMemoryMap<Long> spawnerOrigins;
@@ -96,6 +147,17 @@ public class RiverBasin extends Basin {
 			double fallTemperature, double latitude, double longitude,
 			double surface, double firstDamHeight, double pAccessible, double pAttractive,
 			int memorySize, int memorySizeLongQueue) {
+		 this(pilot, id, basinName, -1, winterTemperature, springTemperature, summerTemperature,
+			fallTemperature, latitude, longitude,
+			surface, firstDamHeight, pAccessible, pAttractive,
+			memorySize, memorySizeLongQueue);
+	}
+	
+	public RiverBasin(Pilot pilot, int id, String basinName,  int basin_id, double winterTemperature,
+			double springTemperature, double summerTemperature,
+			double fallTemperature, double latitude, double longitude,
+			double surface, double firstDamHeight, double pAccessible, double pAttractive,
+			int memorySize, int memorySizeLongQueue) {
 		super(id, basinName, winterTemperature, springTemperature,
 				summerTemperature, fallTemperature);
 		this.latitude = latitude;
@@ -124,6 +186,8 @@ public class RiverBasin extends Basin {
 		
 		this.numberOfNonNulRecruitmentForFinalProbOfPres = new QueueMemory<Double>(memorySizeLongQueue);
 
+		this.basin_id = basin_id; 
+		
 		if (cobservable == null) {
 			cobservable = pilot.addObservable(this.getClass());
 		}

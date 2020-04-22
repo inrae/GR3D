@@ -20,9 +20,10 @@ public class updateTemperatureInRealBasin extends AquaNismsGroupProcess<Diadromo
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		// TODO Include a power in the equation
+		Time time = group.getEnvironment().getTime();
 
-		if (Time.getSeason(group.getPilot()) == Season.WINTER){
-			Map<String, Double[]> temperaturesbasin = ((BasinNetworkReal) group.getEnvironment()).getTemperaturesBasin(Time.getYear(group.getPilot()));
+		if (time.getSeason(group.getPilot()) == Season.WINTER){
+			Map<String, Double[]> temperaturesbasin = ((BasinNetwork) group.getEnvironment()).getTemperaturesBasin(time.getYear(group.getPilot()));
 
 			if (temperaturesbasin != null) {
 				for (Basin basin : group.getEnvironment().getBasins()){		
@@ -40,7 +41,7 @@ public class updateTemperatureInRealBasin extends AquaNismsGroupProcess<Diadromo
 				}
 			}
 			else {
-				System.out.println("pb with temperature at "+ Time.getYear(group.getPilot() ));
+				System.out.println("pb with temperature at "+ time.getYear(group.getPilot() ));
 			}
 		}
 	}

@@ -120,39 +120,39 @@ public class ExportPopulationStatus extends AquaNismsGroupProcess<DiadromousFish
 
 
 
-
-		if (Time.getSeason(group.getPilot()) == reproductionSeason){
+		Time time = group.getEnvironment().getTime();
+		if (time.getSeason(group.getPilot()) == reproductionSeason){
 			try {
 				if(bWMortality != null){
-					bWMortality.write(group.getPilot().getCurrentTime()+sep+Time.getYear(group.getPilot()));
-					bWMortality.write(sep+Time.getSeason(group.getPilot()));
+					bWMortality.write(group.getPilot().getCurrentTime()+sep+time.getYear(group.getPilot()));
+					bWMortality.write(sep+time.getSeason(group.getPilot()));
 					for (RiverBasin basin :group.getEnvironment().getRiverBasins()){
 						bWMortality.write(sep+basin.getNativeSpawnerMortality());
 					}
 					bWMortality.write("\n");
 				}
-				
+
 				if(bWMortalityCrash != null){
-					bWMortalityCrash.write(group.getPilot().getCurrentTime()+sep+Time.getYear(group.getPilot()));
-					bWMortalityCrash.write(sep+Time.getSeason(group.getPilot()));
+					bWMortalityCrash.write(group.getPilot().getCurrentTime()+sep+time.getYear(group.getPilot()));
+					bWMortalityCrash.write(sep+time.getSeason(group.getPilot()));
 					for (RiverBasin basin :group.getEnvironment().getRiverBasins()){
 						bWMortalityCrash.write(sep+basin.getMortalityCrash());
 					}
 					bWMortalityCrash.write("\n");
 				}
-				
+
 				if(bWStockTrap != null){
-					bWStockTrap.write(group.getPilot().getCurrentTime()+sep+Time.getYear(group.getPilot()));
-					bWStockTrap.write(sep+Time.getSeason(group.getPilot()));
+					bWStockTrap.write(group.getPilot().getCurrentTime()+sep+time.getYear(group.getPilot()));
+					bWStockTrap.write(sep+time.getSeason(group.getPilot()));
 					for (RiverBasin basin :group.getEnvironment().getRiverBasins()){
 						bWStockTrap.write(sep+basin.getStockTrap());
 					}
 					bWStockTrap.write("\n");
 				}
-				
+
 				if(bwPopulationStatus != null){
-					bwPopulationStatus.write(group.getPilot().getCurrentTime()+sep+Time.getYear(group.getPilot()));
-					bwPopulationStatus.write(sep+Time.getSeason(group.getPilot()));
+					bwPopulationStatus.write(group.getPilot().getCurrentTime()+sep+time.getYear(group.getPilot()));
+					bwPopulationStatus.write(sep+time.getSeason(group.getPilot()));
 					for (RiverBasin basin :group.getEnvironment().getRiverBasins()){
 						bwPopulationStatus.write(sep+basin.getPopulationStatus());
 					}
@@ -170,15 +170,15 @@ public class ExportPopulationStatus extends AquaNismsGroupProcess<DiadromousFish
 			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1){
 				bWMortality.close();
 			}
-			
+
 			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1){
 				bWMortalityCrash.close();
 			}
-			
+
 			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1){
 				bWStockTrap.close();
 			}
-			
+
 			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1){
 				bwPopulationStatus.close();
 			}

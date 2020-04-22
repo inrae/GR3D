@@ -7,9 +7,11 @@ import java.util.Map;
 
 import environment.Basin;
 import environment.BasinNetwork;
+import environment.RiverBasin;
 import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
+import miscellaneous.BinomialForSuperIndividualGen;
 import miscellaneous.Miscellaneous;
 
 import org.openide.util.lookup.ServiceProvider;
@@ -30,17 +32,17 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 		System.out.println((new XStream(new DomDriver()))
 				.toXML(new DisperseAndMigrateToRiver()));
 	}
-
+//TODO need to be corrected to remove fish remove
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		
-		if (Time.getSeason(group.getPilot()) == riverMigrationSeason ){
+		if (group.getEnvironment().getTime().getSeason(group.getPilot()) == riverMigrationSeason ){
 			BasinNetwork bn = group.getEnvironment();
 			double dMaxDispFish = 0.;
 
 			long amountWithHoming, strayedAmount;
 
-			Map<Basin,Double> distBasOfFish;
+			Map<RiverBasin, Double> distBasOfFish;
 
 			List<DiadromousFish> deadFish = new ArrayList<DiadromousFish>();
 			List<DiadromousFish> newFish = new ArrayList<DiadromousFish>();
@@ -49,18 +51,18 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 		
 				if (fish.isMature())   {
 					// fish with homing
-					amountWithHoming = Miscellaneous.binomialForSuperIndividual(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
+					amountWithHoming = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), fish.getAmount(), pHoming); // seuil par d�faut fix� � 50								
 
 					// strayed fish 
 					strayedAmount = fish.getAmount() - amountWithHoming;					
 					
 					if (strayedAmount != 0) {
 						// On r�cup�re les info du poids des bassin par rapport � la position du poisson
-						Map<Basin,Double> accBasOfFish= new TreeMap<Basin, Double>(accessibleBasinsPerBasin.get(fish.getPosition()));
+						Map<Basin,Double> accBasOfFish= new TreeMap<Basin, Double>(basinWeightsPerBasin.get(fish.getPosition()));
 						//accBasOfFish = accessibleBasinsPerBasin.get(fish.getPosition());						
 
 						// On retire certains bassins si on consid�re une distance max de dispersion
-						distBasOfFish = distanceBasinsPerBasin.get(fish.getPosition());
+						distBasOfFish = basinDistancesPerBasin.get(fish.getPosition());
 						if (group.getdMaxDisp() != 0){
 							// TODO pourquoi distbasoffish peut �tre nul ?
 							if (distBasOfFish != null){
@@ -92,7 +94,7 @@ public class DisperseAndMigrateToRiver extends DisperseAndMigrateToRiverBasic {
 						// compute sequentially the prob to go into a  basin
 						for (Basin accBasin : accBasOfFish.keySet()){
 							probToGo = accBasOfFish.get(accBasin) / totalWeight;
-							amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(), strayedAmount, probToGo);
+							amountToGo = BinomialForSuperIndividualGen.getSuccessNumber(group.getPilot(), strayedAmount, probToGo);
 
 							if (amountToGo > 0){
 								newFish.add(fish.duplicateWithNewPositionAndAmount(group.getPilot(), bn.getAssociatedRiverBasin(accBasin), amountToGo));			

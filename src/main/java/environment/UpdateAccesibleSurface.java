@@ -15,7 +15,8 @@ public class UpdateAccesibleSurface extends AquaNismsGroupProcess<DiadromousFish
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 		if (group.isThereBasinToUpdate()){
-			if (Time.getYear(group.getPilot()) >= group.getYearOfTheUpdate()){
+
+			if (group.getEnvironment().getTime().getYear(group.getPilot()) >= group.getYearOfTheUpdate()){
 				for (RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 					if (! Double.isNaN(group.getPaccessible(riverBasin.getName()))){
 						riverBasin.setPAccessible(group.getPaccessible(riverBasin.getName()));

@@ -29,7 +29,8 @@ public class PopulateBasinNetworkSeveralTimesAccordingToBasinSize extends AquaNi
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
-		if (Time.getNbYearFromBegin(group.getPilot()) <= timesOfPopulate && Time.getSeason(group.getPilot()) == populateSeason){
+		if (group.getEnvironment().getTime().getNbYearFromBegin(group.getPilot()) <= timesOfPopulate && 
+				group.getEnvironment().getTime().getSeason(group.getPilot()) == populateSeason){
 
 			for (RiverBasin riverBasin : group.getEnvironment().getRiverBasins()){
 				// the stock recruitment relationship targets only females

@@ -118,3 +118,4 @@ org.*
 /exploration/scriptR/scriptR.Rproj
 /exploration/scriptR/.Rproj.user/
 /exploration/scriptR/.RData
+/src/main/java/environment/*.ucls

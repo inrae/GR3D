@@ -32,9 +32,11 @@ public class MyCSVObserver extends CSVObserver {
             StringBuffer buf = new StringBuffer();
             StringBuffer sbSeparator = new StringBuffer(" " + this.separator + " ");
             // print current Time
+            
             buf.append(Time.getNbYearFromBegin(t));
             buf.append(" ");
             buf.append(Time.getSeason(t));
+            
             // print value of each field
             for (ObservablesHandler.ObservableFetcher fetcher : fetchers) {
                 buf.append(sbSeparator);

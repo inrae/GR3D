@@ -136,6 +136,9 @@ public class BasinNetworkReal extends BasinNetwork {
 
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
+		
+		time = new Time();
+	
 
 		FileReader reader;
 		Scanner scanner;
