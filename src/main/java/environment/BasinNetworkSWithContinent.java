@@ -348,17 +348,20 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 
 			// skip the first line with headers
 			scanner.nextLine();
-			int i, j;
-			int index = 0;
-			while (scanner.hasNext() & index < Math.pow(nbBasin, 2.)) {
-				j = index % nbBasin;
-				i = (index - j) / nbBasin;
-				if (j == 0)
-					scanner.next(); // to skip the first column
-				// System.out.println("i"+i+"j"+j+"index"+index);
-				distanceGrid[i][j] = Double.valueOf(scanner.next());
-				index++;
+			/*
+			 * int i, j; int index = 0; while (scanner.hasNext() & index < Math.pow(nbBasin, 2.)) { j = index % nbBasin;
+			 * i = (index - j) / nbBasin; if (j == 0) scanner.next(); // to skip the first column //
+			 * System.out.println("i"+i+"j"+j+"index"+index); distanceGrid[i][j] = Double.valueOf(scanner.next());
+			 * index++; }
+			 */
+			int i = 0;
+			while (scanner.hasNextLine()) {
+				String[] fields = scanner.nextLine().split(",");
+				for (int j = 0; j < nbBasin; j++) {
+					distanceGrid[i][j] = Double.valueOf(fields[j + 1]);
+				}
 			}
+
 			reader.close();
 			scanner.close();
 		} catch (Exception e) {
