@@ -10,7 +10,7 @@
 	<riverBasinShpFile>data/input/northeastamerica/shape/riverbasins.shp</riverBasinShpFile>
 	<continentShpFile>data/input/northeastamerica/shape/nea_continent.shp</continentShpFile>
 	<riverBasinNameLabel>NAME</riverBasinNameLabel>
-	<seaBasinNameLabel>name</seaBasinNameLabel>
+	<seaBasinNameLabel>NAME</seaBasinNameLabel>
 	<continentPathName>PATH</continentPathName>
 	<distanceGridFileName>data/input/northeastamerica/distanceGridNEA.csv</distanceGridFileName>
 	<temperatureCatchmentFile>data/input/northeastamerica/basins_temperatures_from_1800.csv</temperatureCatchmentFile>
