@@ -57,7 +57,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 	private double tempOptRep = 20. ;
 	private double eta = 2.4; // parameter linking surface of a basin and S_etoile
 	private double ratioS95_S50 = 2.;	
-	private double a=135000.; // Parameter of fecndity (number of eggs per individual)
+	private double a=270000.; // Parameter of fecndity (number of eggs per individual) Modifié depuis la valeur initial de tHibault, qui était 135000
 	private double delta_t=0.33; // duration of the mortality considered in the reproduction process (ex.: from eggs to juvenile in estuary for alosa alosa = 0.33)
 	private double survOptRep = 0.0017;
 	private double lambda = 0.00041;

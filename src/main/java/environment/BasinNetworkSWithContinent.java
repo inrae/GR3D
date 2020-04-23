@@ -396,16 +396,19 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 			char[] charac = { '"' };
 			String doublequote = new String(charac);
 			scanner.nextLine(); // skip the first line with headers
-			while (scanner.hasNext()) {
-				scanner.next(); // skip gid
-				name = scanner.next();
+		
+			while (scanner.hasNextLine()) {
+					String[] fields = scanner.nextLine().split(",");
+			
+				 // skip gid
+				name = fields[1];
 				name = name.replaceAll(new String(doublequote), "");
-				year = (long) scanner.nextInt();
+				year = Long.valueOf (fields[2]);
 				Double[] seasonalTemperature = new Double[4];
-				seasonalTemperature[0] = scanner.nextDouble();
-				seasonalTemperature[1] = scanner.nextDouble();
-				seasonalTemperature[2] = scanner.nextDouble();
-				seasonalTemperature[3] = scanner.nextDouble();
+				seasonalTemperature[0] = Double.valueOf(fields[3]);
+				seasonalTemperature[1] = Double.valueOf(fields[4]);
+				seasonalTemperature[2] = Double.valueOf(fields[5]);
+				seasonalTemperature[3] = Double.valueOf(fields[6]);
 				// scanner.nextLine();
 
 				// store seasonal temperatures for each basin for the
