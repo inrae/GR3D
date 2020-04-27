@@ -7,134 +7,49 @@
 					<title>Atlantic Area</title>
 					<threshold>10000</threshold>
 				</environment.BasinNetworkObserverWithContinent>
-
-			</observers>
-		</fr.cemagref.observation.kernel.ObservablesHandler>
-	</entry>
-<!--	<entry>
-		<java-class>species.DiadromousFishGroup</java-class>
-		<fr.cemagref.observation.kernel.ObservablesHandler>
-			<observers>
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Number of colonized basins</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>number of basins</yAxisLabel>
-					<variableName>getNbColonizedBasins</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Total Abundance</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>number of fishes</yAxisLabel>
-					<variableName>getFishEffective</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Abundance of spawners</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>number of fishes</yAxisLabel>
-					<variableName>getSpawnerEffective</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Abundance of male spawners</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>number of fishes</yAxisLabel>
-					<variableName>getMaleSpawnerEffective</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Abundance of female spawners</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>number of fishes</yAxisLabel>
-					<variableName>getFemaleSpawnerEffective</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
 				
-				<miscellaneous.TemporalRangeSerieChart>
-					<title>Range distribution</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>latitude</yAxisLabel>
-					<variableName>getRangeDistributionWithLat</variableName>
-				</miscellaneous.TemporalRangeSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Mean age at first reproduction for female</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>age (year)</yAxisLabel>
-					<variableName>getMeanAgeOfFirstReprodutionForFemale</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Mean age at first reproduction for male</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>age (year)</yAxisLabel>
-					<variableName>getMeanAgeOfFirstReprodutionForMale</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Statistic for male spawners age</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel></yAxisLabel>
-					<variableName>computeMaleSpawnerForFirstTimeSummaryStatistic</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Statistic for female spawners age</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel></yAxisLabel>
-					<variableName>computeFemaleSpawnerForFirstTimeSummaryStatistic</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Mean length at first reproduction for female</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>length (cm)</yAxisLabel>
-					<variableName>getMeanLengthOfFirstReprodutionForFemale</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
-				<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-					<graphType>LINE</graphType>
-					<title>Mean length at first reproduction for male</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>length (cm)</yAxisLabel>
-					<variableName>getMeanLengthOfFirstReprodutionForMale</variableName>
-				</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart>
-
+				<environment.BasinNetworkObserverPresence>
+					<title>Shad presence in Atlantic Area</title>
+					<presenceFileName>data/input/atlanticarea/aa_presence.csv</presenceFileName>
+					<period>obs_1751_1850</period>
+				</environment.BasinNetworkObserverPresence>
 			</observers>
 		</fr.cemagref.observation.kernel.ObservablesHandler>
 	</entry>
-	<entry>
-		<java-class>environment.RiverBasin</java-class>
-		<fr.cemagref.observation.kernel.ObservablesHandler>
-			<observers>
-				<miscellaneous.TemporalSerieChartForBasin>
-					<graphType>LINE</graphType>
-					<title>Number of juveniles</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>number of juveniles</yAxisLabel>
-					<variableName>getJuvenileNumber</variableName>
-				</miscellaneous.TemporalSerieChartForBasin>
-
-				<miscellaneous.TemporalSerieChartForBasin>
-					<graphType>LINE</graphType>
-					<title>% Autochtone</title>
-					<xAxisLabel>Time (season)</xAxisLabel>
-					<yAxisLabel>% Autochtone</yAxisLabel>
-					<variableName>getLastPercentageOfAutochtone</variableName>
-				</miscellaneous.TemporalSerieChartForBasin>
-
-			</observers>
-		</fr.cemagref.observation.kernel.ObservablesHandler>
-	</entry> -->
+	<!-- <entry> <java-class>species.DiadromousFishGroup</java-class> <fr.cemagref.observation.kernel.ObservablesHandler> <observers> 
+		<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <graphType>LINE</graphType> <title>Number of colonized 
+		basins</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>number of basins</yAxisLabel> <variableName>getNbColonizedBasins</variableName> 
+		</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<graphType>LINE</graphType> <title>Total Abundance</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>number of fishes</yAxisLabel> 
+		<variableName>getFishEffective</variableName> </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<graphType>LINE</graphType> <title>Abundance of spawners</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>number 
+		of fishes</yAxisLabel> <variableName>getSpawnerEffective</variableName> </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <graphType>LINE</graphType> <title>Abundance of male spawners</title> 
+		<xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>number of fishes</yAxisLabel> <variableName>getMaleSpawnerEffective</variableName> 
+		</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<graphType>LINE</graphType> <title>Abundance of female spawners</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>number 
+		of fishes</yAxisLabel> <variableName>getFemaleSpawnerEffective</variableName> </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<miscellaneous.TemporalRangeSerieChart> <title>Range distribution</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>latitude</yAxisLabel> 
+		<variableName>getRangeDistributionWithLat</variableName> </miscellaneous.TemporalRangeSerieChart> <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<graphType>LINE</graphType> <title>Mean age at first reproduction for female</title> <xAxisLabel>Time (season)</xAxisLabel> 
+		<yAxisLabel>age (year)</yAxisLabel> <variableName>getMeanAgeOfFirstReprodutionForFemale</variableName> </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <graphType>LINE</graphType> <title>Mean age at first reproduction 
+		for male</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>age (year)</yAxisLabel> <variableName>getMeanAgeOfFirstReprodutionForMale</variableName> 
+		</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<graphType>LINE</graphType> <title>Statistic for male spawners age</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel></yAxisLabel> 
+		<variableName>computeMaleSpawnerForFirstTimeSummaryStatistic</variableName> </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <graphType>LINE</graphType> <title>Statistic for female 
+		spawners age</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel></yAxisLabel> <variableName>computeFemaleSpawnerForFirstTimeSummaryStatistic</variableName> 
+		</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<graphType>LINE</graphType> <title>Mean length at first reproduction for female</title> <xAxisLabel>Time (season)</xAxisLabel> 
+		<yAxisLabel>length (cm)</yAxisLabel> <variableName>getMeanLengthOfFirstReprodutionForFemale</variableName> </fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> 
+		<fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> <graphType>LINE</graphType> <title>Mean length at first 
+		reproduction for male</title> <xAxisLabel>Time (season)</xAxisLabel> <yAxisLabel>length (cm)</yAxisLabel> <variableName>getMeanLengthOfFirstReprodutionForMale</variableName> 
+		</fr.cemagref.observation.observers.jfreechart.TemporalSerieChart> </observers> </fr.cemagref.observation.kernel.ObservablesHandler> 
+		</entry> <entry> <java-class>environment.RiverBasin</java-class> <fr.cemagref.observation.kernel.ObservablesHandler> <observers> 
+		<miscellaneous.TemporalSerieChartForBasin> <graphType>LINE</graphType> <title>Number of juveniles</title> <xAxisLabel>Time 
+		(season)</xAxisLabel> <yAxisLabel>number of juveniles</yAxisLabel> <variableName>getJuvenileNumber</variableName> </miscellaneous.TemporalSerieChartForBasin> 
+		<miscellaneous.TemporalSerieChartForBasin> <graphType>LINE</graphType> <title>% Autochtone</title> <xAxisLabel>Time (season)</xAxisLabel> 
+		<yAxisLabel>% Autochtone</yAxisLabel> <variableName>getLastPercentageOfAutochtone</variableName> </miscellaneous.TemporalSerieChartForBasin> 
+		</observers> </fr.cemagref.observation.kernel.ObservablesHandler> </entry> -->
 </hashtable>
