@@ -34,13 +34,14 @@ import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFishGroup;
 
 @SuppressWarnings("serial")
-public class BasinNetworkObserverWithContinent extends ObserverListener implements Configurable, Drawable, MouseMotionListener {
+public class BasinNetworkObserverWithContinent extends ObserverListener
+		implements Configurable, Drawable, MouseMotionListener {
 
 	private String title;
 	private double threshold = 13000000.;
 
 	@Description(name = "Color scale", tooltip = "")
-	public ColorScaleEnum colorScaleEnum = ColorScaleEnum.BluesScale;
+	public ColorScaleEnum colorScaleEnum = ColorScaleEnum.RedsScale;
 
 	// a basin network
 	private transient BasinNetworkSWithContinent bn;
@@ -88,7 +89,7 @@ public class BasinNetworkObserverWithContinent extends ObserverListener implemen
 	public void init(Pilot pilot) {
 		this.pilot = pilot;
 		if (this.colorScaleEnum == null) {
-			this.colorScaleEnum = ColorScaleEnum.BluesScale;
+			this.colorScaleEnum = ColorScaleEnum.RedsScale;
 		}
 		// the Jpanal that holds all the components to be displayed
 		display = new JPanel(new BorderLayout());
@@ -261,7 +262,7 @@ public class BasinNetworkObserverWithContinent extends ObserverListener implemen
 			this.paintComponents(g);
 
 			// draw the continent
-			g.setColor(Color.GRAY);
+			g.setColor(Color.LIGHT_GRAY);
 			for (Path2D.Double path : bn.getMapContinent().values()) {
 				Path2D.Double displayContinent = (Path2D.Double) path.createTransformedShape(af);
 				// g2d.draw(displayContinent);
@@ -288,7 +289,7 @@ public class BasinNetworkObserverWithContinent extends ObserverListener implemen
 				} else if (basin instanceof SeaBasin) {
 					g.setColor(colorScaleEnum.getScale().getSeaBasinColor());
 				} else {
-					g.setColor(new Color(255, 0, 0));
+					g.setColor(new Color(0, 0, 0));
 				}
 				g2d.draw(displayShape);
 
@@ -315,7 +316,8 @@ public class BasinNetworkObserverWithContinent extends ObserverListener implemen
 
 	public enum ColorScaleEnum {
 
-		BluesScale(new BluesScale()), BicolorScale(new BicolorScale()), GraysScale(new GraysScale());
+		RedsScale(new RedsScale()), BluesScale(new BluesScale()), BicolorScale(new BicolorScale()), GraysScale(
+				new GraysScale());
 		private ColorScale scale;
 
 
@@ -348,6 +350,41 @@ public class BasinNetworkObserverWithContinent extends ObserverListener implemen
 		@Override
 		public Color getColor(double value) {
 			return new Color(0.4f + 0.45f * (1f - (float) value), 0.4f + 0.45f * (1f - (float) value), 1f);
+		}
+
+
+		@Override
+		public void drawLegend(Graphics2D g2d, double threshold) {
+			int nbLegend = 11;
+			for (int i = 0; i < nbLegend; i++) {
+				float col = (float) i / (float) (nbLegend - 1);
+				g2d.setColor(getColor(col));
+				g2d.fillRect(10, 30 + 10 * (nbLegend - 1 - i), 20, 10);
+				double limit = Math.round(threshold * i / (nbLegend - 1) * 10.) / 10.;
+				g2d.setColor(Color.BLACK);
+				g2d.drawString(String.valueOf(limit), 32, 20 + 10 * (nbLegend + 1 - i));
+			}
+		}
+
+
+		@Override
+		public Color getSeaBasinColor() {
+			return new Color(0, 102, 255);
+		}
+
+
+		@Override
+		public Color getRiverBasinColor() {
+			return new Color(0, 204, 255);
+		}
+
+	}
+
+	public static class RedsScale implements ColorScale {
+
+		@Override
+		public Color getColor(double value) {
+			return new Color(1f, 0.4f + 0.45f * (1f - (float) value), 0.4f + 0.45f * (1f - (float) value));
 		}
 
 
