@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -17,42 +16,43 @@ import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 
 public class WriteNutrientExportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
-	private String fileName= "nutrientExportFluxes";
+	private String fileName = "nutrientExportFluxes";
+
 
 	public static void main(String[] args) {
-		System.out.println((new XStream(new DomDriver()))
-				.toXML(new WriteNutrientExportFluxes()));
+		System.out.println((new XStream(new DomDriver())).toXML(new WriteNutrientExportFluxes()));
 
 	}
+
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
 		BufferedWriter bW;
 
-		String outputPath = "data/output/" ;
-		String sep = ";"; 
+		String outputPath = group.getOutputPath();
+		String sep = ";";
 		new File(outputPath + fileName).getParentFile().mkdirs();
 		try {
-			bW = new BufferedWriter(new FileWriter(new File(outputPath+
-					fileName + group.getSimulationId() + ".csv")));
+			bW = new BufferedWriter(new FileWriter(new File(outputPath + fileName + group.getSimulationId() + ".csv")));
 
-			bW.write("year"+sep+"nutrient" + sep + "originBasin" + sep + "value" + "\n");
+			bW.write("year" + sep + "nutrient" + sep + "originBasin" + sep + "value" + "\n");
 
-			Map<Long, Map <String,  Map<String, Double>>> fluxesCollection = group.getNutrientRoutine().getNutrientExportFluxesCollection().getExportFluxesCollection();
+			Map<Long, Map<String, Map<String, Double>>> fluxesCollection = group.getNutrientRoutine()
+					.getNutrientExportFluxesCollection().getExportFluxesCollection();
 
 			// to iterate on sorted years
-			List<Long> years =  new ArrayList<Long>(fluxesCollection.keySet());
+			List<Long> years = new ArrayList<Long>(fluxesCollection.keySet());
 			Collections.sort(years);
 
-			for (long year :years) {
+			for (long year : years) {
 				if (year >= group.getMinYearToWrite()) {
 
 					for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 
 						for (String originBasinName : group.getEnvironment().getRiverBasinNames()) {
-							bW.write(year+ sep+ nutrient + sep + originBasinName );
-							bW.write( sep + fluxesCollection.get(year).get(nutrient).get(originBasinName) + '\n');
+							bW.write(year + sep + nutrient + sep + originBasinName);
+							bW.write(sep + fluxesCollection.get(year).get(nutrient).get(originBasinName) + '\n');
 						}
 
 					}
