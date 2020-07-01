@@ -19,11 +19,11 @@
 			<excretionRate class="hashtable">
 				<entry>
 					<string>P</string>
-					<double>2.17E-6</double>
+					<double>5.208E-5</double>
 				</entry>
 				<entry>
 					<string>N</string>
-					<double>2.471E-5</double>
+					<double>5.9304E-4</double>
 				</entry>
 			</excretionRate>
 			<fishFeaturesPreSpawning class="hashtable">
@@ -280,7 +280,7 @@
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>effectiveBiomassFluxesBeforeReproduction</fileNameOutput>
 				</species.WriteEffectiveAndBiomassFluxes>
-				
+
 				<species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
 					<reproductionSeason>SPRING</reproductionSeason>
@@ -303,6 +303,12 @@
 					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
 
+				<species.WriteEffectiveAndBiomassFluxes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<exportSeason>SPRING</exportSeason>
+					<fileNameOutput>effectiveBiomassFluxesAfterReproduction</fileNameOutput>
+				</species.WriteEffectiveAndBiomassFluxes>
+				
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>

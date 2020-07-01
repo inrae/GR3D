@@ -196,8 +196,8 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 
 
 		Map <String, Double> anExcretionRate = new Hashtable <String, Double>(); 
-		anExcretionRate.put("N", 24.71E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
-		anExcretionRate.put("P", 2.17E-6); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
+		anExcretionRate.put("N", 24.71E-6 * 24); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
+		anExcretionRate.put("P", 2.17E-6 * 24); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
 
 
 		/*
