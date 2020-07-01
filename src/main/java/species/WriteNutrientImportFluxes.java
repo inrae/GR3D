@@ -17,7 +17,7 @@ import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 
 public class WriteNutrientImportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
-	private String fileName= "fluxes";
+	private String fileName= "nutrientImportFluxes";
 
 
 
@@ -32,7 +32,7 @@ public class WriteNutrientImportFluxes extends AquaNismsGroupProcess<DiadromousF
 
 		BufferedWriter bW;
 
-		String outputPath = "data/output/" ;
+		String outputPath = group.getOutputPath();
 		String sep = ";"; 
 		new File(outputPath + fileName).getParentFile().mkdirs();
 		try {

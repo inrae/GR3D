@@ -30,7 +30,7 @@ public class WriteNutrientExportFluxes extends AquaNismsGroupProcess<DiadromousF
 
 		BufferedWriter bW;
 
-		String outputPath = "data/output/" ;
+		String outputPath = group.getOutputPath() ;
 		String sep = ";"; 
 		new File(outputPath + fileName).getParentFile().mkdirs();
 		try {

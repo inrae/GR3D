@@ -93,12 +93,12 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 */
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
-	private String outputPath = "data/output/" ; 
+	private String outputPath = "data/output/atlanticarea/" ; 
 
 	private long minYearToWrite = 1900;
 	
 	//TODO:remove fileNameFluxes
-	private String fileNameFluxes = "fluxes";
+	private String fileNameFluxes = "nutrientsImportfluxes";
 
 	private transient BufferedWriter bWForFluxes;
 	private transient String sep;
@@ -458,7 +458,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 		}
 
 		// open an bufferad writer to export fluxes
-		if (fileNameFluxes != null){
+		if (!fileNameFluxes.isEmpty()){
 			sep = ";";
 			new File(this.outputPath +fileNameFluxes).getParentFile().mkdirs();
 			try {
