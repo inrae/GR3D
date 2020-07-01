@@ -20,7 +20,6 @@
 package miscellaneous;
 
 import fr.cemagref.simaqualife.pilot.Pilot;
-import umontreal.iro.lecuyer.randvar.NormalACRGen;
 import umontreal.iro.lecuyer.randvar.NormalGen;
 import umontreal.iro.lecuyer.randvar.UniformGen;
 import umontreal.iro.lecuyer.rng.RandomStream;
@@ -30,40 +29,45 @@ import umontreal.iro.lecuyer.rng.RandomStream;
  */
 public class BinomialForSuperIndividualGen {
 
-	private long  threshold;
+	private long threshold;
 
 	private NormalGen normalGen;
 
 	private UniformGen uniformGen;
 
-	public BinomialForSuperIndividualGen(RandomStream randomStream, long threshold){
-		normalGen = new NormalACRGen(randomStream, 0., 1.);  // NormalACRGen to speed up exceution
+
+	public BinomialForSuperIndividualGen(RandomStream randomStream, long threshold) {
+		normalGen = new NormalGen(randomStream, 0., 1.);
+		// (NormalACRGen to speed up execution give weird result
 		uniformGen = new UniformGen(randomStream, 0., 1.);
 
 		this.threshold = threshold;
 	}
 
-	public BinomialForSuperIndividualGen(RandomStream randomStream){
-		this(randomStream,  50L);
+
+	public BinomialForSuperIndividualGen(RandomStream randomStream) {
+		this(randomStream, 50L);
 	}
 
-	public long getSuccessNumber(long draws,  double succesProbability) {
+
+	public long getSuccessNumber(long draws, double succesProbability) {
 
 		if (draws >= threshold) {
 			double mean = succesProbability * draws;
 			double standardDeviation = Math.sqrt(succesProbability * (1 - succesProbability) * draws);
-			//int nbTRy =0;
+			// int nbTRy =0;
 			if (3. * standardDeviation < 1.)
-				return (long) Math.round( mean);
+				return Math.round(mean);
 			else {
-				long successes = -1L ;
+				long successes = -1L;
 				// approximate the binomial by a normal distribution of mean n p and variance n p (1-p)
 				while (successes < 0 | successes > draws) {
-					successes = (long) Math.round(normalGen.nextDouble() * standardDeviation + mean);
-					//nbTRy ++;
+					successes = Math.round(normalGen.nextDouble() * standardDeviation + mean);
+					// nbTRy ++;
 				}
-				//if (nbTRy >1)
-				//	System.out.println("n =" + draws + "\t p= "+  succesProbability + "\tect = " + standardDeviation+   " \tnp = " + Math.round(mean) +" --> " +nbTRy + " for " + successes);
+				// if (nbTRy >1)
+				// System.out.println("n =" + draws + "\t p= "+ succesProbability + "\tect = " + standardDeviation+ "
+				// \tnp = " + Math.round(mean) +" --> " +nbTRy + " for " + successes);
 				return successes;
 			}
 
@@ -78,29 +82,33 @@ public class BinomialForSuperIndividualGen {
 		}
 	}
 
+
 	private long constantDraw(double mean) {
-		return (long) Math.round( mean);
+		return Math.round(mean);
 	}
 
+
 	private long normalDraw(long draws, double mean, double standardDeviation) {
-		double successes = -1. ;
+		double successes = -1.;
 		while (successes < 0 | successes > draws) {
 			successes = Math.round(normalGen.nextDouble() * standardDeviation + mean);
 		}
-		return (long) Math.round(successes);
+		return Math.round(successes);
 	}
 
+
 	private long binomialDraw(long draws, double succesProbability) {
-		long successes = 0 ;
+		long successes = 0;
 		for (successes = 0; successes < draws; successes++) {
 			if (uniformGen.nextDouble() < succesProbability) {
 				successes++;
 			}
-		} 
+		}
 		return successes;
 	}
-	
-	public long getSuccessNumber2(long draws,  double succesProbability) {
+
+
+	public long getSuccessNumber2(long draws, double succesProbability) {
 
 		if (draws >= threshold) {
 			double mean = succesProbability * draws;
@@ -108,27 +116,26 @@ public class BinomialForSuperIndividualGen {
 
 			if (3. * standardDeviation < 1.)
 				return constantDraw(mean);
-			else 
+			else
 				return normalDraw(draws, mean, standardDeviation);
-			
+
 		} else {
-			return binomialDraw(draws,succesProbability );
+			return binomialDraw(draws, succesProbability);
 		}
 	}
-	
+
+
 	public static long getSuccessNumber(Pilot pilot, long amount, double succesProba, long threshold) {
 
-		if (amount > threshold) { // use a normal approximation for huge amount 
-			/*			double p=-1.;
-             while (p<0 | p>1){
-             p = genAleaNormal.nextDouble() * 
-             Math.sqrt(succesProba * (1 - succesProba) /amount) + succesProba;
-             }
-             amountWithSuccess = (long) Math.round(p* amount);*/
+		if (amount > threshold) { // use a normal approximation for huge amount
+			/*
+			 * double p=-1.; while (p<0 | p>1){ p = genAleaNormal.nextDouble() * Math.sqrt(succesProba * (1 -
+			 * succesProba) /amount) + succesProba; } amountWithSuccess = (long) Math.round(p* amount);
+			 */
 			double amountWithSuccess = -1;
 			while (amountWithSuccess < 0 | amountWithSuccess > amount) {
-				amountWithSuccess = Math.round(NormalGen.nextDouble(pilot.getRandomStream(), 0., 1.) * Math.sqrt(succesProba * (1 - succesProba) * amount)
-						+ succesProba * amount);
+				amountWithSuccess = Math.round(NormalGen.nextDouble(pilot.getRandomStream(), 0., 1.)
+						* Math.sqrt(succesProba * (1 - succesProba) * amount) + succesProba * amount);
 			}
 			return (long) amountWithSuccess;
 
@@ -141,8 +148,9 @@ public class BinomialForSuperIndividualGen {
 				}
 			}
 			return amountWithSuccess;
-		}	
+		}
 	}
+
 
 	public static long getSuccessNumber(Pilot pilot, long amount, double succesProba) {
 		return getSuccessNumber(pilot, amount, succesProba, 50);
