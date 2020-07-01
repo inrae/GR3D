@@ -46,35 +46,42 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 	private String fileNameOutput = "effectiveBiomassFluxes";
 
 	private transient BufferedWriter bW;
-	private transient String sep=";";
+	private transient String sep = ";";
+
 
 	public static void main(String[] args) {
-		System.out.println((new XStream(new DomDriver()))
-				.toXML(new WriteEffectiveAndBiomassFluxes()));
+		System.out.println((new XStream(new DomDriver())).toXML(new WriteEffectiveAndBiomassFluxes()));
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess#initTransientParameters(fr.cemagref.simaqualife.pilot.Pilot)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess#initTransientParameters(fr.cemagref.simaqualife.
+	 * pilot.Pilot)
 	 */
 	@Override
 	public void initTransientParameters(Pilot pilot) {
 		super.initTransientParameters(pilot);
-		sep=";";
+		sep = ";";
 	}
+
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
 
-		if (bW==null){
-			if (fileNameOutput != null){
-				new File(group.getOutputPath()+fileNameOutput).getParentFile().mkdirs();
+		// prepare the output file
+		if (bW == null) {
+			if (fileNameOutput != null) {
+				new File(group.getOutputPath() + fileNameOutput).getParentFile().mkdirs();
 				try {
-					bW = new BufferedWriter(new FileWriter(new File(group.getOutputPath()+
-							fileNameOutput +group.getSimulationId()+ ".csv")));
+					bW = new BufferedWriter(new FileWriter(
+							new File(group.getOutputPath() + fileNameOutput + group.getSimulationId() + ".csv")));
 
-					bW.write("year"+sep+"type"+ sep+"originBasin" ); //create the field of the column
+					bW.write("year" + sep + "type" + sep + "originBasin"); // create the field of the column
 					for (String birthBasinName : group.getEnvironment().getRiverBasinNames()) {
-						bW.write(sep + birthBasinName); // write each basin name in the file 
+						bW.write(sep + birthBasinName); // write each basin name in the file
 					}
 					bW.write("\n");
 
@@ -85,40 +92,46 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 		}
 
 		Time time = group.getEnvironment().getTime();
-		
+
 		if (time.getSeason(pilot) == exportSeason & time.getYear(pilot) >= group.getMinYearToWrite()) {
 
-			//Create the map to get the biomass in each migration basin and birth basin
-			Map<String, Map<String, Long>> spawnerEffectivePerDestination = new HashMap<String,  Map<String, Long>>(group.getEnvironment().getRiverBasinNames().length); 
-			//Create the map to get the abundance in each migration and birth birth basin
-			Map<String,  Map<String, Double>> spawnerBiomassPerDestination = new HashMap<String,  Map<String, Double>>(group.getEnvironment().getRiverBasinNames().length); 
+			// Create the map to get the biomass in each migration basin and birth basin
+			Map<String, Map<String, Long>> spawnerEffectivePerDestination = new HashMap<String, Map<String, Long>>(
+					group.getEnvironment().getRiverBasinNames().length);
+			// Create the map to get the abundance in each migration and birth birth basin
+			Map<String, Map<String, Double>> spawnerBiomassPerDestination = new HashMap<String, Map<String, Double>>(
+					group.getEnvironment().getRiverBasinNames().length);
 
 			// initialise maps with 0
-			for (String destinationName: group.getEnvironment().getRiverBasinNames()) {
-				Map<String, Long> spawnerEffectivePerOrigin =  new HashMap<String, Long>(group.getEnvironment().getRiverBasinNames().length); 
-				Map<String, Double> spawnerBiomassPerOrigin =  new HashMap<String, Double>(group.getEnvironment().getRiverBasinNames().length); 
-				for (String originName : group.getEnvironment().getRiverBasinNames()){
-					spawnerEffectivePerOrigin.put(originName,  0L);		
+			for (String destinationName : group.getEnvironment().getRiverBasinNames()) {
+				Map<String, Long> spawnerEffectivePerOrigin = new HashMap<String, Long>(
+						group.getEnvironment().getRiverBasinNames().length);
+				Map<String, Double> spawnerBiomassPerOrigin = new HashMap<String, Double>(
+						group.getEnvironment().getRiverBasinNames().length);
+				for (String originName : group.getEnvironment().getRiverBasinNames()) {
+					spawnerEffectivePerOrigin.put(originName, 0L);
 					spawnerBiomassPerOrigin.put(originName, 0.);
 				}
 
-				spawnerEffectivePerDestination.put(destinationName,spawnerEffectivePerOrigin );
-				spawnerBiomassPerDestination.put(destinationName,spawnerBiomassPerOrigin );
+				spawnerEffectivePerDestination.put(destinationName, spawnerEffectivePerOrigin);
+				spawnerBiomassPerDestination.put(destinationName, spawnerBiomassPerOrigin);
 			}
 
-			for (RiverBasin destinationBasin: group.getEnvironment().getRiverBasins()) {
-				//compute the cumulative effective and biomass per birth basin 
+			for (RiverBasin destinationBasin : group.getEnvironment().getRiverBasins()) {
+				// compute the cumulative effective and biomass per birth basin
 				if (destinationBasin.getFishs(group) != null) {
 					for (DiadromousFish fish : destinationBasin.getFishs(group)) {
 						if (fish.getStage() == Stage.MATURE) {
 							String originBasinName = fish.getBirthBasin().getName();
 
-							spawnerEffectivePerDestination.get(destinationBasin.getName()).
-							put(originBasinName, spawnerEffectivePerDestination.get(destinationBasin.getName()).get(originBasinName) + fish.getAmount() );
+							spawnerEffectivePerDestination.get(destinationBasin.getName()).put(originBasinName,
+									spawnerEffectivePerDestination.get(destinationBasin.getName()).get(originBasinName)
+											+ fish.getAmount());
 
 							double biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount();
-							spawnerBiomassPerDestination.get(destinationBasin.getName()).
-							put(originBasinName, spawnerBiomassPerDestination.get(destinationBasin.getName()).get(originBasinName) + biomass );
+							spawnerBiomassPerDestination.get(destinationBasin.getName()).put(originBasinName,
+									spawnerBiomassPerDestination.get(destinationBasin.getName()).get(originBasinName)
+											+ biomass);
 						}
 					}
 				}
@@ -126,29 +139,29 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 
 			try {
 				// write effective
-				for (String originBasinName: group.getEnvironment().getRiverBasinNames()) {
-					bW.write(time.getYear(pilot)+ sep + "effective" + sep + originBasinName );
+				for (String originBasinName : group.getEnvironment().getRiverBasinNames()) {
+					bW.write(time.getYear(pilot) + sep + "effective" + sep + originBasinName);
 
 					for (String destinationBasinName : group.getEnvironment().getRiverBasinNames()) {
-						bW.write(sep+spawnerEffectivePerDestination.get(destinationBasinName).get(originBasinName));
+						bW.write(sep + spawnerEffectivePerDestination.get(destinationBasinName).get(originBasinName));
 					}
 					// write an end-of-line
 					bW.write("\n");
 				}
 
 				// write biomass
-				for (String originBasinName: group.getEnvironment().getRiverBasinNames()) {
-					bW.write(time.getYear(pilot)+ sep + "biomass"+ sep + originBasinName );
+				for (String originBasinName : group.getEnvironment().getRiverBasinNames()) {
+					bW.write(time.getYear(pilot) + sep + "biomass" + sep + originBasinName);
 
 					for (String destinationBasinName : group.getEnvironment().getRiverBasinNames()) {
-						bW.write(sep+spawnerBiomassPerDestination.get(destinationBasinName).get(originBasinName));
+						bW.write(sep + spawnerBiomassPerDestination.get(destinationBasinName).get(originBasinName));
 					}
 					// write an end-of-line
 					bW.write("\n");
 				}
 
-
-				if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1) {
+				if (group.getPilot().getCurrentTime() == group.getPilot().getSimBegin()
+						+ group.getPilot().getSimDuration() - 1) {
 					bW.flush();
 					bW.close();
 				}
@@ -158,4 +171,3 @@ public class WriteEffectiveAndBiomassFluxes extends AquaNismsGroupProcess<Diadro
 		}
 	}
 }
-
