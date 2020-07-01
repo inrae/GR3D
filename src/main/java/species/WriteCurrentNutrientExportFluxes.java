@@ -13,41 +13,40 @@ import environment.Time;
 import environment.Time.Season;
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 
-
 public class WriteCurrentNutrientExportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
-	private String fileName= "currentNutrientExportFluxes";
+	private String fileName = "currentNutrientExportFluxes";
 	private Season writeSeason = Season.SPRING;
 
 	private transient BufferedWriter bW;
 
 
 	public static void main(String[] args) {
-		System.out.println((new XStream(new DomDriver()))
-				.toXML(new WriteCurrentNutrientExportFluxes()));
+		System.out.println((new XStream(new DomDriver())).toXML(new WriteCurrentNutrientExportFluxes()));
 	}
 
 
 	@Override
 	public void doProcess(DiadromousFishGroup group) {
-		String sep = ";"; 
-		
+		String sep = ";";
+
 		Time time = group.getEnvironment().getTime();
 
 		// initialise the bW the first time
 		try {
-			if ( bW == null) {
-				String outputPath = "data/output/" ;
+			if (bW == null) {
+				String outputPath = group.getOutputPath();
 				new File(outputPath + fileName).getParentFile().mkdirs();
 
-				bW = new BufferedWriter(new FileWriter(new File(outputPath+
-						fileName + group.getSimulationId() + ".csv")));
+				bW = new BufferedWriter(
+						new FileWriter(new File(outputPath + fileName + group.getSimulationId() + ".csv")));
 
-				bW.write("year"+sep+"nutrient" + sep + "originBasin" + sep + "value" + "\n");
+				bW.write("year" + sep + "nutrient" + sep + "originBasin" + sep + "value" + "\n");
 			}
 
 			// write information for the current year
-			Map<Long, Map <String,  Map<String, Double>>> fluxesCollection = group.getNutrientRoutine().getNutrientExportFluxesCollection().getExportFluxesCollection();
+			Map<Long, Map<String, Map<String, Double>>> fluxesCollection = group.getNutrientRoutine()
+					.getNutrientExportFluxesCollection().getExportFluxesCollection();
 
 			long year = time.getYear(group.getPilot());
 
@@ -55,15 +54,16 @@ public class WriteCurrentNutrientExportFluxes extends AquaNismsGroupProcess<Diad
 
 				for (String nutrient : group.getNutrientRoutine().getNutrientsOfInterest()) {
 					for (String originBasinName : group.getEnvironment().getRiverBasinNames()) {
-						bW.write(year+ sep+ nutrient + sep + originBasinName );
-						bW.write( sep + fluxesCollection.get(year).get(nutrient).get(originBasinName) );
+						bW.write(year + sep + nutrient + sep + originBasinName);
+						bW.write(sep + fluxesCollection.get(year).get(nutrient).get(originBasinName));
 					}
 					bW.write("\n");
 				}
 			}
 
 			// close the bW
-			if (group.getPilot().getCurrentTime()== group.getPilot().getSimBegin()+group.getPilot().getSimDuration()-1){
+			if (group.getPilot().getCurrentTime() == group.getPilot().getSimBegin() + group.getPilot().getSimDuration()
+					- 1) {
 				bW.flush();
 				bW.close();
 			}
