@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -465,8 +464,8 @@ public class DiadromousFishGroup extends AquaNismsGroup<DiadromousFish, BasinNet
 			tempMinRep = parameterSets.get(parameterSetLine - 1).getSecond();
 		}
 
-		// open an bufferad writer to export fluxes
-		if (fileNameFluxes != null) {
+		// open an buffered writer to export fluxes
+		if (!fileNameFluxes.isEmpty()) {
 			sep = ";";
 			new File(this.outputPath + fileNameFluxes).getParentFile().mkdirs();
 			try {
@@ -502,7 +501,7 @@ public class DiadromousFishGroup extends AquaNismsGroup<DiadromousFish, BasinNet
 
 			while (scanner.hasNextLine()) {
 				String[] fields = scanner.nextLine().split(",");
-				System.out.println(Arrays.toString(fields));
+				// System.out.println(Arrays.toString(fields));
 				if (fields.length > 2) {
 					if (!fields[2].isEmpty())
 						obs1900.put(fields[1], Integer.valueOf(fields[2]));

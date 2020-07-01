@@ -198,9 +198,9 @@
 		<parameterSetLine>0</parameterSetLine>
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
-		<outputPath>data/output/</outputPath>
+		<outputPath>data/output/atlanticarea/</outputPath>
 		<minYearToWrite>1900</minYearToWrite>
-		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
+		<fileNameFluxes></fileNameFluxes>
 		<lengthAtHatching>2.0</lengthAtHatching>
 		<linfVonBertForFemale>70.0</linfVonBertForFemale>
 		<linfVonBertForMale>70.0</linfVonBertForMale>
@@ -318,7 +318,7 @@
 			<processesAtEnd>
 				<species.WriteNutrientImportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<fileName>fluxes</fileName>
+					<fileName>nutrientImportFluxes</fileName>
 				</species.WriteNutrientImportFluxes>
 
 				<species.WriteNutrientExportFluxes>
