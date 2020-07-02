@@ -1,7 +1,6 @@
 package species;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -193,41 +192,45 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								totalWeight = totalWeight + weightOfDeathBasin;
 
 								// Afficher le contenu du MAP
-								System.out.println(departure.getName() + ": " + totalWeight);
-								System.out.println("strayedAmount before: " + strayedAmount);
-								Iterator<RiverBasin> iterateur = basinWeightsFromDeparture.keySet().iterator();
-								// Parcourir les clés et afficher les entrées de chaque clé;
-								while (iterateur.hasNext()) {
-									RiverBasin key = iterateur.next();
-									System.out.println(key.getName() + " dist = " + departure.getNeighboursDistances().get(key)
-											+ "=>" + (basinWeightsFromDeparture.get(key)));
-								}
+								/*
+								 * System.out.println(departure.getName() + ": " + totalWeight);
+								 * System.out.println("strayedAmount before: " + strayedAmount); Iterator<RiverBasin>
+								 * iterateur = basinWeightsFromDeparture.keySet().iterator(); while
+								 * (iterateur.hasNext()) { RiverBasin key = iterateur.next();
+								 * System.out.println(key.getName() + " dist = " +
+								 * departure.getNeighboursDistances().get(key) + "=>" +
+								 * (basinWeightsFromDeparture.get(key))); }
+								 */
 
 								// compute sequentially the prob to go into a basin
-								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {
+
+								long remainingStrayedAmount = strayedAmount;
+								for (Entry<RiverBasin, Double> entry : basinWeightsFromDeparture.entrySet()) {
 									RiverBasin strayerDestination = entry.getKey();
 									Double weight = entry.getValue();
 									probToGo = weight / totalWeight;
 									// amountToGo = Miscellaneous.binomialForSuperIndividual(group.getPilot(),
 									// strayedAmount, probToGo);
-									amountToGo = aleaGen.getSuccessNumber(strayedAmount, probToGo);
+
+									amountToGo = Math.min(remainingStrayedAmount,
+											aleaGen.getSuccessNumber(strayedAmount, probToGo));
+
 									if (amountToGo > 0) {
 										strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(),
 												strayerDestination, amountToGo), group);
+										remainingStrayedAmount -= amountToGo;
+										System.out.println(strayerDestination.getName() + "<-" + amountToGo);
 									}
 
-									totalWeight -= weight;
-									strayedAmount -= amountToGo;
-
-									if (strayedAmount <= 0) {
+									if (remainingStrayedAmount == 0) {
 										// CHECK if it occurs and for which basins
 										break;
 									}
 								}
 							}
 
-							System.out.println("strayedAmount after: " + strayedAmount);
-							System.out.println();
+							// System.out.println("strayedAmount after: " + strayedAmount);
+							// System.out.println();
 
 							// update fish with homing
 							if (homingAmount > 0) {
