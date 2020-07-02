@@ -112,8 +112,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 
 
 	public static void main(String[] args) {
-		System.out.println(
-				(new XStream(new DomDriver())).toXML(new DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin()));
+		System.out.println((new XStream(new DomDriver())).toXML(new DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin()));
 	}
 
 
@@ -166,7 +165,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 
 							// influence of the fish length on the probability to disperse
 							if (strayedAmount != 0) {
-								// calcula the weight associated with the fish length in the probabaility to disperse
+								// calculate the weight associated with the fish length in the probabaility to disperse
 								double weightFishLength = -(alpha2Rep * ((fish.getLength() - meanSpawnersLengthAtRepro)
 										/ standardDeviationOfSpawnersLengthAtRepro));
 
@@ -176,8 +175,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								long amountToGo = 0;
 								Map<RiverBasin, Double> basinWeightsFromDeparture = new HashMap<RiverBasin, Double>();
 								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {
-									double accBasinWeight = 1.
-											/ (1. + Math.exp(-(entry.getValue() + weightFishLength)));
+									double accBasinWeight = 1. / (1. + Math.exp(-(entry.getValue() + weightFishLength)));
 
 									// put weight to 0 for unused basins
 									if (group.isThereBasinToUpdate()) {
@@ -195,14 +193,16 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 								totalWeight = totalWeight + weightOfDeathBasin;
 
 								// Afficher le contenu du MAP
-
+								System.out.println(departure.getName() + ": " + totalWeight);
+								System.out.println("strayedAmount before: " + strayedAmount);
 								Iterator<RiverBasin> iterateur = basinWeightsFromDeparture.keySet().iterator();
 								// Parcourir les clés et afficher les entrées de chaque clé;
 								while (iterateur.hasNext()) {
 									RiverBasin key = iterateur.next();
-									System.out.println(key.getName() + "=>" + basinWeightsFromDeparture.get(key));
+									System.out.println(key.getName() + " dist = " + departure.getNeighboursDistances().get(key)
+											+ "=>" + (basinWeightsFromDeparture.get(key)));
 								}
-								System.out.println();
+
 								// compute sequentially the prob to go into a basin
 								for (Entry<RiverBasin, Double> entry : basinWeightsPerBasin.get(departure).entrySet()) {
 									RiverBasin strayerDestination = entry.getKey();
@@ -212,8 +212,8 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 									// strayedAmount, probToGo);
 									amountToGo = aleaGen.getSuccessNumber(strayedAmount, probToGo);
 									if (amountToGo > 0) {
-										strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(
-												group.getPilot(), strayerDestination, amountToGo), group);
+										strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(),
+												strayerDestination, amountToGo), group);
 									}
 
 									totalWeight -= weight;
@@ -225,6 +225,9 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 									}
 								}
 							}
+
+							System.out.println("strayedAmount after: " + strayedAmount);
+							System.out.println();
 
 							// update fish with homing
 							if (homingAmount > 0) {
