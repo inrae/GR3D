@@ -114,9 +114,8 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 
 		@Override
 		public String toString() {
-			return "Record [order=" + this.order + ", basin_id=" + this.basin_id + ", name=" + this.name
-					+ ", longitude=" + this.longitude + ", latitude=" + this.latitude + ", surface=" + this.surface
-					+ ", pDam=" + this.pDam + "]";
+			return "Record [order=" + this.order + ", basin_id=" + this.basin_id + ", name=" + this.name + ", longitude="
+					+ this.longitude + ", latitude=" + this.latitude + ", surface=" + this.surface + ", pDam=" + this.pDam + "]";
 		}
 	}
 
@@ -258,7 +257,7 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 			// Parsing the file
 			scanner = new Scanner(reader);
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal
-												// separator !!!
+			// separator !!!
 			scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
 
 			// System.out.println(scanner.nextLine());
@@ -335,42 +334,55 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 			grid[index + nbBasin] = seaBasin;
 		}
 
-		// fill the distanceGrid
+		// ====== fill the distanceGrid =================
 		distanceGrid = new double[nbBasin][nbBasin];
+
 		try {
 			// open the file
 			reader = new FileReader(distanceGridFileName);
+
+			/*
+			 * // Parsing the file scanner = new Scanner(reader); scanner.useLocale(Locale.ENGLISH); // to have a point
+			 * as decimal separator !!! scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
+			 * 
+			 * // skip the first line with headers scanner.nextLine(); int i = 0; while (scanner.hasNextLine()) {
+			 * String[] fields = scanner.nextLine().split(","); for (int j = 0; j < nbBasin; j++) { distanceGrid[i][j] =
+			 * Double.valueOf(fields[j + 1]); } } scanner.close();
+			 * 
+			 * // TODO fill the distance in each basin for (Basin basin : grid) {
+			 * basin.setNeighboursDistances(getNeighboursWithDistance(basin)); }
+			 */
+
 			// Parsing the file
 			scanner = new Scanner(reader);
-			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal
-												// separator !!!
+			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal separator !!!
 			scanner.useDelimiter(Pattern.compile("[;,\r\n]"));
 
-			// skip the first line with headers
-			scanner.nextLine();
-			/*
-			 * int i, j; int index = 0; while (scanner.hasNext() & index < Math.pow(nbBasin, 2.)) { j = index % nbBasin;
-			 * i = (index - j) / nbBasin; if (j == 0) scanner.next(); // to skip the first column //
-			 * System.out.println("i"+i+"j"+j+"index"+index); distanceGrid[i][j] = Double.valueOf(scanner.next());
-			 * index++; }
-			 */
-			int i = 0;
+			// upload destinationNames
+			String[] destinationNames = scanner.nextLine().split(",");
 			while (scanner.hasNextLine()) {
+				Map<Basin, Double> neighboursDistances = new TreeMap<Basin, Double>();
 				String[] fields = scanner.nextLine().split(",");
+				String departureName = fields[0].replaceAll("\"", "");
 				for (int j = 0; j < nbBasin; j++) {
-					distanceGrid[i][j] = Double.valueOf(fields[j + 1]);
+					if (!departureName.equals(destinationNames[j + 1])) {
+						// String nameDest = destinationNames[j + 1];
+						// Basin seaBasin = this.getSeaBasin(destinationNames[j + 1]);
+						neighboursDistances.put(this.getRiverBasin(destinationNames[j + 1].replaceAll("\"", "")),
+								Double.valueOf(fields[j + 1]));
+					}
 				}
+				// add distances with neighbourg for sea basin
+				this.getSeaBasin(departureName).setNeighboursDistances(neighboursDistances);
+				// no distances with neighbourg for river basin
+				this.getRiverBasin(departureName).setNeighboursDistances(null);
 			}
 
-			reader.close();
 			scanner.close();
+			reader.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		// TODO fill the distance in each basin
-		for (Basin basin : grid) {
-			basin.setNeighboursDistances(getNeighboursWithDistance(basin));
 		}
 
 		// create a QueueMemoryMap to keep the spawnerOrigine in each basin
@@ -391,19 +403,19 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 			// Parsing the file
 			scanner = new Scanner(reader);
 			scanner.useLocale(Locale.ENGLISH); // to have a point as decimal
-												// separator !!!
+			// separator !!!
 			scanner.useDelimiter(Pattern.compile("[,;\r\n]"));
 			char[] charac = { '"' };
 			String doublequote = new String(charac);
 			scanner.nextLine(); // skip the first line with headers
-		
+
 			while (scanner.hasNextLine()) {
-					String[] fields = scanner.nextLine().split(",");
-			
-				 // skip gid
+				String[] fields = scanner.nextLine().split(",");
+
+				// skip gid
 				name = fields[1];
 				name = name.replaceAll(new String(doublequote), "");
-				year = Long.valueOf (fields[2]);
+				year = Long.valueOf(fields[2]);
 				Double[] seasonalTemperature = new Double[4];
 				seasonalTemperature[0] = Double.valueOf(fields[3]);
 				seasonalTemperature[1] = Double.valueOf(fields[4]);
