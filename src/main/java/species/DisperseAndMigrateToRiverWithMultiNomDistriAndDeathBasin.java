@@ -219,7 +219,7 @@ public class DisperseAndMigrateToRiverWithMultiNomDistriAndDeathBasin extends Di
 										strayerDestination.addFish(fish.duplicateWithNewPositionAndAmount(group.getPilot(),
 												strayerDestination, amountToGo), group);
 										remainingStrayedAmount -= amountToGo;
-										System.out.println(strayerDestination.getName() + "<-" + amountToGo);
+										// System.out.println(strayerDestination.getName() + "<-" + amountToGo);
 									}
 
 									if (remainingStrayedAmount == 0) {
