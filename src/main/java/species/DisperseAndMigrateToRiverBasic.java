@@ -87,13 +87,6 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 	protected transient Map<SeaBasin, Map<RiverBasin, Double>> basinWeightsPerBasin;
 
 
-	/**
-	 * a map associtaing a sea bassin with the distance for each river bassin <key> SeaBasin <value> <key> RiverBasin
-	 * <value> distance between the river Basin and the river basin associated with the sea basin
-	 */
-	// @Deprecated
-	// protected transient Map<SeaBasin, Map<RiverBasin, Double>> basinDistancesPerBasin;
-
 	@Override
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
@@ -112,14 +105,12 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 
 			for (Entry<Basin, Double> entry : seaBas.getNeighboursDistances().entrySet()) {
 				associatedRiverBasin = (environment.RiverBasin) entry.getKey();
-				// RiverBasin associatedRiverBasin = (RiverBasin) bn.getAssociatedRiverBasin(entry.getKey());
 
 				double weight = alpha0Rep - alpha1Rep * ((entry.getValue() - meanInterDistance) / standardDeviationInterDistance)
 						+ alpha3Rep
 								* ((associatedRiverBasin.getAttractiveSurface() - meanBvSurface) / standardDeviationBvSurface);
 
 				mapWeight.put(associatedRiverBasin, weight);
-
 			}
 			basinWeightsPerBasin.put(seaBas, mapWeight);
 		}
