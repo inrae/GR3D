@@ -158,13 +158,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 					// Initiate the total fluxes for this basin
 					Map<SpawnerOrigin, Map<String, Double>> totalInputFluxes = new Hashtable<SpawnerOrigin, Map<String, Double>>(); // On
-																																	// cr�er
-																																	// la
-																																	// Map
-																																	// pour
-																																	// stocker
-																																	// les
-																																	// flux
+					// cr�er la map pour stock les flux
 					totalInputFluxes.put(SpawnerOrigin.AUTOCHTONOUS, new Hashtable<String, Double>());
 					totalInputFluxes.put(SpawnerOrigin.ALLOCHTONOUS, new Hashtable<String, Double>());
 					for (SpawnerOrigin origin : totalInputFluxes.keySet()) {
@@ -443,9 +437,12 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 						long numberOfFemaleRecruit = Math.round(numberOfRecruit * proportionOfFemaleAtBirth);
 						long numberOfMaleRecruit = numberOfRecruit - numberOfFemaleRecruit;
 
-						System.out.println(group.getPilot().getCurrentTime() + "  " + time.getSeason(group.getPilot()) + "  "
-								+ riverBasin.getName() + ": " + numberOfFemaleRecruit + "  females \tgive " + numberOfRecruit
-								+ " recruits from a mean of " + meanNumberOfRecruit);
+						/*
+						 * System.out.println(group.getPilot().getCurrentTime() + "  " +
+						 * time.getSeason(group.getPilot()) + "  " + riverBasin.getName() + ": " + numberOfFemaleRecruit
+						 * + "  females \tgive " + numberOfRecruit + " recruits from a mean of " + meanNumberOfRecruit);
+						 * System.out.println(stockRecruitmentRelationship.getEffectiveStock(numberOfFemaleRecruit));
+						 */
 
 						// ----------------------------------------------
 						// keep information when reproduction
@@ -652,9 +649,9 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 		transient double log19;
 
 		/**
-		 * the value of the stock for which 50% partipate to the reproduction
+		 * sum of mortality coefficient (use to calculate depensatory trap)
 		 * 
-		 * @unit # of individuals
+		 * @unit time-1
 		 */
 		double sigmaZ; //
 
