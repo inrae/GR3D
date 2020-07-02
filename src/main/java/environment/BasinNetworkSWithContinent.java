@@ -265,9 +265,9 @@ public class BasinNetworkSWithContinent extends BasinNetwork {
 			while (scanner.hasNext()) {
 				basin_id = scanner.nextInt(); // gid
 				name = scanner.next();
+				surface = scanner.nextDouble();
 				longitude = scanner.nextDouble();
 				latitude = scanner.nextDouble();
-				surface = scanner.nextDouble();
 				order = scanner.nextInt();
 				if (useRealPDam == true) {
 					pDam = scanner.nextDouble();
