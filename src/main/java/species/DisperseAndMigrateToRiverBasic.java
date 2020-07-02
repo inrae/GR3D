@@ -86,40 +86,41 @@ public class DisperseAndMigrateToRiverBasic extends AquaNismsGroupProcess<Diadro
 	 */
 	protected transient Map<SeaBasin, Map<RiverBasin, Double>> basinWeightsPerBasin;
 
+
 	/**
 	 * a map associtaing a sea bassin with the distance for each river bassin <key> SeaBasin <value> <key> RiverBasin
 	 * <value> distance between the river Basin and the river basin associated with the sea basin
 	 */
-	@Deprecated
-	protected transient Map<SeaBasin, Map<RiverBasin, Double>> basinDistancesPerBasin;
-
+	// @Deprecated
+	// protected transient Map<SeaBasin, Map<RiverBasin, Double>> basinDistancesPerBasin;
 
 	@Override
 	@InitTransientParameters
 	public void initTransientParameters(Pilot pilot) {
 		super.initTransientParameters(pilot);
-		// calcul les poids des bassins voisins qui ne d�pendent pas des poissons pour chaque SeaBassin
+
 		BasinNetwork bn = (BasinNetwork) pilot.getAquaticWorld().getEnvironment();
-		basinDistancesPerBasin = new TreeMap<SeaBasin, Map<RiverBasin, Double>>();
+
+		// calcul les poids des bassins voisins qui ne d�pendent pas des poissons pour chaque SeaBassin
 		basinWeightsPerBasin = new TreeMap<SeaBasin, Map<RiverBasin, Double>>();
 
+		// Compute the weight of each river basin
 		for (SeaBasin seaBas : bn.getSeaBasins()) {
-			// compute the distance with between seaBas and all the river basins
-			Map<RiverBasin, Double> mapDist = new TreeMap<RiverBasin, Double>();
-			// Compute the weight of each river basin
-			Map<RiverBasin, Double> mapWeight = new TreeMap<RiverBasin, Double>();
 
-			for (Entry<Basin, Double> entry : bn.getNeighboursWithDistance(seaBas).entrySet()) {
-				RiverBasin associatedRiverBasin = (RiverBasin) bn.getAssociatedRiverBasin(entry.getKey());
-				mapDist.put(associatedRiverBasin, entry.getValue());
+			Map<RiverBasin, Double> mapWeight = new TreeMap<RiverBasin, Double>();
+			RiverBasin associatedRiverBasin;
+
+			for (Entry<Basin, Double> entry : seaBas.getNeighboursDistances().entrySet()) {
+				associatedRiverBasin = (environment.RiverBasin) entry.getKey();
+				// RiverBasin associatedRiverBasin = (RiverBasin) bn.getAssociatedRiverBasin(entry.getKey());
 
 				double weight = alpha0Rep - alpha1Rep * ((entry.getValue() - meanInterDistance) / standardDeviationInterDistance)
 						+ alpha3Rep
 								* ((associatedRiverBasin.getAttractiveSurface() - meanBvSurface) / standardDeviationBvSurface);
+
 				mapWeight.put(associatedRiverBasin, weight);
 
 			}
-			basinDistancesPerBasin.put(seaBas, mapDist);
 			basinWeightsPerBasin.put(seaBas, mapWeight);
 		}
 	}
