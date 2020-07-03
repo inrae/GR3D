@@ -198,7 +198,7 @@
 		<parameterSetLine>0</parameterSetLine>
 		<yearOfTheUpdate>0</yearOfTheUpdate>
 		<basinsToUpdateFile>data/input/reality/basinsToUpdate.csv</basinsToUpdateFile>
-		<outputPath>data/output/</outputPath>
+		<outputPath>data/output/northeastamerica/</outputPath>
 		<minYearToWrite>1900</minYearToWrite>
 		<fileNameFluxes>nutrientFluxes</fileNameFluxes>
 		<lengthAtHatching>2.8</lengthAtHatching>
@@ -297,7 +297,7 @@
 					<initialLength>2.8</initialLength>
 					<sigmaRecruitment>0.2</sigmaRecruitment>
 					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
-					<maxNumberOfSuperIndividualPerReproduction>150.0
+					<maxNumberOfSuperIndividualPerReproduction>100.0
 					</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
 					<displayFluxesOnConsole>false</displayFluxesOnConsole>
@@ -318,7 +318,7 @@
 			<processesAtEnd>
 				<species.WriteNutrientImportFluxes>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
-					<fileName>fluxes</fileName>
+					<fileName>nutrientImportfFluxes</fileName>
 				</species.WriteNutrientImportFluxes>
 
 				<species.WriteNutrientExportFluxes>

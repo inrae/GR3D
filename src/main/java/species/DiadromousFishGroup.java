@@ -93,7 +93,7 @@ public class DiadromousFishGroup extends AquaNismsGroup< DiadromousFish, BasinNe
 	 */
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
 
-	private String outputPath = "data/output/atlanticarea/" ; 
+	private String outputPath = "data/output/" ; 
 
 	private long minYearToWrite = 1900;
 	
