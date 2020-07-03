@@ -89,10 +89,10 @@ public class DiadromousFishGroup extends AquaNismsGroup<DiadromousFish, BasinNet
 	private long yearOfTheUpdate;
 
 	/**
-	 * list of the basins to be updated column 1: name of the basin column 2: Pattractive: how the bassin become
-	 * attractive (0 not attractive, 1 ??? normal weight associated to catchment size) column 3: Paccessible: how the
-	 * bassin become acesssible (0 not accessible, 1 ???normal weight to inter catchment distance )
-	 * 
+	 * list of the basins to be updated
+	 * column 1: name of the basin
+	 * column 2: Pattractive: how the bassin become attractive (0 not attractive, 1 ??? normal weight associated to catchment size)
+	 * column 3: Paccessible: how the bassin become acesssible (0 not accessible, 1 ???normal weight to inter catchment distance )
 	 * @unit
 	 */
 	private String basinsToUpdateFile = "data/input/reality/basinsToUpdate.csv";
@@ -108,32 +108,37 @@ public class DiadromousFishGroup extends AquaNismsGroup<DiadromousFish, BasinNet
 	private transient String sep;
 
 	/**
-	 * map <key> basin name <value> Duo <first> pAttractive <second> pAccessible
-	 * 
+	 *  map
+	 *  <key> basin name
+	 *  <value> Duo
+	 *  	<first>       pAttractive
+	 *  	<second>  pAccessible
 	 * @unit
 	 */
 	private transient Map<String, Duo<Double, Double>> basinsToUpdate;
 
 	/**
-	 * length when fish hatchs ( when the diadromousFish is created after reproduction) no diffrence between gender
+	 * length when fish hatchs (when the diadromousFish is created after reproduction) no diffrence between gender
 	 * 
 	 * @unit cm
 	 */
 	private double lengthAtHatching = 2.;
 
 	/**
-	 * L infinity of the van Bertalanffy growth curve for female L = Linf *(1-exp(-K*(t-t0))
-	 * 
+	 * L infinity of the van Bertalanffy growth curve for  female
+	 * L = Linf *(1-exp(-K*(t-t0))
 	 * @unit cm
 	 */
 	public double linfVonBertForFemale = 60.;
 
 	/**
-	 * L infinity of the van Bertalanffy growth curve for male L = Linf *(1-exp(-K*(t-t0))
-	 * 
+	 * L infinity of the van Bertalanffy growth curve for  male
+	 * L = Linf *(1-exp(-K*(t-t0))
+         *
 	 * @unit cm
 	 */
 	public double linfVonBertForMale = 60.;
+
 
 	/**
 	 * Brody growth coefficient of the von Bertalanffy growth curve for female (calculated from the parameterset file) *
@@ -199,11 +204,9 @@ public class DiadromousFishGroup extends AquaNismsGroup<DiadromousFish, BasinNet
 
 		double aResidenceTime = 30;
 
-		Map<String, Double> anExcretionRate = new Hashtable<String, Double>();
-		anExcretionRate.put("N", 24.71E-6); // values from Barber et al, Alosa sapidissima in ug/g wet mass/hour :
-		// convertit en g
-		anExcretionRate.put("P", 2.17E-6); // values from Barber et al, Alosa sapidissima in ug/g wet mass/hour:
-		// convertit en g
+		Map <String, Double> anExcretionRate = new Hashtable <String, Double>(); 
+		anExcretionRate.put("N", 24.71E-6 * 24); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour : convertit en g
+		anExcretionRate.put("P", 2.17E-6 * 24); //values from Barber et al, Alosa sapidissima in ug/g wet mass/hour: convertit en g
 
 		/*
 		 * A feature pre spawning
@@ -508,11 +511,6 @@ public class DiadromousFishGroup extends AquaNismsGroup<DiadromousFish, BasinNet
 				}
 			}
 
-			/*
-			 * while (scanner.hasNext()) { scanner.next(); // skip basin_id String basin_name = scanner.next(); String
-			 * obs = scanner.next(); scanner.next(); // skip obs_1851_1950, scanner.next(); // skip obs_1951_2010 if
-			 * (obs != null) obs1900.put(basin_name, Integer.valueOf(obs)); }
-			 */
 			reader.close();
 			scanner.close();
 
