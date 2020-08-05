@@ -297,7 +297,7 @@
 					<initialLength>2.0</initialLength>
 					<sigmaRecruitment>0.2</sigmaRecruitment>
 					<survivalRateAfterReproduction>0.1</survivalRateAfterReproduction>
-					<maxNumberOfSuperIndividualPerReproduction>100.0</maxNumberOfSuperIndividualPerReproduction>
+					<maxNumberOfSuperIndividualPerReproduction>250.0</maxNumberOfSuperIndividualPerReproduction>
 					<withDiagnose>false</withDiagnose>
 					<displayFluxesOnConsole>false</displayFluxesOnConsole>
 				</species.ReproduceAndSurviveAfterReproductionWithDiagnose>
