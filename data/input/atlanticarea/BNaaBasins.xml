@@ -13,6 +13,6 @@
 	<seaBasinNameLabel>BASIN_NAME</seaBasinNameLabel>
 	<continentPathName>ID</continentPathName>
 	<distanceGridFileName>data/input/atlanticarea/distanceGridAA.csv</distanceGridFileName>
-	<temperatureCatchmentFile>data/input/atlanticarea/aa_sst_histo.csv</temperatureCatchmentFile>
+	<temperatureCatchmentFile>data/input/atlanticarea/aa_air_temperature_since_1800.csv</temperatureCatchmentFile>
 	<useRealPDam>false</useRealPDam>
 </environment.BasinNetworkSWithContinent>
