@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 
+@Deprecated
 public class WriteNutrientExportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
 	private String fileName = "nutrientExportFluxes";

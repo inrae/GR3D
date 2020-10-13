@@ -36,6 +36,7 @@ import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 import fr.cemagref.simaqualife.pilot.Pilot;
 import species.DiadromousFish.Stage;
 
+@Deprecated
 /**
  *
  */
