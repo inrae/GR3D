@@ -566,6 +566,7 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 					 * ";" + Time.getSeason(group.getPilot()) + ";IMPORT;" + riverBasin.getName() + ";" + fluxBefore +
 					 * ";" + riverBasin.getSpawnerNumberPerGroup(group)+ "; " + totalInputFluxes);
 					 */
+					/*
 					BufferedWriter bW = group.getbWForFluxes();
 					if (bW != null) {
 						try {
@@ -584,7 +585,8 @@ public class ReproduceAndSurviveAfterReproductionWithDiagnose extends AquaNismsG
 
 							e.printStackTrace();
 						}
-					}
+					}*/
+					
 				} else {
 					riverBasin.setYearOfLastNulRep(time.getYear(group.getPilot()));
 				}
