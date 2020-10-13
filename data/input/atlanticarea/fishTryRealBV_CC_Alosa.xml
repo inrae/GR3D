@@ -307,7 +307,13 @@
 					<exportSeason>SPRING</exportSeason>
 					<fileNameOutput>effectiveBiomassFluxesAfterReproduction</fileNameOutput>
 				</species.WriteEffectiveAndBiomassFluxes>
-				
+
+				<species.WriteEffectiveAndBiomassExportFluxes>
+					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
+					<fileName>effectiveAndBiomassExportFluxes</fileName>
+					<writeSeason>SUMMER</writeSeason>
+				</species.WriteEffectiveAndBiomassExportFluxes>
+
 				<species.MigrateToSea>
 					<seaMigrationSeason>SUMMER</seaMigrationSeason>
 					<synchronisationMode>ASYNCHRONOUS</synchronisationMode>
