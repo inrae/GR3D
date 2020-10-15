@@ -69,10 +69,9 @@ public class WriteEffectiveAndBiomassExportFluxes extends AquaNismsGroupProcess<
 							if (fish.getStage()==Stage.IMMATURE) {
 								double abundanceExp = fish.getAmount();
 								double biomass = group.getNutrientRoutine().getWeight(fish) * fish.getAmount(); 
-
 								totalOutputFluxes.put("biomass", totalOutputFluxes.get("biomass") + biomass); 
 								totalOutputFluxes.put("abundance", totalOutputFluxes.get("abundance") + abundanceExp); 
-							}
+							}	
 						}
 					}
 					try {
