@@ -16,7 +16,7 @@ import fr.cemagref.simaqualife.kernel.processes.AquaNismsGroupProcess;
 public class WriteCurrentNutrientExportFluxes extends AquaNismsGroupProcess<DiadromousFish, DiadromousFishGroup> {
 
 	private String fileName = "currentNutrientExportFluxes";
-	private Season writeSeason = Season.SPRING;
+	private Season writeSeason = Season.SUMMER;
 
 	private transient BufferedWriter bW;
 
